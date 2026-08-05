@@ -38,8 +38,9 @@ python .\sql-engineering\scripts\sql_workspace.py bootstrap `
   --dialect starrocks
 ```
 
-This creates `sql-projects/`, the shared `_asset_catalog`, `_review_inbox`, and `_rule_review`
-directories, and the first project at `sql-projects/example`. Running it again is safe.
+The repository already ships the shared `_asset_catalog`, `_review_inbox`, and `_rule_review`
+directory skeleton. `bootstrap` repairs that layout when needed and creates the first project at
+`sql-projects/example`. Running it again is safe.
 
 Save the bundled example query:
 

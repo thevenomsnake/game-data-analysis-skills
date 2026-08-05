@@ -33,8 +33,9 @@ python .\sql-engineering\scripts\sql_workspace.py bootstrap `
   --dialect starrocks
 ```
 
-命令会自动创建 `sql-projects/`、共享的 `_asset_catalog`、`_review_inbox`、
-`_rule_review`，以及首个项目 `sql-projects/example`。重复运行不会清空已有内容。
+仓库已经带有 `sql-projects/`、共享的 `_asset_catalog`、`_review_inbox`、
+`_rule_review` 目录骨架。命令会在缺失时自动补齐，并创建首个项目
+`sql-projects/example`；重复运行不会清空已有内容。
 
 保存仓库自带的示例 SQL：
 

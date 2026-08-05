@@ -3,7 +3,7 @@ name: sql-engineering
 description: Use this skill for durable SQL work where every generated or modified query must be saved, versioned, indexed, and delivered by exact file path. It supports automatic sql-projects repository bootstrapping, project initialization, immutable temporary and retained SQL versions, external SQL intake, searchable summaries, and verified delivery receipts without embedding organization-specific schemas or business rules.
 metadata:
   short-description: File-backed, versioned SQL delivery
-  version: "1.1.0"
+  version: "1.1.1"
 ---
 
 # SQL Engineering
