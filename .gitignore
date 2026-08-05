@@ -7,4 +7,6 @@ venv/
 Thumbs.db
 /.sql-engineering/
 /sql-workspace/
+**/.sql-engineering/connections.local.json
+**/.sql-engineering/runs/
 dist/

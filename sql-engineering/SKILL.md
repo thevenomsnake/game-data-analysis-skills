@@ -1,9 +1,9 @@
 ---
 name: sql-engineering
-description: Use this skill for durable SQL work where every generated or modified query must be saved, versioned, indexed, and delivered by exact file path. It supports automatic sql-projects repository bootstrapping, project initialization, immutable temporary and retained SQL versions, external SQL intake, searchable summaries, and verified delivery receipts without embedding organization-specific schemas or business rules.
+description: Use this skill for durable SQL work where every generated or modified query must be saved, versioned, indexed, and delivered by exact file path. It supports automatic sql-projects bootstrapping, immutable query versions, external SQL intake, searchable summaries, verified delivery receipts, configurable read-only database execution by environment, and a manual result-return fallback without organization-specific schemas or business rules.
 metadata:
-  short-description: File-backed, versioned SQL delivery
-  version: "1.1.3"
+  short-description: Versioned SQL with configurable database execution
+  version: "1.2.0"
 ---
 
 # SQL Engineering
@@ -18,7 +18,8 @@ content hash.
 
 Read `references/workflow.md` for lifecycle decisions. Read
 `references/project-contract.md` when initializing or repairing a workspace. Read
-`references/sql-quality.md` before delivering executable SQL.
+`references/sql-quality.md` before delivering executable SQL. Read
+`references/database-execution.md` before configuring or using automatic execution.
 
 Read `references/example.md` when onboarding a new project or when the expected saved files,
 index entry, and final delivery response are unclear. The bundled example SQL is executable
@@ -30,9 +31,11 @@ Use `scripts/sql_workspace.py` for deterministic storage and retrieval:
 ```powershell
 python <skill-root>/scripts/sql_workspace.py bootstrap --root <workspace-root> --project-id <id> --dialect <dialect>
 python <skill-root>/scripts/sql_workspace.py init --root <project-root> --project-id <id> --dialect <dialect>
+python <skill-root>/scripts/sql_workspace.py environment --root <project-root> --name <environment> --dialect <dialect> --connection-profile <profile> --default
 python <skill-root>/scripts/sql_workspace.py save --root <project-root> --sql-file <input.sql> --title <title> --summary <summary>
 python <skill-root>/scripts/sql_workspace.py receipt --root <project-root> --sql-file <saved-vNNN.sql>
 python <skill-root>/scripts/sql_workspace.py search --root <project-root> --query <text>
+python <skill-root>/scripts/sql_execute.py run --root <project-root> --sql-file <saved-vNNN.sql>
 ```
 
 ## Hard Boundaries
@@ -45,18 +48,27 @@ python <skill-root>/scripts/sql_workspace.py search --root <project-root> --quer
 6. A request that expands an existing analytical question stays in the same query family. A
    materially different business question gets a new family.
 7. A ready receipt must match both the saved metadata hash and the current file hash.
-8. Select the dialect from project configuration. Do not infer a database, table, partition
-   field, business ID, or date policy from this public Skill.
+8. Select the dialect and execution environment from project configuration. Do not infer a
+   database, table, partition field, business ID, or date policy from this public Skill.
 9. Put reusable date and scope values in a short `params` CTE when the target dialect supports
    it. Keep the SQL directly runnable with concrete values.
 10. Apply only business rules supplied by the user or the current project. This Skill ships no
    organization-specific metric definitions.
-11. Do not claim that SQL ran successfully without execution evidence supplied by the user or
-    observed from an execution tool.
+11. Do not claim that SQL ran successfully without a ready `sql_execution_receipt_v1` or
+    execution evidence returned by the user.
 12. SQL-side privacy transformations are not invented automatically. Follow the user's data
     platform policy and preserve business semantics.
 13. Generated indexes and metadata may describe lifecycle state, but they do not approve,
     publish, or promote an asset by themselves.
+14. Use only project-declared context files. Never depend on a personal knowledge-base path. If
+    context is absent, inspect metadata or enums through a saved read-only database query.
+15. Automatic execution supports only project-configured DB-API drivers or database command-line
+    clients. Never automate a web page, Chrome, or a DA console in this public Skill.
+16. Keep hosts, users, and connection options in the local ignored connection file; obtain
+    passwords and tokens only from environment variables. Never commit credentials.
+17. Automatic execution is read-only and accepts one saved query version. If no automatic
+    connection is configured or available, return `manual_required`, deliver the SQL path, and
+    ask the user to run it and return the result file. This is a normal workflow, not a failure.
 
 ## Workflow
 
@@ -69,6 +81,14 @@ python <skill-root>/scripts/sql_workspace.py search --root <project-root> --quer
 5. Save with `sql_workspace.py save` and a human-readable summary.
 6. Run `sql_workspace.py receipt` on the saved version.
 7. Return the receipt's absolute `delivery_file` path.
+
+### Execute Or Hand Off
+
+1. Use the environment saved with the SQL, an explicitly requested environment, or the project default.
+2. Run `sql_execute.py run` only against a ready saved SQL receipt.
+3. On `ready`, return the exact result and execution-receipt paths.
+4. On `manual_required`, return the SQL path and ask the user to run it and send back the result.
+5. On `blocked` or `failed`, report the recorded error without claiming successful execution.
 
 ### External SQL
 

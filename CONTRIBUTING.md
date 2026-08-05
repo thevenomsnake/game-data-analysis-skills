@@ -14,7 +14,7 @@ Before opening a pull request:
 
    ```powershell
    python -m unittest discover -s .\sql-engineering\tests -p "test_*.py"
-   python -m py_compile .\sql-engineering\scripts\sql_workspace.py
+   python -m py_compile .\sql-engineering\scripts\sql_workspace.py .\sql-engineering\scripts\sql_execute.py
    ```
 
 5. Explain the user-visible behavior and migration impact in the pull request.

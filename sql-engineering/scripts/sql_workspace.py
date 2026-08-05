@@ -20,6 +20,7 @@ META_SCHEMA = "sql_workspace_item_v1"
 RECEIPT_SCHEMA = "sql_delivery_receipt_v1"
 KINDS = ("temporary", "retained", "dashboard")
 RESERVED_PROJECT_DIRECTORIES = ("_asset_catalog", "_review_inbox", "_rule_review")
+ENVIRONMENT_NAME_PATTERN = re.compile(r"[A-Za-z0-9][A-Za-z0-9_-]{0,63}")
 
 
 def utc_now() -> str:
@@ -61,6 +62,18 @@ def load_project(root: Path) -> tuple[Path, dict[str, Any], Path]:
         raise ValueError(f"Unsupported project schema in {config_path}")
     if not str(config.get("project_id", "")).strip():
         raise ValueError(f"project_id is required in {config_path}")
+    context_paths = config.get("context_paths", [])
+    if not isinstance(context_paths, list):
+        raise ValueError(f"context_paths must be an array: {config_path}")
+    for raw_path in context_paths:
+        normalized = str(raw_path).strip().replace("\\", "/")
+        if (
+            not normalized
+            or normalized.startswith("/")
+            or re.match(r"^[A-Za-z]:/", normalized)
+            or ".." in normalized.split("/")
+        ):
+            raise ValueError(f"context_paths must contain project-relative paths: {raw_path!r}")
     return root, config, index_path
 
 
@@ -114,6 +127,43 @@ def command_init(args: argparse.Namespace) -> dict[str, Any]:
         "project_root": str(root),
         "config_file": str(config_path),
         "index_file": str(index_path),
+    }
+
+
+def command_environment(args: argparse.Namespace) -> dict[str, Any]:
+    root, config, _ = load_project(Path(args.root))
+    name = args.name.strip()
+    dialect = args.dialect.strip().lower()
+    connection_profile = args.connection_profile.strip()
+    if not ENVIRONMENT_NAME_PATTERN.fullmatch(name):
+        raise ValueError("environment name must use letters, numbers, underscores, or hyphens")
+    if not dialect or not connection_profile:
+        raise ValueError("dialect and connection-profile are required")
+
+    execution = config.setdefault("execution", {})
+    if not isinstance(execution, dict):
+        raise ValueError("project execution configuration must be an object")
+    environments = execution.setdefault("environments", {})
+    if not isinstance(environments, dict):
+        raise ValueError("project execution environments must be an object")
+    environments[name] = {
+        "dialect": dialect,
+        "connection_profile": connection_profile,
+    }
+    if args.default or not str(execution.get("default_environment", "")).strip():
+        execution["default_environment"] = name
+
+    _, config_path, _ = project_paths(root)
+    write_json(config_path, config)
+    return {
+        "status": "ready",
+        "schema_version": PROJECT_SCHEMA,
+        "project_root": str(root),
+        "environment": name,
+        "dialect": dialect,
+        "connection_profile": connection_profile,
+        "default_environment": execution.get("default_environment"),
+        "config_file": str(config_path),
     }
 
 
@@ -194,6 +244,20 @@ def command_save(args: argparse.Namespace) -> dict[str, Any]:
     if not re.fullmatch(r"[a-z0-9][a-z0-9-]{0,79}", slug):
         raise ValueError("slug must use lowercase ASCII letters, numbers, and hyphens")
 
+    requested_environment = str(getattr(args, "environment", "") or "").strip()
+    execution = config.get("execution") if isinstance(config.get("execution"), dict) else {}
+    if not requested_environment:
+        requested_environment = str(execution.get("default_environment", "") or "").strip()
+    environments = execution.get("environments") if isinstance(execution.get("environments"), dict) else {}
+    environment_config = environments.get(requested_environment) if requested_environment else None
+    if requested_environment and not isinstance(environment_config, dict):
+        raise ValueError(f"Unknown execution environment: {requested_environment}")
+    saved_dialect = (
+        str(environment_config.get("dialect", "")).strip().lower()
+        if isinstance(environment_config, dict)
+        else str(config["dialect"]).strip().lower()
+    )
+
     family_dir = root / "sql-workspace" / args.kind / slug
     version_number = next_version(family_dir)
     version = f"v{version_number:03d}"
@@ -220,7 +284,8 @@ def command_save(args: argparse.Namespace) -> dict[str, Any]:
         "title": title,
         "summary": summary,
         "tags": tags,
-        "dialect": config["dialect"],
+        "dialect": saved_dialect,
+        "execution_environment": requested_environment or None,
         "relative_path": relative_sql,
         "content_sha256": digest,
         "source": {"file_name": source.name, "content_sha256": digest},
@@ -238,6 +303,8 @@ def command_save(args: argparse.Namespace) -> dict[str, Any]:
             "title": title,
             "summary": summary,
             "tags": tags,
+            "dialect": saved_dialect,
+            "execution_environment": requested_environment or None,
             "relative_path": relative_sql,
             "meta_path": relative_meta,
             "content_sha256": digest,
@@ -313,6 +380,14 @@ def build_parser() -> argparse.ArgumentParser:
     bootstrap.add_argument("--dialect", default="")
     bootstrap.set_defaults(handler=command_bootstrap)
 
+    environment = subparsers.add_parser("environment")
+    environment.add_argument("--root", required=True)
+    environment.add_argument("--name", required=True)
+    environment.add_argument("--dialect", required=True)
+    environment.add_argument("--connection-profile", required=True)
+    environment.add_argument("--default", action="store_true")
+    environment.set_defaults(handler=command_environment)
+
     init = subparsers.add_parser("init")
     init.add_argument("--root", required=True)
     init.add_argument("--project-id", required=True)
@@ -328,6 +403,7 @@ def build_parser() -> argparse.ArgumentParser:
     save.add_argument("--kind", choices=KINDS, default="temporary")
     save.add_argument("--slug", default="")
     save.add_argument("--tag", action="append")
+    save.add_argument("--environment", default="")
     save.set_defaults(handler=command_save)
 
     receipt = subparsers.add_parser("receipt")

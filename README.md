@@ -1,6 +1,6 @@
 # Game Data Analysis Skills
 
-**A file-backed SQL lifecycle for Codex.**
+**A file-backed SQL lifecycle with configurable read-only database execution for Codex.**
 
 Game Data Analysis Skills turns SQL conversations into durable project files. Every generated
 or modified query is saved, versioned, indexed, searchable, and delivered by exact path, so the
@@ -22,6 +22,7 @@ This Skill gives Codex a small, enforceable workspace contract:
 |---|---|
 | Repository bootstrap | Creates a stable `sql-projects/` layout and the first project |
 | SQL delivery | Saves every generated or modified query as an immutable `vNNN.sql` version |
+| Environment-aware execution | Runs saved SQL through a configured read-only DB-API driver or database CLI |
 | External SQL intake | Treats the supplied file as input and works on a project-local copy |
 | Searchable history | Records a human title, purpose, tags, dialect, path, and content hash |
 | Revision control | Keeps corrections and extensions in one query family without overwriting history |
@@ -69,6 +70,11 @@ Codex should inspect the project, create or reuse a query family, save a version
 `sql-projects/example/sql-workspace/temporary/daily-active-users/v001.sql`, run a receipt, and
 return the absolute saved path. Database execution is reported separately and is never assumed.
 
+Automatic execution is optional. Register a named project environment and keep its real connection
+profile in the ignored `.sql-engineering/connections.local.json` file. When no driver, CLI, secret,
+or connection profile is available, the Skill returns `manual_required`, gives the exact SQL path,
+and asks the user to run it and return the result. It never clicks a browser or DA web console.
+
 ## Common Requests
 
 | Goal | Example request |
@@ -79,6 +85,7 @@ return the absolute saved path. Database execution is reported separately and is
 | Revise a query | `$sql-engineering Add platform as a dimension to the existing active-user query family.` |
 | Keep a useful query | `$sql-engineering Save the confirmed logic as a retained query version.` |
 | Verify delivery | `$sql-engineering Check the receipt for this v003.sql and return the exact path.` |
+| Execute directly | `$sql-engineering Run this saved query in the configured development database.` |
 
 ## How The Lifecycle Works
 
@@ -124,9 +131,11 @@ not invent catalog, review, or rule content.
 |---|---|
 | `bootstrap` | Create the repository layout and optionally initialize the first project |
 | `init` | Initialize one standalone project |
+| `environment` | Map a named project environment to a local database connection profile |
 | `save` | Save a new immutable SQL version and update its index |
 | `search` | Search titles, summaries, and tags |
 | `receipt` | Verify one exact saved SQL version before delivery |
+| `sql_execute.py run` | Execute a saved read-only query or return a manual handoff |
 
 Try the bundled fictional query at
 [`sql-engineering/assets/examples/daily-active-users.sql`](sql-engineering/assets/examples/daily-active-users.sql).
@@ -137,6 +146,10 @@ expected files, and final-response contract.
 
 - The project configuration selects the dialect. The Skill does not guess tables, partitions,
   business IDs, or metric definitions.
+- Project context is optional and explicitly declared. The Skill does not depend on a personal
+  knowledge base; missing schema context can be inspected through saved read-only database queries.
+- Automatic execution uses DB-API or database command-line clients only. Browser and DA-console
+  automation are intentionally unsupported, and missing configuration falls back to manual execution.
 - External SQL remains immutable input; revisions are saved inside the project.
 - Saved versions are not overwritten. Manual edits are detected by the receipt hash checks.
 - A lifecycle label describes intended use; it does not prove business correctness or execution.
@@ -153,16 +166,18 @@ expected files, and final-response contract.
 | Project and directory contract | [`references/project-contract.md`](sql-engineering/references/project-contract.md) |
 | Query-family lifecycle | [`references/workflow.md`](sql-engineering/references/workflow.md) |
 | SQL delivery checks | [`references/sql-quality.md`](sql-engineering/references/sql-quality.md) |
+| Database environments and execution | [`references/database-execution.md`](sql-engineering/references/database-execution.md) |
 | Contribution rules | [CONTRIBUTING.md](CONTRIBUTING.md) |
 | Security policy | [SECURITY.md](SECURITY.md) |
 
 ## Development
 
-The public edition uses only the Python standard library.
+The public core uses only the Python standard library. DB-API execution imports the database driver
+selected by the user's local connection profile.
 
 ```powershell
 python -m unittest discover -s .\sql-engineering\tests -p "test_*.py"
-python -m py_compile .\sql-engineering\scripts\sql_workspace.py
+python -m py_compile .\sql-engineering\scripts\sql_workspace.py .\sql-engineering\scripts\sql_execute.py
 ```
 
 Licensed under the [Apache License 2.0](LICENSE).

@@ -15,7 +15,9 @@ The SQL uses fictional names and demonstrates storage and delivery, not a real d
    `assets/examples/daily-active-users.sql` with the user's project contract.
 3. Keep fixed date values in `params` and save the SQL as a `temporary` query.
 4. Run `receipt` against the exact saved `vNNN.sql` file.
-5. Return the absolute `delivery_file` path. Do not deliver only a chat code block.
+5. Try the configured read-only database environment when one exists.
+6. If execution returns `manual_required`, return the absolute `delivery_file` path and ask the
+   user to run it and return the result. Do not deliver only a chat code block.
 
 ```powershell
 python <skill-root>/scripts/sql_workspace.py bootstrap `
@@ -33,6 +35,10 @@ python <skill-root>/scripts/sql_workspace.py save `
   --tag activity
 
 python <skill-root>/scripts/sql_workspace.py receipt `
+  --root <workspace-root>/sql-projects/example `
+  --sql-file <absolute-saved-vNNN.sql>
+
+python <skill-root>/scripts/sql_execute.py run `
   --root <workspace-root>/sql-projects/example `
   --sql-file <absolute-saved-vNNN.sql>
 ```
@@ -62,5 +68,7 @@ later executable revision becomes `v002.sql`; it does not overwrite `v001.sql`.
 
 ## Expected Final Response
 
-State that the SQL was saved, say whether it was executed, and link the exact absolute path
-returned by the ready receipt. The response must not substitute a pasted SQL block for the file.
+State that the SQL was saved and link the exact absolute path returned by the ready receipt. If
+automatic execution was ready, also link its result and execution receipt. If it returned
+`manual_required`, ask the user to run the SQL and send back the result file. The response must
+not substitute a pasted SQL block for the file or use a browser as an execution fallback.

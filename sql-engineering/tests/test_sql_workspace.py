@@ -100,6 +100,61 @@ class PublicWorkspaceTests(unittest.TestCase):
             self.assertIn("metadata_hash_mismatch", receipt["blockers"])
             self.assertIn("index_hash_mismatch", receipt["blockers"])
 
+    def test_environment_configuration_is_saved_with_sql_version(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp) / "project"
+            source = Path(temp) / "query.sql"
+            source.write_text("SELECT 1;\n", encoding="utf-8")
+            self.module.command_init(
+                type("Args", (), {"root": str(root), "project_id": "demo", "dialect": "starrocks", "force": False})
+            )
+            environment = self.module.command_environment(
+                type(
+                    "Args",
+                    (),
+                    {
+                        "root": str(root),
+                        "name": "development",
+                        "dialect": "starrocks",
+                        "connection_profile": "development-starrocks",
+                        "default": True,
+                    },
+                )
+            )
+            saved = self.module.command_save(
+                type(
+                    "Args",
+                    (),
+                    {
+                        "root": str(root),
+                        "sql_file": str(source),
+                        "title": "One",
+                        "summary": "Returns one scalar.",
+                        "kind": "temporary",
+                        "slug": "one",
+                        "tag": [],
+                        "environment": "",
+                    },
+                )
+            )
+            meta = json.loads(Path(saved["delivery_file"]).with_suffix(".meta.json").read_text(encoding="utf-8"))
+            self.assertEqual(environment["default_environment"], "development")
+            self.assertEqual(meta["execution_environment"], "development")
+            self.assertEqual(meta["dialect"], "starrocks")
+
+    def test_project_context_paths_must_be_relative(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp) / "project"
+            self.module.command_init(
+                type("Args", (), {"root": str(root), "project_id": "demo", "dialect": "starrocks", "force": False})
+            )
+            config_path = root / ".sql-engineering" / "project.json"
+            config = json.loads(config_path.read_text(encoding="utf-8"))
+            config["context_paths"] = ["C:/Users/example/private-schema.md"]
+            config_path.write_text(json.dumps(config), encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "project-relative"):
+                self.module.load_project(root)
+
     def test_bundled_example_saves_and_returns_ready_receipt(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp) / "project"

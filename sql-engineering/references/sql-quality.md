@@ -12,6 +12,9 @@ Before saving a runnable version, check:
 - Production SQL avoids `SELECT *`.
 - Identifiers and string literals are quoted for the target dialect.
 - No execution, verification, or business-rule claim lacks evidence.
+- Automatic execution uses one saved, receipt-verified, read-only statement.
+- The saved SQL dialect matches the selected database environment.
+- Missing automatic connection configuration produces a manual handoff, not browser automation.
 
 Prefer a short parameter CTE for reusable values:
 

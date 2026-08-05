@@ -1,0 +1,35 @@
+{
+  "schema_version": "sql_engineering_connections_v1",
+  "profiles": {
+    "development-starrocks": {
+      "method": "dbapi",
+      "module": "pymysql",
+      "read_only": true,
+      "connect": {
+        "host": "127.0.0.1",
+        "port": 9030,
+        "user": "readonly_user",
+        "database": "example",
+        "charset": "utf8mb4"
+      },
+      "secret_env": {
+        "password": "SQL_ENGINEERING_DEV_PASSWORD"
+      }
+    },
+    "warehouse-hive": {
+      "method": "cli",
+      "program": "beeline",
+      "read_only": true,
+      "arguments": [
+        "--silent=true",
+        "--showHeader=true",
+        "--outputformat=csv2",
+        "-u",
+        "jdbc:hive2://warehouse.example.invalid:10000/default",
+        "-f",
+        "{sql_file}"
+      ],
+      "output_format": "csv"
+    }
+  }
+}

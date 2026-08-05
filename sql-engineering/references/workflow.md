@@ -5,7 +5,8 @@ The public edition keeps the lifecycle deliberately small:
 ```text
 request
   -> saved temporary query version
-  -> execution outside or through a project tool
+  -> configured read-only database execution
+     or exact SQL handoff for manual execution
   -> optional result evidence
   -> human decision about reuse
      -> keep as workspace history
@@ -39,3 +40,10 @@ These labels describe intended use. They do not prove correctness or execution.
 Keep execution evidence separate from SQL. Record the exact SQL version and content hash that
 produced a result. Never bind a result to a title alone, and never overwrite historical SQL to
 make a result appear current.
+
+## Execution Decision
+
+After saving and verifying SQL, run `sql_execute.py` only when the project has a configured
+database environment. A `ready` execution receipt is direct evidence. A `manual_required`
+receipt means the SQL remains ready but the user must run it and return the result. Do not use a
+browser or a web-based DA console as an automatic fallback.

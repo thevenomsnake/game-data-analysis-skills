@@ -1,6 +1,6 @@
 # Game Data Analysis Skills
 
-**Codex를 위한 파일 기반 SQL 수명 주기.**
+**Codex를 위한 파일 기반 SQL 수명 주기와 설정 가능한 읽기 전용 데이터베이스 실행.**
 
 Game Data Analysis Skills는 대화에서 만든 SQL 작업을 오래 유지되는 프로젝트 파일로 바꿉니다.
 생성하거나 수정한 모든 쿼리를 저장하고, 버전 관리하고, 색인화하여 검색할 수 있게 하며, 정확한
@@ -22,6 +22,7 @@ Game Data Analysis Skills는 대화에서 만든 SQL 작업을 오래 유지되�
 |---|---|
 | 저장소 초기화 | 안정적인 `sql-projects/` 구조와 첫 프로젝트를 생성 |
 | SQL 전달 | 생성하거나 수정할 때마다 변경 불가능한 `vNNN.sql` 버전으로 저장 |
+| 환경별 실행 | 설정된 읽기 전용 DB-API 드라이버 또는 데이터베이스 CLI로 저장된 SQL 실행 |
 | 외부 SQL 수집 | 전달받은 파일을 입력으로 취급하고 프로젝트 내부 복사본에서 작업 |
 | 검색 가능한 이력 | 사람이 읽을 수 있는 제목, 목적, 태그, 방언, 경로, 콘텐츠 해시를 기록 |
 | 수정 이력 관리 | 같은 분석 문제의 수정과 확장을 한 쿼리 패밀리에서 새 버전으로 관리 |
@@ -70,6 +71,11 @@ Codex는 프로젝트를 확인하고 쿼리 패밀리를 만들거나 재사용
 저장해야 합니다. 이어서 receipt를 실행하고 저장된 절대 경로를 반환합니다. 데이터베이스 실행은
 별도로 보고해야 하며, 실행했다고 추정해서는 안 됩니다.
 
+자동 실행은 선택 기능입니다. 프로젝트에는 환경 이름만 등록하고 실제 연결 설정은 Git에서 제외되는
+`.sql-engineering/connections.local.json`에 저장합니다. 드라이버, CLI, 비밀값 또는 연결 프로필이
+없으면 Skill은 `manual_required`와 정확한 SQL 경로를 반환하고, 사용자에게 직접 실행한 결과 파일을
+보내 달라고 요청합니다. Chrome이나 DA 웹 콘솔을 조작하지 않습니다.
+
 ## 자주 쓰는 요청
 
 | 목적 | 요청 예시 |
@@ -80,6 +86,7 @@ Codex는 프로젝트를 확인하고 쿼리 패밀리를 만들거나 재사용
 | 쿼리 확장 | `$sql-engineering 기존 활성 사용자 쿼리 패밀리에 플랫폼 차원을 추가해 주세요.` |
 | 유용한 쿼리 보관 | `$sql-engineering 확인된 로직을 retained 쿼리 버전으로 저장해 주세요.` |
 | 전달 검증 | `$sql-engineering 이 v003.sql의 receipt를 확인하고 정확한 경로를 반환해 주세요.` |
+| 직접 실행 | `$sql-engineering 설정된 개발 데이터베이스에서 이 저장 쿼리를 실행해 주세요.` |
 
 ## 수명 주기
 
@@ -125,9 +132,11 @@ sql-projects/
 |---|---|
 | `bootstrap` | 저장소 구조를 만들고 선택적으로 첫 프로젝트를 초기화 |
 | `init` | 독립 프로젝트 하나를 초기화 |
+| `environment` | 프로젝트 환경 이름을 로컬 데이터베이스 연결 프로필에 연결 |
 | `save` | 변경 불가능한 새 SQL 버전을 저장하고 색인을 갱신 |
 | `search` | 제목, 요약, 태그 검색 |
 | `receipt` | 전달 전에 특정 SQL 버전을 검증 |
+| `sql_execute.py run` | 저장된 읽기 전용 SQL을 실행하거나 수동 실행으로 인계 |
 
 포함된 가상 쿼리
 [`daily-active-users.sql`](sql-engineering/assets/examples/daily-active-users.sql)을 사용해 볼 수 있습니다.
@@ -137,6 +146,10 @@ sql-projects/
 ## 설계 경계
 
 - 프로젝트 설정이 SQL 방언을 선택합니다. Skill은 테이블, 파티션, 업무 ID, 지표 정의를 추측하지 않습니다.
+- 프로젝트 컨텍스트는 선택 사항이며 명시적으로 선언합니다. Skill은 개인 지식 저장소에 의존하지 않고,
+  부족한 스키마 정보는 저장된 읽기 전용 데이터베이스 쿼리로 확인할 수 있습니다.
+- 자동 실행은 DB-API 또는 데이터베이스 명령줄 클라이언트만 사용합니다. 브라우저와 DA 웹 콘솔 자동화는
+  지원하지 않으며, 설정이 없으면 수동 실행으로 전환합니다.
 - 외부 SQL은 변경 불가능한 입력으로 유지하며, 수정본은 프로젝트 내부에 저장합니다.
 - 저장된 버전은 덮어쓰지 않습니다. 수동 수정은 receipt의 해시 검사로 감지합니다.
 - 수명 주기 라벨은 의도한 용도를 설명할 뿐, 업무 정확성이나 실행 성공을 증명하지 않습니다.
@@ -152,16 +165,18 @@ sql-projects/
 | 프로젝트 및 디렉터리 계약 | [`references/project-contract.md`](sql-engineering/references/project-contract.md) |
 | 쿼리 패밀리 수명 주기 | [`references/workflow.md`](sql-engineering/references/workflow.md) |
 | SQL 전달 검사 | [`references/sql-quality.md`](sql-engineering/references/sql-quality.md) |
+| 데이터베이스 환경 및 실행 | [`references/database-execution.md`](sql-engineering/references/database-execution.md) |
 | 기여 규칙 | [CONTRIBUTING.md](CONTRIBUTING.md) |
 | 보안 정책 | [SECURITY.md](SECURITY.md) |
 
 ## 개발
 
-공개판은 Python 표준 라이브러리만 사용합니다.
+공개 코어는 Python 표준 라이브러리만 사용합니다. DB-API 실행 시에는 사용자의 로컬 연결 프로필에서
+선택한 데이터베이스 드라이버를 불러옵니다.
 
 ```powershell
 python -m unittest discover -s .\sql-engineering\tests -p "test_*.py"
-python -m py_compile .\sql-engineering\scripts\sql_workspace.py
+python -m py_compile .\sql-engineering\scripts\sql_workspace.py .\sql-engineering\scripts\sql_execute.py
 ```
 
 [Apache License 2.0](LICENSE)에 따라 배포됩니다.

@@ -61,5 +61,30 @@ Minimal configuration:
 }
 ```
 
+Optional project context and execution routing:
+
+```json
+{
+  "context_paths": [
+    "context/schema.md",
+    "context/metrics.md"
+  ],
+  "execution": {
+    "default_environment": "development",
+    "environments": {
+      "development": {
+        "dialect": "starrocks",
+        "connection_profile": "development-starrocks"
+      }
+    }
+  }
+}
+```
+
+`context_paths` and `execution` are optional. Context paths are project-relative and must not
+point into one person's home directory or private Skill installation. Configure environments
+with `sql_workspace.py environment`; keep actual connection details in the ignored local file
+described in `database-execution.md`.
+
 The workspace index is machine generated. Edit SQL by creating a new saved version, not by
 hand-editing index entries or old `vNNN.sql` files.

@@ -1,6 +1,6 @@
 # Game Data Analysis Skills
 
-**Codex のための、ファイルを正とする SQL ライフサイクル。**
+**Codex のための、設定可能な読み取り専用データベース実行を備えたファイル主体の SQL ライフサイクル。**
 
 Game Data Analysis Skills は、会話の中で生まれた SQL を永続的なプロジェクトファイルへ変換します。
 生成または変更されたすべてのクエリを保存し、バージョン管理し、索引化して検索可能にし、正確な
@@ -22,6 +22,7 @@ Game Data Analysis Skills は、会話の中で生まれた SQL を永続的な�
 |---|---|
 | リポジトリ初期化 | 安定した `sql-projects/` 構造と最初のプロジェクトを作成 |
 | SQL の引き渡し | 生成または変更のたびに、不変の `vNNN.sql` バージョンとして保存 |
+| 環境別の実行 | 設定済みの読み取り専用 DB-API ドライバーまたはデータベース CLI で保存済み SQL を実行 |
 | 外部 SQL の取り込み | 入力ファイルを変更せず、プロジェクト内のコピーで作業 |
 | 検索可能な履歴 | 人が読めるタイトル、目的、タグ、方言、パス、内容ハッシュを記録 |
 | 継続的な改訂 | 同じ分析課題を一つのクエリファミリーで管理し、新バージョンとして拡張 |
@@ -71,6 +72,11 @@ Codex はプロジェクトを確認し、クエリファミリーを作成ま�
 その後 receipt を実行し、保存済みの絶対パスを返します。データベースでの実行結果は別に報告し、
 実行済みだと推測してはいけません。
 
+自動実行は任意です。プロジェクトには環境名だけを登録し、実際の接続設定は Git が無視する
+`.sql-engineering/connections.local.json` に保存します。ドライバー、CLI、シークレット、接続設定が
+ない場合、Skill は `manual_required` と正確な SQL パスを返し、ユーザーに実行と結果ファイルの
+返却を依頼します。Chrome や DA の Web コンソールを操作することはありません。
+
 ## よく使う依頼
 
 | 目的 | 依頼例 |
@@ -81,6 +87,7 @@ Codex はプロジェクトを確認し、クエリファミリーを作成ま�
 | クエリを拡張 | `$sql-engineering 既存のアクティブユーザークエリファミリーにプラットフォーム次元を追加してください。` |
 | 有用なクエリを保管 | `$sql-engineering 確認済みのロジックを retained クエリとして保存してください。` |
 | 引き渡しを検証 | `$sql-engineering この v003.sql の receipt を確認し、正確なパスを返してください。` |
+| 直接実行 | `$sql-engineering 設定済みの開発データベースで、この保存済みクエリを実行してください。` |
 
 ## ライフサイクル
 
@@ -126,9 +133,11 @@ sql-projects/
 |---|---|
 | `bootstrap` | リポジトリ構造を作成し、必要なら最初のプロジェクトも初期化 |
 | `init` | 一つの独立プロジェクトを初期化 |
+| `environment` | プロジェクトの環境名をローカルのデータベース接続プロファイルへ対応付け |
 | `save` | 新しい不変 SQL バージョンを保存して索引を更新 |
 | `search` | タイトル、要約、タグを検索 |
 | `receipt` | 引き渡し前に特定の SQL バージョンを検証 |
+| `sql_execute.py run` | 保存済みの読み取り専用 SQL を実行、または手動実行へ引き渡し |
 
 同梱の架空クエリ
 [`daily-active-users.sql`](sql-engineering/assets/examples/daily-active-users.sql) を試せます。
@@ -138,6 +147,10 @@ sql-projects/
 ## 設計上の境界
 
 - SQL 方言はプロジェクト設定で選択します。Skill はテーブル、パーティション、業務 ID、指標定義を推測しません。
+- プロジェクトコンテキストは任意で、明示的に宣言します。Skill は個人のナレッジベースに依存せず、
+  不足するスキーマ情報は保存済みの読み取り専用データベースクエリで確認できます。
+- 自動実行は DB-API またはデータベース CLI だけを使用します。ブラウザーや DA Web コンソールの
+  自動操作は対応せず、設定がなければ手動実行へ移ります。
 - 外部 SQL は不変の入力として扱い、変更版はプロジェクト内へ保存します。
 - 保存済みバージョンを上書きしません。手動変更は receipt のハッシュ検証で検出されます。
 - ライフサイクルラベルは用途を示すだけで、業務上の正しさや実行成功を証明しません。
@@ -153,16 +166,18 @@ sql-projects/
 | プロジェクトとディレクトリの契約 | [`references/project-contract.md`](sql-engineering/references/project-contract.md) |
 | クエリファミリーのライフサイクル | [`references/workflow.md`](sql-engineering/references/workflow.md) |
 | SQL 引き渡し検証 | [`references/sql-quality.md`](sql-engineering/references/sql-quality.md) |
+| データベース環境と実行 | [`references/database-execution.md`](sql-engineering/references/database-execution.md) |
 | コントリビューション | [CONTRIBUTING.md](CONTRIBUTING.md) |
 | セキュリティポリシー | [SECURITY.md](SECURITY.md) |
 
 ## 開発
 
-公開版は Python 標準ライブラリだけを使用します。
+公開コアは Python 標準ライブラリだけを使用します。DB-API 実行時は、ローカル接続設定で
+ユーザーが選択したデータベースドライバーを読み込みます。
 
 ```powershell
 python -m unittest discover -s .\sql-engineering\tests -p "test_*.py"
-python -m py_compile .\sql-engineering\scripts\sql_workspace.py
+python -m py_compile .\sql-engineering\scripts\sql_workspace.py .\sql-engineering\scripts\sql_execute.py
 ```
 
 [Apache License 2.0](LICENSE) の下で提供されます。
