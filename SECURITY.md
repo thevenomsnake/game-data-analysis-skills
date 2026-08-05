@@ -22,3 +22,7 @@ through environment variables only. The public Skill does not automate browser o
 sessions, and local execution results under `.sql-engineering/runs/` are not committed by default.
 Connection profiles select Python modules or executable database clients and must therefore come
 from a trusted local source, never from an unreviewed repository or message attachment.
+
+Registered telemetry definitions, planning tables, confirmed knowledge, rules, SQL, and results may
+contain private project information. Keep them in an appropriately private project repository and do
+not submit them to this public upstream repository. Public examples must remain fictional.

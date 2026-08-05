@@ -1,9 +1,9 @@
 ---
 name: sql-engineering
-description: Use this skill for durable SQL work where every generated or modified query must be saved, versioned, indexed, and delivered by exact file path. It supports automatic sql-projects bootstrapping, immutable query versions, external SQL intake, searchable summaries, verified delivery receipts, configurable read-only database execution by environment, and a manual result-return fallback without organization-specific schemas or business rules.
+description: Use this skill for durable SQL projects that must register raw telemetry definitions, separate planning and human-confirmed knowledge, fix versioned canonical rules, select SQL dialect and database environment, and save every generated or modified query as an indexed immutable file. It supports configurable read-only database execution and exact manual SQL handoff without organization-specific schemas or rules.
 metadata:
-  short-description: Versioned SQL with configurable database execution
-  version: "1.2.0"
+  short-description: Governed project context and versioned SQL execution
+  version: "1.3.0"
 ---
 
 # SQL Engineering
@@ -20,6 +20,9 @@ Read `references/workflow.md` for lifecycle decisions. Read
 `references/project-contract.md` when initializing or repairing a workspace. Read
 `references/sql-quality.md` before delivering executable SQL. Read
 `references/database-execution.md` before configuring or using automatic execution.
+Read `references/dialects.md` before selecting SQL syntax or mapping a connection method to an engine.
+Read `references/project-onboarding.md` before creating a project or when source, planning,
+confirmed knowledge, rule ownership, dialect, or connection setup is unclear.
 
 Read `references/example.md` when onboarding a new project or when the expected saved files,
 index entry, and final delivery response are unclear. The bundled example SQL is executable
@@ -32,6 +35,10 @@ Use `scripts/sql_workspace.py` for deterministic storage and retrieval:
 python <skill-root>/scripts/sql_workspace.py bootstrap --root <workspace-root> --project-id <id> --dialect <dialect>
 python <skill-root>/scripts/sql_workspace.py init --root <project-root> --project-id <id> --dialect <dialect>
 python <skill-root>/scripts/sql_workspace.py environment --root <project-root> --name <environment> --dialect <dialect> --connection-profile <profile> --default
+python <skill-root>/scripts/sql_workspace.py source --root <project-root> --file <definition-file> --name <name> --description <description>
+python <skill-root>/scripts/sql_workspace.py knowledge --root <project-root> --file <file> --kind <planning|confirmed> --name <name> --description <description>
+python <skill-root>/scripts/sql_workspace.py rule --root <project-root> --rule-file <rule.json> --confirmed-by <person> --confirmation-note <reason>
+python <skill-root>/scripts/sql_workspace.py status --root <project-root>
 python <skill-root>/scripts/sql_workspace.py save --root <project-root> --sql-file <input.sql> --title <title> --summary <summary>
 python <skill-root>/scripts/sql_workspace.py receipt --root <project-root> --sql-file <saved-vNNN.sql>
 python <skill-root>/scripts/sql_workspace.py search --root <project-root> --query <text>
@@ -69,18 +76,35 @@ python <skill-root>/scripts/sql_execute.py run --root <project-root> --sql-file 
 17. Automatic execution is read-only and accepts one saved query version. If no automatic
     connection is configured or available, return `manual_required`, deliver the SQL path, and
     ask the user to run it and return the result file. This is a normal workflow, not a failure.
+18. Before authoritative project SQL, register at least one original telemetry definition. Preserve
+    XML, JSON, YAML, Excel, CSV, text, or another supplied format unchanged and cite its versioned ID.
+19. Store original planning/configuration tables under `knowledge/planning`; they are evidence, not
+    confirmed truth. Store manually reviewed material under `knowledge/confirmed` with confirmer and reason.
+20. Fix business logic only through an explicit `rule` request. A canonical rule must cite exact source
+    or knowledge IDs, creates an immutable `vNNN.json`, and is never changed by ordinary SQL work.
+21. Use `context/` only for non-authoritative notes and platform manuals. Do not treat a file as a rule
+    merely because it appears in project context or a chat message.
 
 ## Workflow
 
+### Create A Project
+
+1. Run `bootstrap` with the project ID and generation dialect.
+2. Register original telemetry files with `source`.
+3. Register planning tables and separately register human-confirmed knowledge.
+4. Declare database environments and local connection profiles when automatic execution is available.
+5. Fix only explicitly confirmed canonical rules with `rule`.
+6. Run `status`; resolve source blockers before authoritative SQL generation.
+
 ### Generate Or Modify SQL
 
-1. Identify the project root and read `.sql-engineering/project.json`.
-2. Search the workspace before creating a duplicate query family.
-3. Draft or modify SQL in a temporary input file.
-4. Run the quality checks in `references/sql-quality.md`.
-5. Save with `sql_workspace.py save` and a human-readable summary.
-6. Run `sql_workspace.py receipt` on the saved version.
-7. Return the receipt's absolute `delivery_file` path.
+1. Identify the project root, run `status`, and read `.sql-engineering/project.json`.
+2. Read relevant registered source, knowledge, and current rule versions.
+3. Search the workspace before creating a duplicate query family.
+4. Draft or modify SQL in a temporary input file using the selected environment dialect.
+5. Run the quality checks in `references/sql-quality.md`.
+6. Save with `sql_workspace.py save` and a human-readable summary.
+7. Run `sql_workspace.py receipt` and return its absolute `delivery_file` path.
 
 ### Execute Or Hand Off
 

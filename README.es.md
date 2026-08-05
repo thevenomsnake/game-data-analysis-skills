@@ -21,6 +21,7 @@ Este Skill proporciona a Codex un contrato de espacio de trabajo pequeño y veri
 | Capacidad | Qué ocurre |
 |---|---|
 | Inicialización del repositorio | Crea una estructura estable `sql-projects/` y el primer proyecto |
+| Gobierno del contexto | Versiona por separado telemetría original, entradas de diseño, material confirmado y reglas canónicas |
 | Entrega de SQL | Guarda cada consulta generada o modificada como una versión inmutable `vNNN.sql` |
 | Ejecución por entorno | Ejecuta SQL guardado mediante un controlador DB-API de solo lectura o una CLI de base de datos |
 | Entrada de SQL externo | Trata el archivo recibido como entrada y trabaja con una copia dentro del proyecto |
@@ -32,7 +33,20 @@ Este Skill proporciona a Codex un contrato de espacio de trabajo pequeño y veri
 La edición pública de la especificación no contiene esquemas de empresa, tablas de producción,
 credenciales, reglas de negocio privadas, resultados de consultas ni integraciones internas de ejecución.
 
-## Empieza en tres minutos
+## Qué debes proporcionar para un proyecto
+
+| Contexto necesario | Cómo lo gestiona el Skill |
+|---|---|
+| Definición original de telemetría | Copia XML, JSON, YAML, Excel, CSV, texto u otro formato sin modificarlo en `sources/raw/` y registra hash y versión |
+| Base de datos y dialecto SQL | Declara por entorno el dialecto de generación; los datos locales DB-API o CLI quedan fuera de Git |
+| Tablas de diseño y configuración | Conserva los originales en `knowledge/planning/`; son evidencia, no reglas automáticas |
+| Material confirmado por una persona | Guarda en `knowledge/confirmed/` la versión revisada, quién la confirmó, el motivo y su procedencia |
+| Reglas de negocio canónicas | Guarda Base, grano, cálculo, filtros y referencias confirmadas como versiones inmutables en `rules/definitions/` |
+
+El Skill no inventa estos hechos del proyecto. Proporciona una estructura que hace visibles su propiedad y
+sus cambios. Consulta la [guía de incorporación](sql-engineering/references/project-onboarding.md).
+
+## Crea e incorpora un proyecto
 
 ### 1. Instala el Skill
 
@@ -55,11 +69,23 @@ python .\sql-engineering\scripts\sql_workspace.py bootstrap `
   --dialect starrocks
 ```
 
-El repositorio ya incluye la estructura compartida de `_asset_catalog`, `_review_inbox` y
-`_rule_review`. `bootstrap` repara directorios ausentes e inicializa `sql-projects/example`;
-volver a ejecutarlo no elimina contenido existente.
+`bootstrap` inicializa `sql-projects/example` y crea catálogos vacíos de telemetría, conocimiento, reglas y
+SQL. Al repetirlo, repara la estructura vacía ausente sin borrar contenido registrado.
 
-### 3. Pide el trabajo a Codex con lenguaje natural
+### 3. Registra el contexto del proyecto
+
+Entrega primero la telemetría original, las tablas de diseño/configuración y el material confirmado por
+separado. Después declara el entorno y dialecto SQL y fija únicamente reglas confirmadas explícitamente.
+
+```powershell
+python .\sql-engineering\scripts\sql_workspace.py status `
+  --root .\sql-projects\example
+```
+
+`query_context_ready=false` indica que falta una definición original de telemetría. No disponer de conexión
+automática es válido; el proyecto usará la entrega manual del archivo SQL.
+
+### 4. Pide el trabajo a Codex con lenguaje natural
 
 ```text
 $sql-engineering Crea una consulta StarRocks que cuente usuarios de inicio de sesión distintos por día.
@@ -79,6 +105,10 @@ que ejecute la consulta y devuelva el resultado. Nunca controla Chrome ni una co
 
 | Objetivo | Ejemplo de solicitud |
 |---|---|
+| Crear un proyecto | `$sql-engineering Crea el proyecto alpha para StarRocks e indica qué telemetría, conocimiento, reglas y conexión faltan.` |
+| Registrar telemetría | `$sql-engineering Registra este XML sin cambios como definición original de PlayerLogin.` |
+| Registrar evidencia de diseño | `$sql-engineering Guarda este libro de configuración de modos como entrada de diseño, no como regla confirmada.` |
+| Fijar una regla | `$sql-engineering Fija la definición de usuario activo diario confirmada por una persona como una nueva versión canónica.` |
 | Crear SQL | `$sql-engineering Crea y guarda una consulta de usuarios activos diarios para este proyecto.` |
 | Modificar SQL externo | `$sql-engineering Importa este SQL, corrígelo para el dialecto del proyecto y no sobrescribas el original.` |
 | Buscar trabajo previo | `$sql-engineering Busca consultas guardadas sobre retención y resume su propósito.` |
@@ -91,7 +121,10 @@ que ejecute la consulta y devuelva el resultado. Nunca controla Chrome ni una co
 
 ```text
 solicitud
-  -> contexto de proyecto y dialecto
+  -> telemetría original registrada
+  -> conocimiento de diseño y confirmado separado
+  -> reglas canónicas aplicables fijadas
+  -> entorno y dialecto SQL seleccionados
   -> versión SQL temporal guardada
   -> ejecución en el entorno del usuario
   -> corrección o ampliación como nueva versión
@@ -113,6 +146,15 @@ sql-projects/
   example/
     .sql-engineering/
       project.json             identidad y dialecto del proyecto
+    sources/
+      source-catalog.json
+      raw/<source>/vNNN.*      definiciones originales sin modificar
+    knowledge/
+      planning/<item>/vNNN.*   tablas originales de diseño y configuración
+      confirmed/<item>/vNNN.* material confirmado por una persona
+    rules/
+      definitions/<rule>/vNNN.json
+    context/                    notas y manuales no autoritativos
     sql-workspace/
       index.json               índice consultable por máquinas
       temporary/<slug>/
@@ -122,8 +164,8 @@ sql-projects/
       dashboard/<slug>/
 ```
 
-Los tres directorios con guion bajo son puntos de extensión estables. El núcleo público los crea,
-pero no inventa contenido de catálogo, revisión ni reglas.
+Los directorios con guion bajo son extensiones entre proyectos. Dentro del proyecto se separan evidencia
+original, confirmación humana, reglas canónicas y SQL ejecutable para impedir sustituciones silenciosas.
 
 ## Referencia de comandos
 
@@ -132,6 +174,10 @@ pero no inventa contenido de catálogo, revisión ni reglas.
 | `bootstrap` | Crea la estructura del repositorio y, opcionalmente, el primer proyecto |
 | `init` | Inicializa un proyecto independiente |
 | `environment` | Asocia un entorno del proyecto con un perfil local de conexión a base de datos |
+| `source` | Copia y registra una definición original de telemetría sin cambiar su formato |
+| `knowledge` | Registra una entrada de diseño o material confirmado por una persona |
+| `rule` | Fija una regla confirmada como una nueva versión inmutable |
+| `status` | Muestra las fuentes, el conocimiento, las reglas y la ejecución que faltan |
 | `save` | Guarda una versión SQL inmutable y actualiza su índice |
 | `search` | Busca títulos, resúmenes y etiquetas |
 | `receipt` | Verifica una versión SQL exacta antes de entregarla |
@@ -162,11 +208,13 @@ comandos, los archivos esperados y el contrato de respuesta final.
 | Tema | Documento |
 |---|---|
 | Flujo del agente y límites obligatorios | [`sql-engineering/SKILL.md`](sql-engineering/SKILL.md) |
+| Entradas y flujo de un proyecto nuevo | [`references/project-onboarding.md`](sql-engineering/references/project-onboarding.md) |
 | Ejemplo completo | [`references/example.md`](sql-engineering/references/example.md) |
 | Contrato del proyecto y directorios | [`references/project-contract.md`](sql-engineering/references/project-contract.md) |
 | Ciclo de vida de familias de consultas | [`references/workflow.md`](sql-engineering/references/workflow.md) |
 | Comprobaciones de entrega SQL | [`references/sql-quality.md`](sql-engineering/references/sql-quality.md) |
 | Entornos y ejecución de base de datos | [`references/database-execution.md`](sql-engineering/references/database-execution.md) |
+| Métodos de conexión y dialectos SQL | [`references/dialects.md`](sql-engineering/references/dialects.md) |
 | Reglas de contribución | [CONTRIBUTING.md](CONTRIBUTING.md) |
 | Política de seguridad | [SECURITY.md](SECURITY.md) |
 

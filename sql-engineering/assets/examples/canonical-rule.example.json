@@ -1,0 +1,21 @@
+{
+  "schema_version": "sql_rule_input_v1",
+  "concept_key": "daily_active_user",
+  "title": "Daily active user",
+  "business_definition": "A distinct eligible player with a PlayerLogin event on the selected activity date.",
+  "base_population": "Players in the selected zone and date window.",
+  "grain": "activity_date",
+  "calculation": {
+    "aggregation": "count_distinct",
+    "entity": "player_id"
+  },
+  "filters": [
+    {"field": "zone_id", "operator": "=", "value": 42}
+  ],
+  "source_contracts": [
+    "player-login:v001"
+  ],
+  "knowledge_contracts": [
+    "confirmed:game-mode-mapping:v001"
+  ]
+}

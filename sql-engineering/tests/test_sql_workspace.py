@@ -69,6 +69,9 @@ class PublicWorkspaceTests(unittest.TestCase):
                 self.assertTrue((root / "sql-projects" / directory / ".gitkeep").is_file())
             self.assertTrue((root / "sql-projects" / "example" / ".sql-engineering" / "project.json").is_file())
             self.assertTrue((root / "sql-projects" / "example" / "sql-workspace" / "index.json").is_file())
+            self.assertTrue((root / "sql-projects" / "example" / "sources" / "source-catalog.json").is_file())
+            self.assertTrue((root / "sql-projects" / "example" / "knowledge" / "knowledge-catalog.json").is_file())
+            self.assertTrue((root / "sql-projects" / "example" / "rules" / "rule-catalog.json").is_file())
 
     def test_receipt_blocks_modified_saved_sql(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
@@ -141,6 +144,11 @@ class PublicWorkspaceTests(unittest.TestCase):
             self.assertEqual(environment["default_environment"], "development")
             self.assertEqual(meta["execution_environment"], "development")
             self.assertEqual(meta["dialect"], "starrocks")
+            self.module.command_init(
+                type("Args", (), {"root": str(root), "project_id": "demo", "dialect": "starrocks", "force": True})
+            )
+            _, repaired_config, _ = self.module.load_project(root)
+            self.assertEqual(repaired_config["execution"]["default_environment"], "development")
 
     def test_project_context_paths_must_be_relative(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
@@ -154,6 +162,159 @@ class PublicWorkspaceTests(unittest.TestCase):
             config_path.write_text(json.dumps(config), encoding="utf-8")
             with self.assertRaisesRegex(ValueError, "project-relative"):
                 self.module.load_project(root)
+
+    def test_project_sources_knowledge_rules_and_status_are_versioned(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp) / "project"
+            self.module.command_init(
+                type("Args", (), {"root": str(root), "project_id": "demo", "dialect": "starrocks", "force": False})
+            )
+            telemetry = Path(temp) / "events.xml"
+            telemetry.write_text("<events><event name='PlayerLogin'/></events>\n", encoding="utf-8")
+            source_args = type(
+                "Args",
+                (),
+                {
+                    "root": str(root),
+                    "file": str(telemetry),
+                    "name": "PlayerLogin event definition",
+                    "description": "Raw telemetry contract for login events.",
+                    "source_format": "xml",
+                    "slug": "player-login",
+                },
+            )
+            source = self.module.command_source(source_args)
+            duplicate = self.module.command_source(source_args)
+            self.assertEqual(source["source_id"], "player-login:v001")
+            self.assertEqual(duplicate["registration_status"], "existing")
+            self.assertEqual(Path(source["source_file"]).read_bytes(), telemetry.read_bytes())
+
+            planning = Path(temp) / "mode-table.csv"
+            planning.write_text("mode_id,mode_name\n7,Tutorial\n", encoding="utf-8")
+            planning_result = self.module.command_knowledge(
+                type(
+                    "Args",
+                    (),
+                    {
+                        "root": str(root),
+                        "file": str(planning),
+                        "kind": "planning",
+                        "name": "Game mode planning table",
+                        "description": "Original mode mapping supplied by design.",
+                        "slug": "game-mode-table",
+                        "confirmed_by": "",
+                        "confirmation_note": "",
+                        "based_on": [],
+                    },
+                )
+            )
+            with self.assertRaisesRegex(ValueError, "evidence, not confirmed knowledge"):
+                self.module.command_knowledge(
+                    type(
+                        "Args",
+                        (),
+                        {
+                            "root": str(root),
+                            "file": str(planning),
+                            "kind": "planning",
+                            "name": "Incorrectly confirmed planning table",
+                            "description": "Must remain source evidence.",
+                            "slug": "incorrect-planning",
+                            "confirmed_by": "analyst@example",
+                            "confirmation_note": "This is not allowed.",
+                            "based_on": [],
+                        },
+                    )
+                )
+            confirmed = Path(temp) / "confirmed-mode.json"
+            confirmed.write_text('{"mode_id": 7, "mode_name": "Tutorial"}\n', encoding="utf-8")
+            confirmed_result = self.module.command_knowledge(
+                type(
+                    "Args",
+                    (),
+                    {
+                        "root": str(root),
+                        "file": str(confirmed),
+                        "kind": "confirmed",
+                        "name": "Confirmed mode mapping",
+                        "description": "Human-reviewed mapping used by SQL.",
+                        "slug": "game-mode-mapping",
+                        "confirmed_by": "analyst@example",
+                        "confirmation_note": "Confirmed against the current planning table.",
+                        "based_on": [planning_result["knowledge_id"]],
+                    },
+                )
+            )
+            self.assertEqual(planning_result["knowledge_id"], "planning:game-mode-table:v001")
+            self.assertEqual(confirmed_result["knowledge_id"], "confirmed:game-mode-mapping:v001")
+
+            rule_input = Path(temp) / "rule.json"
+            rule_body = {
+                "schema_version": "sql_rule_input_v1",
+                "concept_key": "daily_active_user",
+                "title": "Daily active user",
+                "business_definition": "Distinct players with a login event on the selected date.",
+                "grain": "activity_date",
+                "calculation": {"aggregation": "count_distinct", "entity": "player_id"},
+                "filters": [{"field": "zone_id", "operator": "=", "value": 42}],
+                "source_contracts": [source["source_id"]],
+                "knowledge_contracts": [confirmed_result["knowledge_id"]],
+            }
+            rule_input.write_text(json.dumps(rule_body), encoding="utf-8")
+            invalid_rule = dict(rule_body)
+            invalid_rule["source_contracts"] = ["missing-source:v001"]
+            rule_input.write_text(json.dumps(invalid_rule), encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "unknown contracts"):
+                self.module.command_rule(
+                    type(
+                        "Args",
+                        (),
+                        {
+                            "root": str(root),
+                            "rule_file": str(rule_input),
+                            "confirmed_by": "analyst@example",
+                            "confirmation_note": "This reference must be rejected.",
+                        },
+                    )
+                )
+            rule_input.write_text(json.dumps(rule_body), encoding="utf-8")
+            rule = self.module.command_rule(
+                type(
+                    "Args",
+                    (),
+                    {
+                        "root": str(root),
+                        "rule_file": str(rule_input),
+                        "confirmed_by": "analyst@example",
+                        "confirmation_note": "Approved for the example project.",
+                    },
+                )
+            )
+            self.assertEqual(rule["version"], "v001")
+            rule_body["business_definition"] = "Distinct eligible players with a login event on the selected date."
+            rule_input.write_text(json.dumps(rule_body), encoding="utf-8")
+            revised = self.module.command_rule(
+                type(
+                    "Args",
+                    (),
+                    {
+                        "root": str(root),
+                        "rule_file": str(rule_input),
+                        "confirmed_by": "analyst@example",
+                        "confirmation_note": "Updated definition approved after review.",
+                    },
+                )
+            )
+            self.assertEqual(revised["version"], "v002")
+            self.assertTrue((root / "rules" / "definitions" / "daily_active_user" / "v001.json").is_file())
+            self.assertTrue((root / "rules" / "definitions" / "daily_active_user" / "v002.json").is_file())
+
+            status = self.module.command_status(type("Args", (), {"root": str(root)}))
+            self.assertTrue(status["query_context_ready"])
+            self.assertEqual(status["raw_source_count"], 1)
+            self.assertEqual(status["planning_knowledge_count"], 1)
+            self.assertEqual(status["confirmed_knowledge_count"], 1)
+            self.assertEqual(status["canonical_rule_count"], 1)
 
     def test_bundled_example_saves_and_returns_ready_receipt(self) -> None:
         with tempfile.TemporaryDirectory() as temp:

@@ -1,0 +1,7 @@
+{
+  "mapping_name": "game_mode_names",
+  "values": [
+    {"mode_id": 7, "mode_name": "Tutorial"},
+    {"mode_id": 9, "mode_name": "Arena"}
+  ]
+}

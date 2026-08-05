@@ -4,6 +4,9 @@ The public edition keeps the lifecycle deliberately small:
 
 ```text
 request
+  -> registered raw telemetry definition
+  -> planning and human-confirmed knowledge separated
+  -> applicable canonical rules fixed and versioned
   -> saved temporary query version
   -> configured read-only database execution
      or exact SQL handoff for manual execution
@@ -26,6 +29,13 @@ Examples:
 - Adding a requested dimension to the same metric: usually the same family.
 - Replacing an incorrect predicate with the confirmed one: same family, new version.
 - Moving from active-user counts to retention: new family.
+
+## Context And Rule Lifecycle
+
+Raw telemetry and planning files remain immutable evidence. Human-confirmed knowledge records a
+named confirmation and reason. Canonical rules are separate versioned definitions that cite exact
+source or knowledge IDs. Ordinary SQL work reads these assets but never updates them; rule changes
+require an explicit `rule` command and create a new version.
 
 ## Lifecycle States
 

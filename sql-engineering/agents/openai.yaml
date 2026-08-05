@@ -1,4 +1,4 @@
 interface:
   display_name: "SQL Engineering"
-  short_description: "Version SQL and run it through configured databases"
-  default_prompt: "Use $sql-engineering to save SQL as an indexed immutable project file, run it through the configured read-only database environment when available, or return the exact SQL path for manual execution."
+  short_description: "Onboard data context, fix rules, and version SQL"
+  default_prompt: "Use $sql-engineering to inspect or create the project, register raw telemetry and governed knowledge, apply only confirmed versioned rules, save SQL as an immutable indexed file, and execute it through a configured read-only database or return its exact path for manual execution."

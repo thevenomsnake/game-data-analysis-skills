@@ -11,12 +11,13 @@ The SQL uses fictional names and demonstrates storage and delivery, not a real d
 ## Agent Actions
 
 1. Read the project contract and bootstrap the repository if `sql-projects/` is missing.
-2. Replace the fictional source and fields in
+2. Register the fictional telemetry definition as project source evidence.
+3. Replace the fictional source and fields in
    `assets/examples/daily-active-users.sql` with the user's project contract.
-3. Keep fixed date values in `params` and save the SQL as a `temporary` query.
-4. Run `receipt` against the exact saved `vNNN.sql` file.
-5. Try the configured read-only database environment when one exists.
-6. If execution returns `manual_required`, return the absolute `delivery_file` path and ask the
+4. Keep fixed date values in `params` and save the SQL as a `temporary` query.
+5. Run `receipt` against the exact saved `vNNN.sql` file.
+6. Try the configured read-only database environment when one exists.
+7. If execution returns `manual_required`, return the absolute `delivery_file` path and ask the
    user to run it and return the result. Do not deliver only a chat code block.
 
 ```powershell
@@ -24,6 +25,13 @@ python <skill-root>/scripts/sql_workspace.py bootstrap `
   --root <workspace-root> `
   --project-id example `
   --dialect starrocks
+
+python <skill-root>/scripts/sql_workspace.py source `
+  --root <workspace-root>/sql-projects/example `
+  --file <skill-root>/assets/examples/telemetry-source.example.xml `
+  --name "PlayerLogin telemetry" `
+  --description "Fictional event and field definition for the worked example." `
+  --slug player-login
 
 python <skill-root>/scripts/sql_workspace.py save `
   --root <workspace-root>/sql-projects/example `
@@ -54,6 +62,9 @@ python <skill-root>/scripts/sql_execute.py run `
     example/
       .sql-engineering/
         project.json
+      sources/
+        source-catalog.json
+        raw/player-login/v001.xml
       sql-workspace/
         index.json
         temporary/

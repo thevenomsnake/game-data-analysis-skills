@@ -2,6 +2,9 @@
 
 The public Skill never assumes one company's knowledge base, network, database, or DA platform.
 Storage works without execution configuration. Automatic execution is an optional project layer.
+Read `project-onboarding.md` first when the project has not yet registered telemetry, planning
+knowledge, human-confirmed material, and canonical rules.
+Read `dialects.md` before assuming that a connection protocol determines SQL syntax.
 
 ## Separation Of Responsibilities
 

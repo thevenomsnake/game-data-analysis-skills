@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<telemetry project="example">
+  <event name="PlayerLogin" description="Player login event">
+    <field name="event_time" type="timestamp" description="Event timestamp" />
+    <field name="player_id" type="string" description="Stable player identifier" />
+    <field name="zone_id" type="integer" description="Game zone identifier" />
+  </event>
+</telemetry>

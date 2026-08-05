@@ -21,6 +21,7 @@ Game Data Analysis Skills は、会話の中で生まれた SQL を永続的な�
 | 機能 | 実際の動作 |
 |---|---|
 | リポジトリ初期化 | 安定した `sql-projects/` 構造と最初のプロジェクトを作成 |
+| プロジェクト資料の統制 | 元のテレメトリ、企画入力、人が確認した資料、正式ルールを分けてバージョン管理 |
 | SQL の引き渡し | 生成または変更のたびに、不変の `vNNN.sql` バージョンとして保存 |
 | 環境別の実行 | 設定済みの読み取り専用 DB-API ドライバーまたはデータベース CLI で保存済み SQL を実行 |
 | 外部 SQL の取り込み | 入力ファイルを変更せず、プロジェクト内のコピーで作業 |
@@ -32,7 +33,20 @@ Game Data Analysis Skills は、会話の中で生まれた SQL を永続的な�
 公開仕様版には、企業固有のスキーマ、本番テーブル名、認証情報、非公開の業務ルール、
 クエリ結果、社内実行環境との連携は含まれません。
 
-## 3 分で始める
+## プロジェクトに必要な情報
+
+| 必要な情報 | Skill での管理方法 |
+|---|---|
+| 元のテレメトリ定義 | XML、JSON、YAML、Excel、CSV、テキストなどを変更せず `sources/raw/` にコピーし、ハッシュとバージョンを記録 |
+| データベースと SQL 方言 | 環境ごとに SQL 生成方言を宣言し、ローカルの DB-API または CLI 接続情報は Git の外で管理 |
+| 企画表と設定表 | 原本を `knowledge/planning/` に保存。証拠であり、自動的に正しいルールにはならない |
+| 人が確認した資料 | `knowledge/confirmed/` に確認版、確認者、理由、元資料との関係を保存 |
+| 正式な業務ルール | 確認済みの Base、粒度、計算、フィルター、参照資料を `rules/definitions/` の不変バージョンとして保存 |
+
+Skill はこれらのプロジェクト事実を作りません。資料の所有者と変更履歴を見える形にします。
+完全な手順は [プロジェクト導入ガイド](sql-engineering/references/project-onboarding.md) を参照してください。
+
+## プロジェクトを作成して導入する
 
 ### 1. Skill をインストール
 
@@ -56,11 +70,23 @@ python .\sql-engineering\scripts\sql_workspace.py bootstrap `
   --dialect starrocks
 ```
 
-リポジトリには共有の `_asset_catalog`、`_review_inbox`、`_rule_review` ディレクトリ骨格が
-含まれています。`bootstrap` は不足したディレクトリを補い、`sql-projects/example` を初期化します。
-再実行しても既存の内容は削除されません。
+`bootstrap` は `sql-projects/example` と、空のテレメトリ、ナレッジ、ルール、SQL カタログを
+作成します。再実行しても登録済みの内容は削除せず、不足した空構造だけを補います。
 
-### 3. Codex に自然言語で依頼
+### 3. プロジェクト資料を登録
+
+元のテレメトリ、企画/設定表、人が確認した資料を先に登録します。その後、データベース環境と
+SQL 方言を宣言し、人が明示的に確認したルールだけを固定します。最後に次を実行します。
+
+```powershell
+python .\sql-engineering\scripts\sql_workspace.py status `
+  --root .\sql-projects\example
+```
+
+`query_context_ready=false` は元のテレメトリ定義が未登録であることを示します。自動接続がなくても
+問題はなく、その場合は SQL ファイルを手動実行用に引き渡します。
+
+### 4. Codex に自然言語で依頼
 
 ```text
 $sql-engineering StarRocks 用に、日別の重複しないログインユーザー数を集計する SQL を作成してください。
@@ -81,6 +107,10 @@ Codex はプロジェクトを確認し、クエリファミリーを作成ま�
 
 | 目的 | 依頼例 |
 |---|---|
+| プロジェクト作成 | `$sql-engineering StarRocks 方言で alpha プロジェクトを作成し、不足するテレメトリ、資料、ルール、接続設定を教えてください。` |
+| テレメトリ登録 | `$sql-engineering この XML を PlayerLogin の元のテレメトリ定義として変更せず登録してください。` |
+| 企画証拠の登録 | `$sql-engineering このモード設定表を企画入力として保存し、確認済みルールにはしないでください。` |
+| ルール固定 | `$sql-engineering 人が確認した日次アクティブユーザー定義を新しい正式ルール版として固定してください。` |
 | SQL を作成 | `$sql-engineering このプロジェクトの日次アクティブユーザークエリを作成して保存してください。` |
 | 外部 SQL を修正 | `$sql-engineering この SQL を取り込み、プロジェクトの方言に修正し、元ファイルは上書きしないでください。` |
 | 過去の作業を検索 | `$sql-engineering リテンションに関する保存済みクエリを探し、目的を要約してください。` |
@@ -93,7 +123,10 @@ Codex はプロジェクトを確認し、クエリファミリーを作成ま�
 
 ```text
 依頼
-  -> プロジェクトと SQL 方言を確認
+  -> 元のテレメトリ定義を登録
+  -> 企画資料と人が確認した資料を分離
+  -> 適用する正式ルールを固定
+  -> データベース環境と SQL 方言を選択
   -> 一時 SQL バージョンを保存
   -> ユーザー環境で実行
   -> 修正または拡張を次のバージョンとして保存
@@ -115,6 +148,15 @@ sql-projects/
   example/
     .sql-engineering/
       project.json             プロジェクト識別子と SQL 方言
+    sources/
+      source-catalog.json
+      raw/<source>/vNNN.*      変更しない元のテレメトリ定義
+    knowledge/
+      planning/<item>/vNNN.*   元の企画表と設定表
+      confirmed/<item>/vNNN.* 人が確認した資料
+    rules/
+      definitions/<rule>/vNNN.json
+    context/                    非正式なメモとプラットフォーム資料
     sql-workspace/
       index.json               検索可能な機械索引
       temporary/<slug>/
@@ -124,8 +166,8 @@ sql-projects/
       dashboard/<slug>/
 ```
 
-アンダースコアで始まる三つのディレクトリは安定した拡張点です。公開コアはディレクトリを作成しますが、
-カタログ、レビュー、ルールの内容を捏造しません。
+アンダースコアで始まるディレクトリはプロジェクト横断の拡張点です。プロジェクト内では元の証拠、
+人の確認、正式ルール、実行 SQL を分離し、相互に暗黙置換されないようにします。
 
 ## コマンド一覧
 
@@ -134,6 +176,10 @@ sql-projects/
 | `bootstrap` | リポジトリ構造を作成し、必要なら最初のプロジェクトも初期化 |
 | `init` | 一つの独立プロジェクトを初期化 |
 | `environment` | プロジェクトの環境名をローカルのデータベース接続プロファイルへ対応付け |
+| `source` | 元の形式を変えずにテレメトリ定義をコピーして登録 |
+| `knowledge` | 企画入力または人が確認した資料を登録 |
+| `rule` | 明示的に確認された業務ルールを新しい不変バージョンとして固定 |
+| `status` | 不足するソース、資料、ルール、実行設定を表示 |
 | `save` | 新しい不変 SQL バージョンを保存して索引を更新 |
 | `search` | タイトル、要約、タグを検索 |
 | `receipt` | 引き渡し前に特定の SQL バージョンを検証 |
@@ -162,11 +208,13 @@ sql-projects/
 | トピック | ドキュメント |
 |---|---|
 | エージェントのワークフローと厳守事項 | [`sql-engineering/SKILL.md`](sql-engineering/SKILL.md) |
+| 新規プロジェクトの入力と導入手順 | [`references/project-onboarding.md`](sql-engineering/references/project-onboarding.md) |
 | 完全な実行例 | [`references/example.md`](sql-engineering/references/example.md) |
 | プロジェクトとディレクトリの契約 | [`references/project-contract.md`](sql-engineering/references/project-contract.md) |
 | クエリファミリーのライフサイクル | [`references/workflow.md`](sql-engineering/references/workflow.md) |
 | SQL 引き渡し検証 | [`references/sql-quality.md`](sql-engineering/references/sql-quality.md) |
 | データベース環境と実行 | [`references/database-execution.md`](sql-engineering/references/database-execution.md) |
+| 接続方法と SQL 方言 | [`references/dialects.md`](sql-engineering/references/dialects.md) |
 | コントリビューション | [CONTRIBUTING.md](CONTRIBUTING.md) |
 | セキュリティポリシー | [SECURITY.md](SECURITY.md) |
 

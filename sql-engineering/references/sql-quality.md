@@ -3,6 +3,9 @@
 Before saving a runnable version, check:
 
 - The configured dialect and execution environment are explicit.
+- Event and field semantics come from a registered original telemetry source version.
+- Applied business rules cite registered source or knowledge versions and are current confirmed definitions.
+- Planning inputs are not presented as human-confirmed knowledge or canonical rules.
 - Every large source has a bounded time or partition predicate.
 - Date bounds use the project's documented inclusive/exclusive convention.
 - Required scope filters use concrete values or named parameters.
@@ -23,7 +26,7 @@ WITH params AS (
     SELECT
         CAST('2026-01-01' AS DATE) AS start_date,
         CAST('2026-01-31' AS DATE) AS end_date,
-        10001 AS zone_id
+        42 AS zone_id
 )
 ```
 

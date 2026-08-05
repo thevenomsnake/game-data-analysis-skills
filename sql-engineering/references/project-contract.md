@@ -20,6 +20,17 @@ This creates:
     example/
       .sql-engineering/
         project.json
+      sources/
+        source-catalog.json
+        raw/<source-slug>/vNNN.<original-format>
+      knowledge/
+        knowledge-catalog.json
+        planning/<knowledge-slug>/vNNN.<original-format>
+        confirmed/<knowledge-slug>/vNNN.<original-format>
+      rules/
+        rule-catalog.json
+        definitions/<concept-key>/vNNN.json
+      context/
       sql-workspace/
         index.json
         temporary/<slug>/vNNN.sql
@@ -33,7 +44,8 @@ The underscore directories are stable cross-project extension points:
 - `_review_inbox`: external SQL and evidence awaiting review or intake.
 - `_rule_review`: rule dictionary and rule-review outputs.
 
-The public core creates these directories but does not invent catalog, review, or rule content.
+The public core creates these directories and empty machine catalogs but does not invent source,
+knowledge, review, or rule content.
 Projects live beside them under `sql-projects/<project-id>`.
 
 `bootstrap` is idempotent. It preserves existing files and reuses a matching project. It blocks
@@ -48,8 +60,8 @@ python <skill-root>/scripts/sql_workspace.py init `
   --dialect starrocks
 ```
 
-`project.json` is the authority for project identity and dialect. Extend it with local table,
-time, and rule contracts as needed, but do not hide those choices in the Skill.
+`project.json` is the authority for project identity, catalog locations, dialect, and execution
+environment routing. Do not hide those choices in the Skill.
 
 Minimal configuration:
 
@@ -57,7 +69,11 @@ Minimal configuration:
 {
   "schema_version": "sql_engineering_public_project_v1",
   "project_id": "example",
-  "dialect": "starrocks"
+  "dialect": "starrocks",
+  "source_catalog": "sources/source-catalog.json",
+  "knowledge_catalog": "knowledge/knowledge-catalog.json",
+  "rule_catalog": "rules/rule-catalog.json",
+  "context_paths": []
 }
 ```
 
@@ -67,7 +83,7 @@ Optional project context and execution routing:
 {
   "context_paths": [
     "context/schema.md",
-    "context/metrics.md"
+    "context/platform-manual.md"
   ],
   "execution": {
     "default_environment": "development",
@@ -81,10 +97,14 @@ Optional project context and execution routing:
 }
 ```
 
-`context_paths` and `execution` are optional. Context paths are project-relative and must not
-point into one person's home directory or private Skill installation. Configure environments
-with `sql_workspace.py environment`; keep actual connection details in the ignored local file
-described in `database-execution.md`.
+Catalog paths are generated and project-relative. `context_paths` and `execution` are optional;
+context paths must not point into one person's home directory or private Skill installation.
+Configure environments with `sql_workspace.py environment`; keep actual connection details in
+the ignored local file described in `database-execution.md`.
+
+The source, knowledge, and rule catalogs are machine managed. Add content through the `source`,
+`knowledge`, and explicit `rule` commands. Read `project-onboarding.md` for evidence ownership and
+the complete setup sequence.
 
 The workspace index is machine generated. Edit SQL by creating a new saved version, not by
 hand-editing index entries or old `vNNN.sql` files.

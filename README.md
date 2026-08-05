@@ -21,6 +21,7 @@ This Skill gives Codex a small, enforceable workspace contract:
 | Capability | What happens |
 |---|---|
 | Repository bootstrap | Creates a stable `sql-projects/` layout and the first project |
+| Project context governance | Versions original telemetry, planning inputs, human-confirmed material, and canonical rules separately |
 | SQL delivery | Saves every generated or modified query as an immutable `vNNN.sql` version |
 | Environment-aware execution | Runs saved SQL through a configured read-only DB-API driver or database CLI |
 | External SQL intake | Treats the supplied file as input and works on a project-local copy |
@@ -32,7 +33,21 @@ This Skill gives Codex a small, enforceable workspace contract:
 The public specification edition deliberately contains no company schemas, production table
 names, credentials, private business rules, query results, or internal execution integrations.
 
-## Start In Three Minutes
+## What You Provide For A Project
+
+| Required context | What the Skill does with it |
+|---|---|
+| Original telemetry definition | Copies the XML, JSON, YAML, Excel, CSV, text, or other source unchanged into `sources/raw/` and records a versioned hash |
+| Database and SQL dialect | Records named environments and the dialect used to generate SQL; local DB-API or CLI connection details stay outside Git |
+| Planning/configuration tables | Preserves original design-owned mappings and IDs under `knowledge/planning/`; they are evidence, not automatic rules |
+| Human-confirmed material | Stores the reviewed version, confirmer, reason, and lineage under `knowledge/confirmed/` |
+| Canonical metric rules | Saves explicitly confirmed Base, grain, calculation, filters, and cited source/knowledge IDs as immutable versions under `rules/definitions/` |
+
+The Skill cannot supply these project facts for you. It provides the structure that keeps their
+ownership and changes visible. See the [project onboarding guide](sql-engineering/references/project-onboarding.md)
+for the complete sequence.
+
+## Set Up A Project
 
 ### 1. Install The Skill
 
@@ -55,11 +70,24 @@ python .\sql-engineering\scripts\sql_workspace.py bootstrap `
   --dialect starrocks
 ```
 
-The repository already includes the shared `_asset_catalog`, `_review_inbox`, and `_rule_review`
-directory skeleton. `bootstrap` repairs missing directories and initializes
-`sql-projects/example`; running it again does not clear existing content.
+`bootstrap` initializes `sql-projects/example`, including empty source, knowledge, rule, and SQL
+catalogs. Running it again repairs missing empty structure without clearing registered content.
 
-### 3. Ask Codex Naturally
+### 3. Register Project Context
+
+Give Codex the raw telemetry files, planning/configuration tables, and any separately confirmed
+materials. Register them before fixing rules. Then declare the database environment and SQL dialect,
+fix only rules a person has explicitly confirmed, and run:
+
+```powershell
+python .\sql-engineering\scripts\sql_workspace.py status `
+  --root .\sql-projects\example
+```
+
+`query_context_ready=false` means the project still has no registered raw telemetry definition.
+No automatic database connection is acceptable; that project uses manual SQL handoff.
+
+### 4. Ask Codex Naturally
 
 ```text
 $sql-engineering Create a StarRocks query that counts distinct login users by day.
@@ -79,6 +107,10 @@ and asks the user to run it and return the result. It never clicks a browser or 
 
 | Goal | Example request |
 |---|---|
+| Create a project | `$sql-engineering Create project alpha for StarRocks and tell me which source, knowledge, rule, and connection inputs are still missing.` |
+| Register telemetry | `$sql-engineering Register this event XML as the original PlayerLogin source definition.` |
+| Register planning evidence | `$sql-engineering Store this mode configuration workbook as a planning input; do not treat it as a confirmed rule.` |
+| Fix a rule | `$sql-engineering Fix this human-confirmed daily-active-user definition as a new canonical rule version.` |
 | Create SQL | `$sql-engineering Create a daily active-user query for this project and save it.` |
 | Modify external SQL | `$sql-engineering Import this SQL, fix it for the project dialect, and do not overwrite the original.` |
 | Find prior work | `$sql-engineering Find saved queries related to retention and summarize their purpose.` |
@@ -91,7 +123,10 @@ and asks the user to run it and return the result. It never clicks a browser or 
 
 ```text
 request
-  -> project and dialect context
+  -> original telemetry registered
+  -> planning and confirmed knowledge separated
+  -> applicable canonical rules fixed
+  -> project environment and dialect selected
   -> saved temporary SQL version
   -> execution in the user's environment
   -> correction or extension as the next version
@@ -113,6 +148,15 @@ sql-projects/
   example/
     .sql-engineering/
       project.json             project identity and dialect
+    sources/
+      source-catalog.json
+      raw/<source>/vNNN.*      unchanged telemetry definitions
+    knowledge/
+      planning/<item>/vNNN.*   original planning/configuration inputs
+      confirmed/<item>/vNNN.* human-confirmed material
+    rules/
+      definitions/<rule>/vNNN.json
+    context/                    non-authoritative notes and manuals
     sql-workspace/
       index.json               searchable machine index
       temporary/<slug>/
@@ -122,8 +166,8 @@ sql-projects/
       dashboard/<slug>/
 ```
 
-The underscore directories are stable extension points. The public core creates them but does
-not invent catalog, review, or rule content.
+The underscore directories are stable cross-project extension points. Project directories separate
+raw evidence, human confirmation, canonical rules, and executable SQL so one cannot silently replace another.
 
 ## Command Reference
 
@@ -132,6 +176,10 @@ not invent catalog, review, or rule content.
 | `bootstrap` | Create the repository layout and optionally initialize the first project |
 | `init` | Initialize one standalone project |
 | `environment` | Map a named project environment to a local database connection profile |
+| `source` | Copy and register an original telemetry definition without changing its format |
+| `knowledge` | Register a planning input or separately human-confirmed material |
+| `rule` | Fix an explicitly confirmed canonical rule as a new immutable version |
+| `status` | Report missing source, knowledge, rule, and execution setup |
 | `save` | Save a new immutable SQL version and update its index |
 | `search` | Search titles, summaries, and tags |
 | `receipt` | Verify one exact saved SQL version before delivery |
@@ -162,11 +210,13 @@ expected files, and final-response contract.
 | Topic | Document |
 |---|---|
 | Agent workflow and hard boundaries | [`sql-engineering/SKILL.md`](sql-engineering/SKILL.md) |
+| New project inputs and setup flow | [`references/project-onboarding.md`](sql-engineering/references/project-onboarding.md) |
 | Complete worked example | [`references/example.md`](sql-engineering/references/example.md) |
 | Project and directory contract | [`references/project-contract.md`](sql-engineering/references/project-contract.md) |
 | Query-family lifecycle | [`references/workflow.md`](sql-engineering/references/workflow.md) |
 | SQL delivery checks | [`references/sql-quality.md`](sql-engineering/references/sql-quality.md) |
 | Database environments and execution | [`references/database-execution.md`](sql-engineering/references/database-execution.md) |
+| Connection methods and SQL dialects | [`references/dialects.md`](sql-engineering/references/dialects.md) |
 | Contribution rules | [CONTRIBUTING.md](CONTRIBUTING.md) |
 | Security policy | [SECURITY.md](SECURITY.md) |
 

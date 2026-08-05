@@ -21,6 +21,7 @@ Game Data Analysis Skills는 대화에서 만든 SQL 작업을 오래 유지되�
 | 기능 | 실제 동작 |
 |---|---|
 | 저장소 초기화 | 안정적인 `sql-projects/` 구조와 첫 프로젝트를 생성 |
+| 프로젝트 자료 거버넌스 | 원본 텔레메트리, 기획 입력, 사람 확인 자료, 표준 규칙을 분리하여 버전 관리 |
 | SQL 전달 | 생성하거나 수정할 때마다 변경 불가능한 `vNNN.sql` 버전으로 저장 |
 | 환경별 실행 | 설정된 읽기 전용 DB-API 드라이버 또는 데이터베이스 CLI로 저장된 SQL 실행 |
 | 외부 SQL 수집 | 전달받은 파일을 입력으로 취급하고 프로젝트 내부 복사본에서 작업 |
@@ -32,7 +33,20 @@ Game Data Analysis Skills는 대화에서 만든 SQL 작업을 오래 유지되�
 공개 사양판에는 회사별 스키마, 운영 테이블 이름, 자격 증명, 비공개 업무 규칙,
 쿼리 결과 또는 내부 실행 환경 연동이 포함되지 않습니다.
 
-## 3분 안에 시작하기
+## 프로젝트에 필요한 입력
+
+| 필요한 정보 | Skill의 관리 방식 |
+|---|---|
+| 원본 텔레메트리 정의 | XML, JSON, YAML, Excel, CSV, 텍스트 등 원본 형식을 바꾸지 않고 `sources/raw/`에 복사하고 해시와 버전을 기록 |
+| 데이터베이스와 SQL 방언 | 환경별 SQL 생성 방언을 선언하고 로컬 DB-API 또는 CLI 연결 정보는 Git 밖에서 관리 |
+| 기획표와 설정표 | 원본을 `knowledge/planning/`에 보존하며, 자동으로 확정 규칙이 되지 않음 |
+| 사람이 확인한 자료 | `knowledge/confirmed/`에 확인 버전, 확인자, 이유, 원본과의 관계를 저장 |
+| 표준 업무 규칙 | 확인된 Base, 단위, 계산, 필터, 참조 자료를 `rules/definitions/`의 변경 불가능한 버전으로 저장 |
+
+Skill은 이러한 프로젝트 사실을 만들어 내지 않습니다. 자료 소유권과 변경 이력을 보이게 하는 구조를
+제공합니다. 전체 과정은 [프로젝트 온보딩 가이드](sql-engineering/references/project-onboarding.md)를 참조하세요.
+
+## 프로젝트 생성 및 온보딩
 
 ### 1. Skill 설치
 
@@ -55,11 +69,23 @@ python .\sql-engineering\scripts\sql_workspace.py bootstrap `
   --dialect starrocks
 ```
 
-저장소에는 공유 `_asset_catalog`, `_review_inbox`, `_rule_review` 디렉터리 골격이 포함되어
-있습니다. `bootstrap`은 누락된 디렉터리를 복구하고 `sql-projects/example`을 초기화합니다.
-다시 실행해도 기존 내용은 삭제하지 않습니다.
+`bootstrap`은 `sql-projects/example`과 비어 있는 텔레메트리, 지식, 규칙, SQL 카탈로그를 만듭니다.
+다시 실행해도 등록된 내용을 삭제하지 않고 누락된 빈 구조만 복구합니다.
 
-### 3. Codex에 자연어로 요청
+### 3. 프로젝트 자료 등록
+
+원본 텔레메트리, 기획/설정표, 별도로 사람이 확인한 자료를 먼저 등록합니다. 그다음 데이터베이스 환경과
+SQL 방언을 선언하고 사람이 명시적으로 확인한 규칙만 고정합니다.
+
+```powershell
+python .\sql-engineering\scripts\sql_workspace.py status `
+  --root .\sql-projects\example
+```
+
+`query_context_ready=false`는 원본 텔레메트리 정의가 없다는 뜻입니다. 자동 연결이 없어도 되며,
+이 경우 정확한 SQL 파일을 수동 실행용으로 전달합니다.
+
+### 4. Codex에 자연어로 요청
 
 ```text
 $sql-engineering 날짜별 고유 로그인 사용자 수를 집계하는 StarRocks 쿼리를 만들어 주세요.
@@ -80,6 +106,10 @@ Codex는 프로젝트를 확인하고 쿼리 패밀리를 만들거나 재사용
 
 | 목적 | 요청 예시 |
 |---|---|
+| 프로젝트 생성 | `$sql-engineering StarRocks용 alpha 프로젝트를 만들고 부족한 텔레메트리, 자료, 규칙, 연결 설정을 알려 주세요.` |
+| 텔레메트리 등록 | `$sql-engineering 이 XML을 PlayerLogin 원본 텔레메트리 정의로 변경 없이 등록해 주세요.` |
+| 기획 증거 등록 | `$sql-engineering 이 모드 설정 워크북을 기획 입력으로 저장하고 확정 규칙으로 취급하지 마세요.` |
+| 규칙 고정 | `$sql-engineering 사람이 확인한 일간 활성 사용자 정의를 새 표준 규칙 버전으로 고정해 주세요.` |
 | SQL 생성 | `$sql-engineering 이 프로젝트의 일간 활성 사용자 쿼리를 만들고 저장해 주세요.` |
 | 외부 SQL 수정 | `$sql-engineering 이 SQL을 가져와 프로젝트 방언에 맞게 고치고 원본은 덮어쓰지 마세요.` |
 | 이전 작업 검색 | `$sql-engineering 리텐션 관련 저장 쿼리를 찾아 목적을 요약해 주세요.` |
@@ -92,7 +122,10 @@ Codex는 프로젝트를 확인하고 쿼리 패밀리를 만들거나 재사용
 
 ```text
 요청
-  -> 프로젝트와 SQL 방언 확인
+  -> 원본 텔레메트리 등록
+  -> 기획 자료와 사람이 확인한 자료 분리
+  -> 적용할 표준 규칙 고정
+  -> 데이터베이스 환경과 SQL 방언 선택
   -> 임시 SQL 버전 저장
   -> 사용자 환경에서 실행
   -> 수정 또는 확장을 다음 버전으로 저장
@@ -114,6 +147,15 @@ sql-projects/
   example/
     .sql-engineering/
       project.json             프로젝트 식별자와 SQL 방언
+    sources/
+      source-catalog.json
+      raw/<source>/vNNN.*      변경하지 않은 원본 텔레메트리 정의
+    knowledge/
+      planning/<item>/vNNN.*   원본 기획표와 설정표
+      confirmed/<item>/vNNN.* 사람이 확인한 자료
+    rules/
+      definitions/<rule>/vNNN.json
+    context/                    비권위 메모와 플랫폼 문서
     sql-workspace/
       index.json               기계가 검색할 수 있는 색인
       temporary/<slug>/
@@ -123,8 +165,8 @@ sql-projects/
       dashboard/<slug>/
 ```
 
-밑줄로 시작하는 세 디렉터리는 안정적인 확장 지점입니다. 공개 코어는 디렉터리를 만들지만,
-카탈로그, 검토 또는 규칙 내용을 임의로 만들지 않습니다.
+밑줄로 시작하는 디렉터리는 프로젝트 간 확장 지점입니다. 프로젝트 안에서는 원본 증거, 사람의 확인,
+표준 규칙, 실행 SQL을 분리하여 서로 조용히 대체되지 않게 합니다.
 
 ## 명령어 안내
 
@@ -133,6 +175,10 @@ sql-projects/
 | `bootstrap` | 저장소 구조를 만들고 선택적으로 첫 프로젝트를 초기화 |
 | `init` | 독립 프로젝트 하나를 초기화 |
 | `environment` | 프로젝트 환경 이름을 로컬 데이터베이스 연결 프로필에 연결 |
+| `source` | 원본 형식을 바꾸지 않고 텔레메트리 정의를 복사하고 등록 |
+| `knowledge` | 기획 입력 또는 사람이 확인한 자료를 등록 |
+| `rule` | 명시적으로 확인된 업무 규칙을 새 변경 불가능한 버전으로 고정 |
+| `status` | 부족한 소스, 자료, 규칙, 실행 설정을 표시 |
 | `save` | 변경 불가능한 새 SQL 버전을 저장하고 색인을 갱신 |
 | `search` | 제목, 요약, 태그 검색 |
 | `receipt` | 전달 전에 특정 SQL 버전을 검증 |
@@ -161,11 +207,13 @@ sql-projects/
 | 주제 | 문서 |
 |---|---|
 | 에이전트 워크플로와 필수 경계 | [`sql-engineering/SKILL.md`](sql-engineering/SKILL.md) |
+| 새 프로젝트 입력과 온보딩 과정 | [`references/project-onboarding.md`](sql-engineering/references/project-onboarding.md) |
 | 전체 실행 예제 | [`references/example.md`](sql-engineering/references/example.md) |
 | 프로젝트 및 디렉터리 계약 | [`references/project-contract.md`](sql-engineering/references/project-contract.md) |
 | 쿼리 패밀리 수명 주기 | [`references/workflow.md`](sql-engineering/references/workflow.md) |
 | SQL 전달 검사 | [`references/sql-quality.md`](sql-engineering/references/sql-quality.md) |
 | 데이터베이스 환경 및 실행 | [`references/database-execution.md`](sql-engineering/references/database-execution.md) |
+| 연결 방식과 SQL 방언 | [`references/dialects.md`](sql-engineering/references/dialects.md) |
 | 기여 규칙 | [CONTRIBUTING.md](CONTRIBUTING.md) |
 | 보안 정책 | [SECURITY.md](SECURITY.md) |
 
