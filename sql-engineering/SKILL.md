@@ -3,7 +3,7 @@ name: sql-engineering
 description: Use this skill for durable SQL projects that must register raw telemetry definitions, separate planning and human-confirmed knowledge, fix versioned canonical rules, select SQL dialect and database environment, and save every generated or modified query as an indexed immutable file. It supports configurable read-only database execution and exact manual SQL handoff without organization-specific schemas or rules.
 metadata:
   short-description: Governed project context and versioned SQL execution
-  version: "1.3.0"
+  version: "1.3.1"
 ---
 
 # SQL Engineering

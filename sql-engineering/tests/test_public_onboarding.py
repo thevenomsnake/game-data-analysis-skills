@@ -10,6 +10,7 @@ SKILL_ROOT = ROOT / "sql-engineering"
 READMES = (
     ROOT / "README.md",
     ROOT / "README.zh-CN.md",
+    ROOT / "README.zh-TW.md",
     ROOT / "README.ja.md",
     ROOT / "README.es.md",
     ROOT / "README.ko.md",
@@ -35,6 +36,11 @@ class PublicOnboardingTests(unittest.TestCase):
             content = readme.read_text(encoding="utf-8")
             missing = [token for token in required if token not in content]
             self.assertFalse(missing, f"{readme.name} missing {missing}")
+
+    def test_all_other_homepages_link_to_traditional_chinese(self) -> None:
+        for readme in READMES:
+            if readme.name != "README.zh-TW.md":
+                self.assertIn("README.zh-TW.md", readme.read_text(encoding="utf-8"))
 
     def test_onboarding_examples_are_parseable_and_fictional(self) -> None:
         examples = SKILL_ROOT / "assets" / "examples"

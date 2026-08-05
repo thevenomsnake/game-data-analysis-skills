@@ -6,7 +6,7 @@ Game Data Analysis Skills는 대화에서 만든 SQL 작업을 오래 유지되�
 생성하거나 수정한 모든 쿼리를 저장하고, 버전 관리하고, 색인화하여 검색할 수 있게 하며, 정확한
 경로로 전달합니다. 대화가 끝난 뒤에도 작업 내용을 이해하고 계속 수정할 수 있습니다.
 
-[English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [Español](README.es.md)
+[English](README.md) · [简体中文](README.zh-CN.md) · [繁體中文](README.zh-TW.md) · [日本語](README.ja.md) · [Español](README.es.md)
 
 > 채팅의 SQL 코드 블록은 설명입니다. 검증된 `vNNN.sql` 파일이 실제 결과물입니다.
 

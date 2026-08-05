@@ -6,7 +6,7 @@ Game Data Analysis Skills convierte el trabajo SQL de una conversación en archi
 duraderos. Cada consulta generada o modificada se guarda, versiona, indexa, se puede buscar y se
 entrega mediante una ruta exacta, para que el trabajo siga siendo comprensible cuando termina el chat.
 
-[English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md)
+[English](README.md) · [简体中文](README.zh-CN.md) · [繁體中文](README.zh-TW.md) · [日本語](README.ja.md) · [한국어](README.ko.md)
 
 > Un bloque SQL en el chat es una explicación. El archivo `vNNN.sql` verificado es el entregable.
 

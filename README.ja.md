@@ -6,7 +6,7 @@ Game Data Analysis Skills は、会話の中で生まれた SQL を永続的な�
 生成または変更されたすべてのクエリを保存し、バージョン管理し、索引化して検索可能にし、正確な
 パスで引き渡します。会話が終わった後でも、作業内容を理解して継続できます。
 
-[English](README.md) · [简体中文](README.zh-CN.md) · [Español](README.es.md) · [한국어](README.ko.md)
+[English](README.md) · [简体中文](README.zh-CN.md) · [繁體中文](README.zh-TW.md) · [Español](README.es.md) · [한국어](README.ko.md)
 
 > チャット内の SQL コードブロックは説明です。検証済みの `vNNN.sql` ファイルが成果物です。
 
