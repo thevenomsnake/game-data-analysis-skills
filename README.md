@@ -6,7 +6,7 @@ Game Data Analysis Skills turns SQL conversations into durable project files. Ev
 or modified query is saved, versioned, indexed, searchable, and delivered by exact path, so the
 work remains understandable after the chat ends.
 
-[简体中文](README.zh-CN.md)
+[简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [Español](README.es.md) · [한국어](README.ko.md)
 
 > A SQL code block is an explanation. A verified `vNNN.sql` file is the deliverable.
 

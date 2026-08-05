@@ -6,7 +6,7 @@ Game Data Analysis Skills 把对话里的 SQL 工作变成长期可用的项目�
 修改后的 SQL 都会落盘、版本化、建立索引、支持检索，并通过精确路径交付；对话结束后，
 别人仍然能找到它、理解它、继续修改它。
 
-[English](README.md)
+[English](README.md) · [日本語](README.ja.md) · [Español](README.es.md) · [한국어](README.ko.md)
 
 > 聊天里的 SQL 代码块用于解释；通过校验的 `vNNN.sql` 文件才是交付物。
 
