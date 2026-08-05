@@ -1,6 +1,6 @@
-# SQL Engineering Skill
+# Game Data Analysis Skills
 
-A small, file-backed Codex skill for SQL work that must remain runnable, searchable, and
+This repository contains a small, file-backed Codex SQL Engineering Skill for work that must remain runnable, searchable, and
 traceable after the conversation ends.
 
 [简体中文](README.zh-CN.md)

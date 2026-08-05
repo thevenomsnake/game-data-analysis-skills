@@ -1,11 +1,11 @@
 {
   "schema_version": "sql_skill_public_release_manifest_v1",
-  "release_version": "1.0.0",
-  "target_repository": "https://github.com/thevenomsnake/da_skills",
+  "release_version": "1.0.1",
+  "target_repository": "https://github.com/thevenomsnake/game-data-analysis-skills",
   "target_visibility": "private",
   "publication_contract": "public_ready_private_hosted",
-  "source_commit": "043ec095b2cf47ffdec2235bd5fca4223aa0a01a",
-  "source_tree_sha256": "003d2a66a1f1fc424d10e28e573cbb7458d978f09d3ec78e6203d5e54ca8c938",
+  "source_commit": "bdda871c21b1799ee22c977a24b36b503da067f2",
+  "source_tree_sha256": "a4f8c352171bbdc3dbad21b83137e67ca322303967a32a14e7621c9fdd8b87d1",
   "files": [
     {
       "path": ".gitignore",
@@ -24,13 +24,13 @@
     },
     {
       "path": "README.md",
-      "size": 2707,
-      "sha256": "3c14af03d817224313641f57d879a57a084dd7c6847edf1e512277693a016ddb"
+      "size": 2748,
+      "sha256": "8a37951ddf8e7ec2a2b15e1c5c74ef4f2579e2a1b470b35fb81822eb02bbb840"
     },
     {
       "path": "README.zh-CN.md",
-      "size": 1867,
-      "sha256": "28973288cfe3e7be7651993be966059762279cb76b8f488b4f1602413d4b96bc"
+      "size": 1871,
+      "sha256": "4fb5d02a227b19fad692cf0ca66a79c3ad49022ea63961b37e2f44dec6734b3b"
     },
     {
       "path": "SECURITY.md",
@@ -40,7 +40,7 @@
     {
       "path": "sql-engineering/SKILL.md",
       "size": 4424,
-      "sha256": "a048d1d200c2a50e251dad443437f7e248f93cc47cb823805a20a2e53a80d15a"
+      "sha256": "c6d4712084c8b406fd50dcef89c7796e7b5c518c3320d5ec329cac9744ef1b8f"
     },
     {
       "path": "sql-engineering/agents/openai.yaml",

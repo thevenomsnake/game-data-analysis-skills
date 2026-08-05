@@ -1,4 +1,4 @@
-# SQL Engineering Skill
+# Game Data Analysis Skills
 
 这是一个面向 Codex 的轻量 SQL 工程化 Skill，用来保证对话中生成或修改的 SQL
 能够落盘、版本化、检索，并准确交付到具体文件。
