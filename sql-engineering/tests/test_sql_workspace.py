@@ -5,6 +5,7 @@ from pathlib import Path
 
 
 SCRIPT = Path(__file__).resolve().parents[1] / "scripts" / "sql_workspace.py"
+EXAMPLE_SQL = Path(__file__).resolve().parents[1] / "assets" / "examples" / "daily-active-users.sql"
 
 
 class PublicWorkspaceTests(unittest.TestCase):
@@ -79,6 +80,35 @@ class PublicWorkspaceTests(unittest.TestCase):
             self.assertEqual(receipt["status"], "blocked")
             self.assertIn("metadata_hash_mismatch", receipt["blockers"])
             self.assertIn("index_hash_mismatch", receipt["blockers"])
+
+    def test_bundled_example_saves_and_returns_ready_receipt(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp) / "project"
+            self.module.command_init(
+                type("Args", (), {"root": str(root), "project_id": "demo", "dialect": "starrocks", "force": False})
+            )
+            saved = self.module.command_save(
+                type(
+                    "Args",
+                    (),
+                    {
+                        "root": str(root),
+                        "sql_file": str(EXAMPLE_SQL),
+                        "title": "Daily active users",
+                        "summary": "Counts distinct login users by activity date.",
+                        "kind": "temporary",
+                        "slug": "daily-active-users",
+                        "tag": ["activity"],
+                    },
+                )
+            )
+            receipt = self.module.delivery_receipt(root, Path(saved["delivery_file"]))
+            self.assertEqual(receipt["status"], "ready")
+            self.assertTrue(Path(receipt["delivery_file"]).is_absolute())
+            self.assertEqual(
+                Path(receipt["delivery_file"]).read_text(encoding="utf-8"),
+                EXAMPLE_SQL.read_text(encoding="utf-8"),
+            )
 
 
 if __name__ == "__main__":

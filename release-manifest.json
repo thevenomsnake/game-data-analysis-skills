@@ -1,11 +1,11 @@
 {
   "schema_version": "sql_skill_public_release_manifest_v1",
-  "release_version": "1.0.1",
+  "release_version": "1.0.2",
   "target_repository": "https://github.com/thevenomsnake/game-data-analysis-skills",
   "target_visibility": "private",
   "publication_contract": "public_ready_private_hosted",
-  "source_commit": "bdda871c21b1799ee22c977a24b36b503da067f2",
-  "source_tree_sha256": "a4f8c352171bbdc3dbad21b83137e67ca322303967a32a14e7621c9fdd8b87d1",
+  "source_commit": "fd2949b2e5cf398c21af939394dcfa139a45ab02",
+  "source_tree_sha256": "c568269ca84ce110e97b049da547564bb3e58d293be47fb8c56797972ef17949",
   "files": [
     {
       "path": ".gitignore",
@@ -24,13 +24,13 @@
     },
     {
       "path": "README.md",
-      "size": 2748,
-      "sha256": "8a37951ddf8e7ec2a2b15e1c5c74ef4f2579e2a1b470b35fb81822eb02bbb840"
+      "size": 2643,
+      "sha256": "4805606d8f798a1be1a975c4f6b9245c70d043f55fe4b3fbfc23e96c70d36b38"
     },
     {
       "path": "README.zh-CN.md",
-      "size": 1871,
-      "sha256": "4fb5d02a227b19fad692cf0ca66a79c3ad49022ea63961b37e2f44dec6734b3b"
+      "size": 2171,
+      "sha256": "93c96a26a75f058f694224fd672d678df98a84b5796010252da63a5836a3657f"
     },
     {
       "path": "SECURITY.md",
@@ -39,13 +39,23 @@
     },
     {
       "path": "sql-engineering/SKILL.md",
-      "size": 4424,
-      "sha256": "c6d4712084c8b406fd50dcef89c7796e7b5c518c3320d5ec329cac9744ef1b8f"
+      "size": 4722,
+      "sha256": "760a02d944b2b48d906682f9142f7a40e6062ff68dd690ede6c1ec73bdfe32a5"
     },
     {
       "path": "sql-engineering/agents/openai.yaml",
       "size": 250,
       "sha256": "6432b2076dea0e293225dc95ab2bf0b08c3f9143edaa664589a7811a6f48c7e6"
+    },
+    {
+      "path": "sql-engineering/assets/examples/daily-active-users.sql",
+      "size": 751,
+      "sha256": "9ef62513e37f8f03a06ccf59d8005eb1350e4f367087fcd63d1272d03e00c35f"
+    },
+    {
+      "path": "sql-engineering/references/example.md",
+      "size": 2052,
+      "sha256": "456a5256a1145b9d8ba7a4de08a9ccb75c0a5956d291cb123aaa6a99796e6601"
     },
     {
       "path": "sql-engineering/references/project-contract.md",
@@ -69,8 +79,8 @@
     },
     {
       "path": "sql-engineering/tests/test_sql_workspace.py",
-      "size": 3669,
-      "sha256": "c31e9380aa1d9f1703ebec902d9c388c979bad2f3d856a3a5996a6c1696b846c"
+      "size": 5081,
+      "sha256": "1dfa41cd58c1b2c6fb9ba9db495a65eedc093df5740bbe6f219261105ef19962"
     }
   ]
 }

@@ -38,27 +38,24 @@ python .\sql-engineering\scripts\sql_workspace.py init `
   --dialect starrocks
 ```
 
-Save a query:
+Save the bundled example query:
 
 ```powershell
 python .\sql-engineering\scripts\sql_workspace.py save `
   --root .\example-project `
-  --sql-file .\query.sql `
+  --sql-file .\sql-engineering\assets\examples\daily-active-users.sql `
   --title "Daily active users" `
   --summary "Counts distinct active users by date." `
   --kind temporary
 ```
 
-The command returns the absolute saved SQL path and a content hash. See
-[`sql-engineering/SKILL.md`](sql-engineering/SKILL.md) for the agent workflow.
+The command creates an immutable SQL version, a sidecar metadata file, and a searchable index
+entry. It returns the absolute saved SQL path and a content hash. Run `receipt` on that saved
+path before delivery.
 
-## Public And Internal Editions
-
-This repository is a clean public-ready edition with its own version and release history. Its
-hosting visibility may remain private; the source still follows public-content rules. It is not
-a mirror of any private analytics workspace. Private projects may build additional rule stores,
-result evidence, review systems, data catalogs, and execution adapters on top of the public
-file-backed contract without publishing those assets here.
+The example uses fictional `demo.events` fields, so adapt the source contract before database
+execution. See the [worked agent example](sql-engineering/references/example.md) for the exact
+request-to-file workflow and expected final response.
 
 ## Development
 

@@ -12,8 +12,7 @@
 - 临时查询、可复用查询和看板 SQL 使用不同生命周期状态。
 
 公共规范版不包含任何公司的项目配置、生产表名、业务口径、凭据、查询结果或内部
-执行平台集成。GitHub 仓库可以继续保持 PRIVATE，但内容始终按未来可公开的标准校验。
-它和私有分析工作区分别维护版本和 Git 历史，不是内部仓库镜像。
+执行平台集成。
 
 ## 安装
 
@@ -34,18 +33,24 @@ python .\sql-engineering\scripts\sql_workspace.py init `
   --dialect starrocks
 ```
 
-保存 SQL：
+保存仓库自带的示例 SQL：
 
 ```powershell
 python .\sql-engineering\scripts\sql_workspace.py save `
   --root .\example-project `
-  --sql-file .\query.sql `
+  --sql-file .\sql-engineering\assets\examples\daily-active-users.sql `
   --title "每日活跃用户" `
   --summary "按日期统计去重活跃用户数。" `
   --kind temporary
 ```
 
-完整的 AI 执行约束见 [`sql-engineering/SKILL.md`](sql-engineering/SKILL.md)。
+命令会生成不可变 SQL 版本、同版本元数据和可搜索索引，并返回绝对文件路径与内容
+哈希。交付前还要对保存后的路径执行 `receipt`。
+
+示例里的 `demo.events` 是虚构数据源，真正执行前需要替换成项目的数据契约。完整的
+“用户需求 -> AI 操作 -> 文件产物 -> 最终回复”示例见
+[AI 工作示例](sql-engineering/references/example.md)，完整执行约束见
+[`sql-engineering/SKILL.md`](sql-engineering/SKILL.md)。
 
 ## 开发校验
 

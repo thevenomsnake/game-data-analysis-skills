@@ -3,7 +3,7 @@ name: sql-engineering
 description: Use this skill for durable SQL work where every generated or modified query must be saved, versioned, indexed, and delivered by exact file path. It supports project initialization, immutable temporary and retained SQL versions, external SQL intake, searchable summaries, and verified delivery receipts without embedding organization-specific schemas or business rules.
 metadata:
   short-description: File-backed, versioned SQL delivery
-  version: "1.0.1"
+  version: "1.0.2"
 ---
 
 # SQL Engineering
@@ -19,6 +19,11 @@ content hash.
 Read `references/workflow.md` for lifecycle decisions. Read
 `references/project-contract.md` when initializing or repairing a workspace. Read
 `references/sql-quality.md` before delivering executable SQL.
+
+Read `references/example.md` when onboarding a new project or when the expected saved files,
+index entry, and final delivery response are unclear. The bundled example SQL is executable
+input for the storage workflow and uses fictional source names that must be replaced before
+database execution.
 
 Use `scripts/sql_workspace.py` for deterministic storage and retrieval:
 
