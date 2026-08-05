@@ -1,9 +1,9 @@
 ---
 name: sql-engineering
-description: Use this skill for durable SQL work where every generated or modified query must be saved, versioned, indexed, and delivered by exact file path. It supports project initialization, immutable temporary and retained SQL versions, external SQL intake, searchable summaries, and verified delivery receipts without embedding organization-specific schemas or business rules.
+description: Use this skill for durable SQL work where every generated or modified query must be saved, versioned, indexed, and delivered by exact file path. It supports automatic sql-projects repository bootstrapping, project initialization, immutable temporary and retained SQL versions, external SQL intake, searchable summaries, and verified delivery receipts without embedding organization-specific schemas or business rules.
 metadata:
   short-description: File-backed, versioned SQL delivery
-  version: "1.0.2"
+  version: "1.1.0"
 ---
 
 # SQL Engineering
@@ -28,6 +28,7 @@ database execution.
 Use `scripts/sql_workspace.py` for deterministic storage and retrieval:
 
 ```powershell
+python <skill-root>/scripts/sql_workspace.py bootstrap --root <workspace-root> --project-id <id> --dialect <dialect>
 python <skill-root>/scripts/sql_workspace.py init --root <project-root> --project-id <id> --dialect <dialect>
 python <skill-root>/scripts/sql_workspace.py save --root <project-root> --sql-file <input.sql> --title <title> --summary <summary>
 python <skill-root>/scripts/sql_workspace.py receipt --root <project-root> --sql-file <saved-vNNN.sql>
@@ -36,24 +37,25 @@ python <skill-root>/scripts/sql_workspace.py search --root <project-root> --quer
 
 ## Hard Boundaries
 
-1. Never use a chat code block as the only SQL deliverable.
-2. Never edit an external SQL file in place. Save a project-local immutable version.
-3. Every generated or modified SQL must have a concise title and summary in the index.
-4. Save a new `vNNN.sql` when executable SQL changes. Never overwrite an existing version.
-5. A request that expands an existing analytical question stays in the same query family. A
+1. On first use of a repository, run `bootstrap` when `sql-projects/` or its reserved cross-project directories are missing. Store normal projects under `sql-projects/<project-id>`.
+2. Never use a chat code block as the only SQL deliverable.
+3. Never edit an external SQL file in place. Save a project-local immutable version.
+4. Every generated or modified SQL must have a concise title and summary in the index.
+5. Save a new `vNNN.sql` when executable SQL changes. Never overwrite an existing version.
+6. A request that expands an existing analytical question stays in the same query family. A
    materially different business question gets a new family.
-6. A ready receipt must match both the saved metadata hash and the current file hash.
-7. Select the dialect from project configuration. Do not infer a database, table, partition
+7. A ready receipt must match both the saved metadata hash and the current file hash.
+8. Select the dialect from project configuration. Do not infer a database, table, partition
    field, business ID, or date policy from this public Skill.
-8. Put reusable date and scope values in a short `params` CTE when the target dialect supports
+9. Put reusable date and scope values in a short `params` CTE when the target dialect supports
    it. Keep the SQL directly runnable with concrete values.
-9. Apply only business rules supplied by the user or the current project. This Skill ships no
+10. Apply only business rules supplied by the user or the current project. This Skill ships no
    organization-specific metric definitions.
-10. Do not claim that SQL ran successfully without execution evidence supplied by the user or
+11. Do not claim that SQL ran successfully without execution evidence supplied by the user or
     observed from an execution tool.
-11. SQL-side privacy transformations are not invented automatically. Follow the user's data
+12. SQL-side privacy transformations are not invented automatically. Follow the user's data
     platform policy and preserve business semantics.
-12. Generated indexes and metadata may describe lifecycle state, but they do not approve,
+13. Generated indexes and metadata may describe lifecycle state, but they do not approve,
     publish, or promote an asset by themselves.
 
 ## Workflow

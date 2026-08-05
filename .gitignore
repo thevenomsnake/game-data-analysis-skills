@@ -5,6 +5,6 @@ venv/
 .env
 .DS_Store
 Thumbs.db
-.sql-engineering/
-sql-workspace/
+/.sql-engineering/
+/sql-workspace/
 dist/

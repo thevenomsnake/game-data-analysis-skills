@@ -51,6 +51,25 @@ class PublicWorkspaceTests(unittest.TestCase):
             self.assertEqual(meta["source"]["file_name"], "incoming.sql")
             self.assertNotIn(str(Path(temp)), json.dumps(meta))
 
+    def test_bootstrap_creates_repository_layout_and_is_idempotent(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp) / "workspace"
+            args = type(
+                "Args",
+                (),
+                {"root": str(root), "project_id": "example", "dialect": "starrocks"},
+            )
+            first = self.module.command_bootstrap(args)
+            second = self.module.command_bootstrap(args)
+
+            self.assertEqual(first["status"], "ready")
+            self.assertEqual(second["status"], "ready")
+            self.assertEqual(second["project"]["status"], "existing")
+            for directory in ("_asset_catalog", "_review_inbox", "_rule_review"):
+                self.assertTrue((root / "sql-projects" / directory / ".gitkeep").is_file())
+            self.assertTrue((root / "sql-projects" / "example" / ".sql-engineering" / "project.json").is_file())
+            self.assertTrue((root / "sql-projects" / "example" / "sql-workspace" / "index.json").is_file())
+
     def test_receipt_blocks_modified_saved_sql(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp) / "project"

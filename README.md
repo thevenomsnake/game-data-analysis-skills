@@ -29,20 +29,23 @@ Copy-Item -Recurse .\sql-engineering "$HOME\.codex\skills\sql-engineering"
 
 Restart or refresh Codex, then invoke `$sql-engineering` in a task.
 
-## Initialize A Project
+## Initialize The Workspace
 
 ```powershell
-python .\sql-engineering\scripts\sql_workspace.py init `
-  --root .\example-project `
+python .\sql-engineering\scripts\sql_workspace.py bootstrap `
+  --root . `
   --project-id example `
   --dialect starrocks
 ```
+
+This creates `sql-projects/`, the shared `_asset_catalog`, `_review_inbox`, and `_rule_review`
+directories, and the first project at `sql-projects/example`. Running it again is safe.
 
 Save the bundled example query:
 
 ```powershell
 python .\sql-engineering\scripts\sql_workspace.py save `
-  --root .\example-project `
+  --root .\sql-projects\example `
   --sql-file .\sql-engineering\assets\examples\daily-active-users.sql `
   --title "Daily active users" `
   --summary "Counts distinct active users by date." `

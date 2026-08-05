@@ -14,10 +14,12 @@ from typing import Any
 
 
 PROJECT_SCHEMA = "sql_engineering_public_project_v1"
+REPOSITORY_SCHEMA = "sql_engineering_public_repository_v1"
 INDEX_SCHEMA = "sql_workspace_index_v1"
 META_SCHEMA = "sql_workspace_item_v1"
 RECEIPT_SCHEMA = "sql_delivery_receipt_v1"
 KINDS = ("temporary", "retained", "dashboard")
+RESERVED_PROJECT_DIRECTORIES = ("_asset_catalog", "_review_inbox", "_rule_review")
 
 
 def utc_now() -> str:
@@ -112,6 +114,62 @@ def command_init(args: argparse.Namespace) -> dict[str, Any]:
         "project_root": str(root),
         "config_file": str(config_path),
         "index_file": str(index_path),
+    }
+
+
+def command_bootstrap(args: argparse.Namespace) -> dict[str, Any]:
+    workspace_root = Path(args.root).resolve()
+    projects_root = workspace_root / "sql-projects"
+    projects_root.mkdir(parents=True, exist_ok=True)
+
+    reserved_paths = []
+    for directory_name in RESERVED_PROJECT_DIRECTORIES:
+        directory = projects_root / directory_name
+        directory.mkdir(parents=True, exist_ok=True)
+        (directory / ".gitkeep").touch(exist_ok=True)
+        reserved_paths.append(str(directory))
+
+    project_result: dict[str, Any] | None = None
+    project_id = args.project_id.strip()
+    dialect = args.dialect.strip().lower()
+    if project_id or dialect:
+        if not project_id or not dialect:
+            raise ValueError("project-id and dialect must be supplied together")
+        if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]{0,63}", project_id):
+            raise ValueError("project-id must use letters, numbers, underscores, or hyphens")
+        project_root = projects_root / project_id
+        _, config_path, index_path = project_paths(project_root)
+        if config_path.exists():
+            config = read_json(config_path)
+            if config.get("schema_version") != PROJECT_SCHEMA:
+                raise ValueError(f"Unsupported project schema in {config_path}")
+            if config.get("project_id") != project_id or config.get("dialect") != dialect:
+                raise ValueError(f"Existing project configuration conflicts with bootstrap request: {config_path}")
+            if not index_path.exists():
+                write_json(index_path, {"schema_version": INDEX_SCHEMA, "project_id": project_id, "items": []})
+            project_result = {
+                "status": "existing",
+                "project_root": str(project_root),
+                "config_file": str(config_path),
+                "index_file": str(index_path),
+            }
+        else:
+            project_result = command_init(
+                argparse.Namespace(
+                    root=str(project_root),
+                    project_id=project_id,
+                    dialect=dialect,
+                    force=False,
+                )
+            )
+
+    return {
+        "status": "ready",
+        "schema_version": REPOSITORY_SCHEMA,
+        "workspace_root": str(workspace_root),
+        "projects_root": str(projects_root),
+        "reserved_directories": reserved_paths,
+        "project": project_result,
     }
 
 
@@ -248,6 +306,12 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--format", choices=("json", "text"), default="json")
     subparsers = parser.add_subparsers(dest="command", required=True)
+
+    bootstrap = subparsers.add_parser("bootstrap")
+    bootstrap.add_argument("--root", required=True)
+    bootstrap.add_argument("--project-id", default="")
+    bootstrap.add_argument("--dialect", default="")
+    bootstrap.set_defaults(handler=command_bootstrap)
 
     init = subparsers.add_parser("init")
     init.add_argument("--root", required=True)

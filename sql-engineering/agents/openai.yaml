@@ -1,4 +1,4 @@
 interface:
   display_name: "SQL Engineering"
   short_description: "Save, version, find, and deliver SQL files"
-  default_prompt: "Use $sql-engineering to create or modify SQL as an indexed, immutable project file and return its exact delivery path."
+  default_prompt: "Use $sql-engineering to bootstrap sql-projects when missing, create or modify SQL as an indexed immutable project file, and return its exact delivery path."

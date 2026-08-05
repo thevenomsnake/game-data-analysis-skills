@@ -24,20 +24,23 @@ Copy-Item -Recurse .\sql-engineering "$HOME\.codex\skills\sql-engineering"
 
 刷新 Codex 后，在任务里调用 `$sql-engineering`。
 
-## 初始化项目
+## 初始化 SQL 工作空间
 
 ```powershell
-python .\sql-engineering\scripts\sql_workspace.py init `
-  --root .\example-project `
+python .\sql-engineering\scripts\sql_workspace.py bootstrap `
+  --root . `
   --project-id example `
   --dialect starrocks
 ```
+
+命令会自动创建 `sql-projects/`、共享的 `_asset_catalog`、`_review_inbox`、
+`_rule_review`，以及首个项目 `sql-projects/example`。重复运行不会清空已有内容。
 
 保存仓库自带的示例 SQL：
 
 ```powershell
 python .\sql-engineering\scripts\sql_workspace.py save `
-  --root .\example-project `
+  --root .\sql-projects\example `
   --sql-file .\sql-engineering\assets\examples\daily-active-users.sql `
   --title "每日活跃用户" `
   --summary "按日期统计去重活跃用户数。" `

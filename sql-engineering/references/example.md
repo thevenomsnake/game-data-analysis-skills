@@ -10,7 +10,7 @@ The SQL uses fictional names and demonstrates storage and delivery, not a real d
 
 ## Agent Actions
 
-1. Read the project contract and initialize the project if needed.
+1. Read the project contract and bootstrap the repository if `sql-projects/` is missing.
 2. Replace the fictional source and fields in
    `assets/examples/daily-active-users.sql` with the user's project contract.
 3. Keep fixed date values in `params` and save the SQL as a `temporary` query.
@@ -18,13 +18,13 @@ The SQL uses fictional names and demonstrates storage and delivery, not a real d
 5. Return the absolute `delivery_file` path. Do not deliver only a chat code block.
 
 ```powershell
-python <skill-root>/scripts/sql_workspace.py init `
-  --root <project-root> `
+python <skill-root>/scripts/sql_workspace.py bootstrap `
+  --root <workspace-root> `
   --project-id example `
   --dialect starrocks
 
 python <skill-root>/scripts/sql_workspace.py save `
-  --root <project-root> `
+  --root <workspace-root>/sql-projects/example `
   --sql-file <skill-root>/assets/examples/daily-active-users.sql `
   --title "Daily active users" `
   --summary "Counts distinct login users by activity date." `
@@ -33,22 +33,27 @@ python <skill-root>/scripts/sql_workspace.py save `
   --tag activity
 
 python <skill-root>/scripts/sql_workspace.py receipt `
-  --root <project-root> `
+  --root <workspace-root>/sql-projects/example `
   --sql-file <absolute-saved-vNNN.sql>
 ```
 
 ## Expected Files
 
 ```text
-<project-root>/
-  .sql-engineering/
-    project.json
-  sql-workspace/
-    index.json
-    temporary/
-      daily-active-users/
-        v001.sql
-        v001.meta.json
+<workspace-root>/
+  sql-projects/
+    _asset_catalog/
+    _review_inbox/
+    _rule_review/
+    example/
+      .sql-engineering/
+        project.json
+      sql-workspace/
+        index.json
+        temporary/
+          daily-active-users/
+            v001.sql
+            v001.meta.json
 ```
 
 `v001.sql` is the immutable runnable text. `v001.meta.json` records its title, summary, source
