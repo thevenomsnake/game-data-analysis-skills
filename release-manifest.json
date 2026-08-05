@@ -1,0 +1,76 @@
+{
+  "schema_version": "sql_skill_public_release_manifest_v1",
+  "release_version": "1.0.0",
+  "target_repository": "https://github.com/thevenomsnake/da_skills",
+  "target_visibility": "private",
+  "publication_contract": "public_ready_private_hosted",
+  "source_commit": "043ec095b2cf47ffdec2235bd5fca4223aa0a01a",
+  "source_tree_sha256": "003d2a66a1f1fc424d10e28e573cbb7458d978f09d3ec78e6203d5e54ca8c938",
+  "files": [
+    {
+      "path": ".gitignore",
+      "size": 100,
+      "sha256": "b7e49bc0d26b69234feda91878542e65892dc3d4d89c998fc49f6a8217d11720"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "size": 749,
+      "sha256": "c04ec3c2d1edc897767d16482a22155aa4699eaa93ca562622bd0f501a820253"
+    },
+    {
+      "path": "LICENSE",
+      "size": 11343,
+      "sha256": "747f9749a3034e600a29fa858ce2ac684ffb012ae92acae400be936fd61cce40"
+    },
+    {
+      "path": "README.md",
+      "size": 2707,
+      "sha256": "3c14af03d817224313641f57d879a57a084dd7c6847edf1e512277693a016ddb"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "size": 1867,
+      "sha256": "28973288cfe3e7be7651993be966059762279cb76b8f488b4f1602413d4b96bc"
+    },
+    {
+      "path": "SECURITY.md",
+      "size": 595,
+      "sha256": "072665086bfd6dabe461a9517a49fda0d086f1eee24a9397da5282e1cec2319e"
+    },
+    {
+      "path": "sql-engineering/SKILL.md",
+      "size": 4424,
+      "sha256": "a048d1d200c2a50e251dad443437f7e248f93cc47cb823805a20a2e53a80d15a"
+    },
+    {
+      "path": "sql-engineering/agents/openai.yaml",
+      "size": 250,
+      "sha256": "6432b2076dea0e293225dc95ab2bf0b08c3f9143edaa664589a7811a6f48c7e6"
+    },
+    {
+      "path": "sql-engineering/references/project-contract.md",
+      "size": 819,
+      "sha256": "a3e2b215499930baa3ff80177c634d34e258873ee2c9b9672a6f2b22b2060fc4"
+    },
+    {
+      "path": "sql-engineering/references/sql-quality.md",
+      "size": 1028,
+      "sha256": "e9023edab1f0b8d7b579e5e4b9e1c4d85f52ed8e362afc0e18746edd6b74414a"
+    },
+    {
+      "path": "sql-engineering/references/workflow.md",
+      "size": 1444,
+      "sha256": "276095ba2f67838aa4da1e6313f9e4f28abae96a15b89dbcabda6ecbf5a14568"
+    },
+    {
+      "path": "sql-engineering/scripts/sql_workspace.py",
+      "size": 11251,
+      "sha256": "4f8ad673ab55ed06899adadab13b7939a250447054b4d8292accc7f2aed8fa1f"
+    },
+    {
+      "path": "sql-engineering/tests/test_sql_workspace.py",
+      "size": 3669,
+      "sha256": "c31e9380aa1d9f1703ebec902d9c388c979bad2f3d856a3a5996a6c1696b846c"
+    }
+  ]
+}
