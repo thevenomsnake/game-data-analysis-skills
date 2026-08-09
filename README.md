@@ -190,6 +190,12 @@ Try the bundled fictional query at
 The [worked agent example](sql-engineering/references/example.md) shows the request, commands,
 expected files, and final-response contract.
 
+## TODO
+
+- Automatically generate recurring reports on a schedule.
+- Compare data results across assets to assess whether they are reasonable.
+- Automatically trace anomalies to their source and investigate likely causes.
+
 ## Design Boundaries
 
 - The project configuration selects the dialect. The Skill does not guess tables, partitions,
