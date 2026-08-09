@@ -188,6 +188,12 @@ Prueba la consulta ficticia incluida en
 El [ejemplo completo del agente](sql-engineering/references/example.md) muestra la solicitud, los
 comandos, los archivos esperados y el contrato de respuesta final.
 
+## Próximos pasos
+
+- Generar automáticamente informes periódicos según una programación.
+- Comparar los resultados entre distintos activos de datos para comprobar si son razonables.
+- Rastrear automáticamente el origen de las anomalías e investigar sus posibles causas.
+
 ## Límites de diseño
 
 - La configuración del proyecto selecciona el dialecto. El Skill no adivina tablas, particiones,
