@@ -397,6 +397,235 @@
       box-shadow: var(--shadow-sm);
     }
 
+    .workbook-inspector {
+      margin-bottom: 16px;
+      padding: 18px 22px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: var(--surface);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .is-fixed-report .workbook-inspector,
+    .workbook-inspector[hidden] {
+      display: none;
+    }
+
+    .workbook-inspector-heading {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 18px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .workbook-inspector-eyebrow {
+      margin: 0 0 4px;
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 760;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .workbook-inspector-heading h2,
+    .workbook-detail-title,
+    .workbook-detail-subtitle {
+      margin: 0;
+      color: var(--ink-strong);
+    }
+
+    .workbook-inspector-heading h2 {
+      font-size: 20px;
+      line-height: 1.35;
+    }
+
+    .workbook-inspector-summary,
+    .workbook-detail-meta,
+    .workbook-preview-note {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .workbook-sheet-picker,
+    .workbook-schema-controls label {
+      display: grid;
+      gap: 5px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 680;
+    }
+
+    .workbook-sheet-picker {
+      min-width: 220px;
+    }
+
+    .workbook-sheet-picker select,
+    .workbook-schema-controls select,
+    .workbook-schema-controls input {
+      min-height: 34px;
+      padding: 0 9px;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      color: var(--ink-strong);
+      font: inherit;
+    }
+
+    .workbook-inspector-body {
+      display: grid;
+      grid-template-columns: minmax(210px, 270px) minmax(0, 1fr);
+      gap: 18px;
+      padding-top: 16px;
+    }
+
+    .workbook-sheet-list {
+      display: grid;
+      align-content: start;
+      gap: 6px;
+      max-height: 520px;
+      overflow: auto;
+      padding-right: 3px;
+    }
+
+    .workbook-sheet-item {
+      width: 100%;
+      min-height: 48px;
+      padding: 8px 10px;
+      display: grid;
+      gap: 2px;
+      text-align: left;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      background: var(--surface-sunk);
+      color: var(--ink-strong);
+      cursor: pointer;
+      font: inherit;
+    }
+
+    .workbook-sheet-item:hover,
+    .workbook-sheet-item:focus-visible,
+    .workbook-sheet-item.is-selected {
+      border-color: var(--accent);
+      background: var(--accent-softer);
+      outline: none;
+    }
+
+    .workbook-sheet-item-meta {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 560;
+    }
+
+    .workbook-sheet-detail {
+      min-width: 0;
+    }
+
+    .workbook-detail-title {
+      font-size: 18px;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+
+    .workbook-detail-subtitle {
+      margin-bottom: 8px;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .workbook-diagnostics {
+      margin: 12px 0 16px;
+      padding: 9px 12px 9px 28px;
+      border: 1px solid #e5c5bd;
+      border-radius: var(--radius-sm);
+      background: #fff8f5;
+      color: #7a4036;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .workbook-diagnostics .diagnostic-info {
+      color: var(--muted);
+    }
+
+    .workbook-schema-panel {
+      margin-top: 16px;
+    }
+
+    .workbook-schema-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .workbook-schema-controls input {
+      width: 100px;
+    }
+
+    .workbook-schema-table,
+    .workbook-preview-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .workbook-schema-table th,
+    .workbook-schema-table td,
+    .workbook-preview-table th,
+    .workbook-preview-table td {
+      max-width: 220px;
+      padding: 7px 9px;
+      border: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .workbook-schema-table select {
+      min-height: 30px;
+      padding: 0 7px;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      color: var(--ink-strong);
+      font: inherit;
+    }
+
+    .workbook-schema-table th,
+    .workbook-preview-table th {
+      background: var(--surface-sunk);
+      color: var(--ink-strong);
+      font-weight: 720;
+    }
+
+    .workbook-preview-table {
+      display: block;
+      max-width: 100%;
+      overflow: auto;
+      white-space: nowrap;
+    }
+
+    .workbook-preview-table tbody {
+      display: table;
+      width: 100%;
+    }
+
+    .workbook-preview-note {
+      margin-bottom: 8px;
+    }
+
+    .workbook-empty {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
     .controls-title {
       margin: 0;
       color: var(--ink-strong);
@@ -2981,6 +3210,23 @@
     }
 
     @media (max-width: 920px) {
+      .workbook-inspector-heading {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .workbook-sheet-picker {
+        min-width: 0;
+      }
+
+      .workbook-inspector-body {
+        grid-template-columns: 1fr;
+      }
+
+      .workbook-sheet-list {
+        max-height: 190px;
+      }
+
       .behavior-retention-scroll .paired-module-grid {
         grid-template-columns: 1fr;
         gap: 0;
@@ -6303,16 +6549,7 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
       if (!window.XLSX) throw new Error("Excel 解析组件未加载。");
       const buffer = await file.arrayBuffer();
       return XLSX.read(buffer, {
-        type: "array", cellDates: false, raw: true, dense: true, sheetRows: 1200,
-        sheets: [
-          ...Object.values(ACQUISITION_SHEETS),
-          ...Object.values(FUNNEL_SHEETS),
-          ...Object.values(ACTIVE_SHEETS),
-          ...Object.values(RETENTION_SHEETS),
-          ...Object.values(COMMERCIAL_SHEETS),
-          ...Object.values(MODES_SHEETS),
-          ...Object.values(BEHAVIOR_SHEETS)
-        ].flatMap((sheet) => [sheet.name, ...(sheet.aliases || [])])
+        type: "array", cellDates: false, raw: true, dense: true, sheetRows: 1200
       });
     }
 
@@ -11573,6 +11810,9 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
       try {
         const workbook = await parseWorkbookFile(file);
         if (!workbook.SheetNames.length) throw new Error("文件中没有可用工作表。");
+        if (window.reportWorkbench && typeof window.reportWorkbench.onWorkbookLoaded === "function") {
+          await window.reportWorkbench.onWorkbookLoaded(workbook, file.name, file);
+        }
         const acquisitionData = parseAcquisitionWorkbook(workbook);
         const funnelData = parseFunnelWorkbook(workbook);
         const activeData = parseActiveWorkbook(workbook);
@@ -11711,6 +11951,9 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
         header: collectReportHeader(),
         definitions: collectDefinitions(),
         conclusions: collectCoreConclusions(),
+        workbook: window.reportWorkbench && typeof window.reportWorkbench.getSnapshot === "function"
+          ? window.reportWorkbench.getSnapshot()
+          : null,
         viewState: {
           funnel: {
             progressPlayer: FUNNEL_STATE.selectedProgressPlayer
@@ -11763,6 +12006,7 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
       clone.querySelector("body").classList.remove("is-editing-conclusions");
       clone.querySelector("body").classList.remove("is-editing-definitions");
       clone.querySelectorAll("#embeddedReportData").forEach((element) => element.remove());
+      clone.querySelectorAll(".workbook-inspector, [data-workbook-inspector-script]").forEach((element) => element.remove());
       clone.querySelectorAll(".report-header-field, .judgement-topic, .judgement-copy, .definition-term, .definition-text").forEach((element) => {
         element.removeAttribute("contenteditable");
         element.removeAttribute("role");
@@ -11794,7 +12038,7 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
       const embeddedData = document.createElement("script");
       embeddedData.type = "application/json";
       embeddedData.id = "embeddedReportData";
-      embeddedData.textContent = escapeEmbeddedJson(payload);
+      embeddedData.textContent = escapeEmbeddedJson({ ...payload, workbook: null });
       clone.querySelector("body").appendChild(embeddedData);
       return "<!doctype html>\n" + clone.outerHTML;
     }
@@ -11871,6 +12115,9 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
       renderReportPeriod(startInput.value, endInput.value);
       if (Array.isArray(payload.definitions)) applyDefinitions(payload.definitions);
       if (Array.isArray(payload.conclusions)) applyCoreConclusions(payload.conclusions);
+      if (payload.workbook && window.reportWorkbench && typeof window.reportWorkbench.restoreSnapshot === "function") {
+        window.reportWorkbench.restoreSnapshot(payload.workbook);
+      }
 
       const badge = document.getElementById("fixedReportBadge");
       badge.hidden = !isFixed;
@@ -12105,7 +12352,11 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     initializeBehaviorControls();
     updateFixedExportButtonState();
     scheduleReportChartResize();
+    window.addEventListener("report-workbook-change", () => {
+      persistLocalDraft().catch((error) => console.error("工作簿配置保存失败", error));
+    });
     window.addEventListener("DOMContentLoaded", initializeStoredReport);
   </script>
+  <script src="workbook-inspector.js" data-workbook-inspector-script></script>
 </body>
 </html>
