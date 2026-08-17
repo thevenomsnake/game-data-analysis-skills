@@ -10,4 +10,11 @@ Copy-Item -Recurse .\setup "$HOME\.codex\skills\setup"
 Copy-Item -Recurse .\sql-engineering "$HOME\.codex\skills\sql-engineering"
 ```
 
+
 含まれるのは架空の例と汎用ツールだけで、`BetterXml`、本番結果、私有スキーマ、認証情報は含みません。
+
+## 今後の予定
+
+- スケジュールに沿って定期レポートを自動生成する。
+- データ資産を横断して結果を比較し、妥当性を検証する。
+- 異常の発生源を自動的に追跡し、原因を調査する。

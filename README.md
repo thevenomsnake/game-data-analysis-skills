@@ -120,6 +120,12 @@ silently promote a query, and a lifecycle label does not claim correctness by it
 - [Public maintenance boundary](docs/PUBLIC_MAINTENANCE.md)
 - [Offline Excel report visualizer](excel-report-visualizer/README.md)
 
+## Roadmap
+
+- Generate recurring reports on a schedule.
+- Compare results across data assets to assess whether they are reasonable.
+- Trace anomalies back to their source and investigate likely causes.
+
 ## Official site
 
 The website brings the modules together with examples and product-facing guidance:

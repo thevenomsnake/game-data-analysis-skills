@@ -111,6 +111,12 @@ checkout 信息保存在被忽略的 `.local/`；密码和 token 由 Git/SVN 自
 - [公开维护边界](docs/PUBLIC_MAINTENANCE.md)
 - [Excel 报告可视化](excel-report-visualizer/README.md)
 
+## 下一步
+
+- 按设定周期自动生成报告。
+- 跨资产对比数据结果，检查结果是否合理。
+- 自动追溯异常来源并排查可能原因。
+
 ## 官方网站
 
 官方网站会用更适合产品读者的方式介绍这些模块、示例和使用场景：

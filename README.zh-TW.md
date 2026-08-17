@@ -10,4 +10,11 @@ Copy-Item -Recurse .\setup "$HOME\.codex\skills\setup"
 Copy-Item -Recurse .\sql-engineering "$HOME\.codex\skills\sql-engineering"
 ```
 
+
 內容只包含虛構範例與通用工具，不包含 `BetterXml`、生產結果、私有表結構或憑據。
+
+## 後續規劃
+
+- 依排程自動產出週期性報告。
+- 跨資產比較資料結果，檢查結果是否合理。
+- 自動追溯異常來源並調查可能原因。

@@ -10,5 +10,12 @@ Copy-Item -Recurse .\setup "$HOME\.codex\skills\setup"
 Copy-Item -Recurse .\sql-engineering "$HOME\.codex\skills\sql-engineering"
 ```
 
+
 Solo contiene ejemplos ficticios y herramientas genéricas; no incluye `BetterXml`, resultados de
 producción, esquemas privados ni credenciales.
+
+## Próximos pasos
+
+- Generar automáticamente informes periódicos según una programación.
+- Comparar los resultados entre distintos activos de datos para comprobar si son razonables.
+- Rastrear automáticamente el origen de las anomalías e investigar sus posibles causas.
