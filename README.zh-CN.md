@@ -1,24 +1,41 @@
 # Game Data Analysis Skills
 
-Game Data Analysis Skills 是一个面向 Codex 的公开 SQL 工作区。它把查询版本、业务规则、
-证据和交付回执保存为可追溯的项目文件，让对话结束后仍然能继续维护。
+**面向 Codex 的游戏数据分析工具集，把 SQL、口径、证据和交付文件真正保存下来。**
 
-本仓库不包含生产结果、私有表结构、凭据或组织内部服务配置，示例全部是虚构数据。
+[官方网站](https://fairy.sumimi.jp/) · [English](README.md) · [繁體中文](README.zh-TW.md)
 
-## 快速开始
+聊天里的查询很容易散掉：SQL 版本变了，口径来源找不到，结果也无法确认对应哪一版。这个
+项目把这些关系放进文件和索引里，让一次排查可以继续演进成可复用的分析资产，同时保留
+临时查询应有的轻量感。
+
+## 各模块负责什么
+
+| 模块 | 解决的问题 |
+| --- | --- |
+| **Setup** | 安装时以 Git 为基础，配置 GitHub、GitLab、自建 Git、SSH 或本地 Git，并选择 Git、SVN、本地目录或暂不配置策划源。 |
+| **SQL 工作台** | 每条查询保存为不可变、可检索的版本，附带元数据、内容哈希和精确交付 receipt。 |
+| **口径与资料** | 分开管理原始埋点定义、策划输入、人工确认资料和 canonical rule，保留来源关系。 |
+| **查询生命周期** | 从需求判定进入 QUERY，再到验证、正式资产包和看板派生；每一步都保留证据边界。 |
+| **Review 与健康检查** | 同时检查业务含义和 SQL 结构，用确定性事实、质量门禁和健康检查尽早发现漂移。 |
+| **结果与 lineage** | 把结果、可视化和工作簿绑定到实际产生它们的准确 SQL 版本。 |
+| **Excel 报告可视化** | 在本地检查约定格式的工作簿，生成可离线复用的报告页面；仓库只提供工具源码，不带任何工作簿。 |
+
+## 安装并跑通第一条查询
 
 需要 Python 3.11+ 和 Git；首次运行不需要第三方 Python 依赖。
 
 ```powershell
 git clone https://github.com/thevenomsnake/game-data-analysis-skills.git
 Set-Location .\game-data-analysis-skills
-python .\setup\scripts\bootstrap_repo.py configure --root . --planning-provider none
+
+# Git 是默认传输方式；其他 Git 托管平台只需要替换 remote。
+# 下一段命令会完成 provider 配置和 demo 初始化。
 python .\setup\scripts\bootstrap_repo.py demo --root .
 Copy-Item -Recurse .\setup "$HOME\.codex\skills\setup"
 Copy-Item -Recurse .\sql-engineering "$HOME\.codex\skills\sql-engineering"
 ```
 
-刷新 Codex 后使用 `$sql-engineering`。不连接数据库也可以先跑通文件交付流程：
+刷新 Codex 后使用 `$sql-engineering`。不连接数据库也能先跑通文件交付：
 
 ```powershell
 python .\sql-engineering\scripts\sql_workspace.py save `
@@ -30,42 +47,74 @@ python .\sql-engineering\scripts\sql_workspace.py save `
   --slug daily-active-users
 ```
 
-命令会生成不可变的 `v001.sql`、元数据和索引。交付前对返回路径运行 `receipt`。没有只读
-执行适配器时，Skill 会返回准确的人工执行交接，不会虚报已经跑数。
+命令会返回不可变的 `v001.sql` 路径。交付前对准确路径运行 `receipt`。没有数据库适配器时，
+执行结果会明确返回 `manual_required`，不会把“已生成”说成“已跑通”。
 
-## 内容范围
+## 策划源怎么选
 
-- 不可变 SQL 工作台和兼容的 `sql_workspace.py` 接口。
-- 持续维护的项目、口径、资料、策划源、Review、验证、正式资产和结果关系模块。
-- 只读本地执行适配器、健康检查和 receipt 校验。
-- Excel 报告可视化工具源码，不带任何工作簿或报告数据。
-- 虚构示例、schema、模板、测试和公开版维护工具。
-
-## Setup 流程
-
-可以使用 `$setup`，也可以直接运行：
+仓库 Git remote 和策划源是两件事，分别配置：
 
 ```powershell
-python .\setup\scripts\bootstrap_repo.py status --root .
-python .\setup\scripts\bootstrap_repo.py demo --root .
+# Git 策划源
+python .\setup\scripts\bootstrap_repo.py configure --root . `
+  --planning-provider git `
+  --planning-url <git-planning-url> `
+  --planning-branch main `
+  --planning-id planning
+python .\setup\scripts\bootstrap_repo.py planning-sync --root .
+
+# SVN 策划源
+python .\setup\scripts\bootstrap_repo.py configure --root . `
+  --planning-provider svn `
+  --planning-url <svn-url> `
+  --planning-revision <revision>
+
+# 用户自己维护的本地目录
+python .\setup\scripts\bootstrap_repo.py configure --root . `
+  --planning-provider local `
+  --planning-path <folder>
 ```
 
-Setup 不绑定特定 Git 托管平台，也不需要 DA 网页控制台或生产数据库。
+项目还没准备好时使用 `--planning-provider none`。provider、URL、分支、revision 和本地
+checkout 信息保存在被忽略的 `.local/`；密码和 token 由 Git/SVN 自己的本地凭据机制管理，
+不会写入配置文件。
 
-默认依赖是 Git，而不是某一个托管平台。可以通过 `--remote` 配置 GitHub、GitLab、自建
-Git、SSH 或本地 Git 仓库；策划表单独选择 `--planning-provider git|svn|local|none`，选择
-`git` 或 `svn` 后再运行 `planning-sync`。provider、URL、分支和 revision 等非敏感信息保存在
-被忽略的 `.local/setup-config.json` 中。
+## 从问题到交付
 
-## 开发校验
-
-```powershell
-python -m unittest discover -s .\sql-engineering\tests -p "test_*.py"
-python -m unittest discover -s .\setup\scripts -p "test_*.py"
-python .\tools\public_release.py validate --root .
+```text
+问题
+  -> 查找需求、来源和口径
+  -> 保存一个版本化工作台查询
+  -> 校验准确 receipt
+  -> 可选：通过只读适配器执行并绑定结果
+  -> Review 与验证
+  -> 明确固化为可复用资产或看板派生
 ```
 
-详见 [CONTRIBUTING.md](CONTRIBUTING.md)、[SECURITY.md](SECURITY.md) 和
-[docs/PROJECT_OVERVIEW.md](docs/PROJECT_OVERVIEW.md)。
+执行状态、结果展示和资产长期价值彼此独立。有结果不等于自动固化，生命周期标签也不替代
+正确性证据。
+
+## 安全边界
+
+- 公开仓库只带虚构示例，不带生产 SQL、结果、私有表结构或凭据。
+- 外部 SQL 作为输入保存，不会覆盖原文件。
+- 自动执行必须是只读；可选浏览器执行只消费准确 receipt，并通过 Chrome 插件使用用户自己的登录态。
+- `tools/public_release.py` 会扫描公开树，并可生成本地 SHA-256 清单。
+
+## 继续阅读
+
+- [Setup 接入手册](setup/references/onboarding.md)
+- [SQL Engineering 合约](sql-engineering/SKILL.md)
+- [项目总览](docs/PROJECT_OVERVIEW.md)
+- [用户手册](docs/USER_MANUAL.md)
+- [策划源 provider](sql-engineering/references/planning-source.md)
+- [公开维护边界](docs/PUBLIC_MAINTENANCE.md)
+- [Excel 报告可视化](excel-report-visualizer/README.md)
+
+## 官方网站
+
+官方网站会用更适合产品读者的方式介绍这些模块、示例和使用场景：
+
+**[访问 fairy.sumimi.jp](https://fairy.sumimi.jp/)**
 
 本项目使用 Apache License 2.0。

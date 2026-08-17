@@ -1,25 +1,48 @@
 # Game Data Analysis Skills
 
-Game Data Analysis Skills is a public Codex workspace for governed, file-backed SQL work. It
-keeps query versions, rules, evidence, and delivery receipts understandable after the chat ends.
+**A file-backed toolkit for game-data analysis in Codex.**
 
-This repository contains no production results, private schemas, credentials, or organization
-service configuration. Examples are fictional and run locally.
+[Official site](https://fairy.sumimi.jp/) · [简体中文](README.zh-CN.md) · [繁體中文](README.zh-TW.md)
 
-## Quick start
+A useful query should still be useful after the chat ends. Game Data Analysis Skills keeps the
+question, the SQL version, the rule sources, the result evidence, and the delivery decision close
+enough to follow without turning every small analysis into a heavy release process.
 
-Requirements: Python 3.11+ and Git. No third-party Python dependency is needed for the first run.
+## What it helps you do
+
+| Module | The job it handles |
+| --- | --- |
+| **Setup** | Start a local workspace, keep Git as the baseline, and choose GitHub, GitLab, self-hosted Git, SSH, local Git, SVN, or a local planning folder at install time. |
+| **SQL workspace** | Save every query as an immutable, searchable version with metadata, content hashes, and an exact delivery receipt. |
+| **Rules and knowledge** | Keep raw event definitions, planning inputs, confirmed references, and canonical business rules separate and traceable. |
+| **Query lifecycle** | Move from requirement intake to query, validation, formal asset packages, and dashboard-ready derivatives without silently skipping evidence. |
+| **Review and health** | Inspect SQL from product and code perspectives, run deterministic facts and quality checks, and catch drift before delivery. |
+| **Results and lineage** | Bind results, visualizations, and workbooks to the exact SQL version that produced them. |
+| **Excel report visualizer** | Inspect a local workbook and turn a supported report shape into an offline, reusable presentation. The repository ships the tool, not anyone's workbook. |
+
+## Install and try it
+
+Requirements: Python 3.11+ and Git. The first run needs no third-party Python package.
 
 ```powershell
 git clone https://github.com/thevenomsnake/game-data-analysis-skills.git
 Set-Location .\game-data-analysis-skills
-python .\setup\scripts\bootstrap_repo.py configure --root . --planning-provider none
+
+```
+
+Configure the repository and planning source, then create the demo project:
+
+```powershell
+python .\setup\scripts\bootstrap_repo.py configure `
+  --root . `
+  --remote https://github.com/thevenomsnake/game-data-analysis-skills.git `
+  --planning-provider none
 python .\setup\scripts\bootstrap_repo.py demo --root .
 Copy-Item -Recurse .\setup "$HOME\.codex\skills\setup"
 Copy-Item -Recurse .\sql-engineering "$HOME\.codex\skills\sql-engineering"
 ```
 
-Refresh Codex, then use `$sql-engineering`. To exercise the storage contract without a database:
+Refresh Codex, then use `$sql-engineering`. To prove the file-backed workflow without a database:
 
 ```powershell
 python .\sql-engineering\scripts\sql_workspace.py save `
@@ -31,44 +54,76 @@ python .\sql-engineering\scripts\sql_workspace.py save `
   --slug daily-active-users
 ```
 
-The command writes an immutable `v001.sql`, metadata, and an index. Run `receipt` against the
-returned path before sharing it. Automatic execution is optional; without a configured read-only
-adapter, the skill returns a precise manual handoff.
+The command returns an immutable `v001.sql` path. Run `receipt` on that exact path before sharing
+it. With no database adapter configured, execution correctly ends as `manual_required` instead of
+pretending that the query ran.
 
-## What is included
+## Choose your planning source
 
-- Immutable SQL workspace storage and the original `sql_workspace.py` compatibility interface.
-- Governed project, rule, knowledge, planning-source, review, validation, formal-asset, and
-  result-lineage modules from the maintained Skill.
-- Read-only local execution adapters and deterministic health/receipt checks.
-- The standalone Excel report visualizer source, without any workbook or report data.
-- Fictional examples, schemas, templates, tests, and public maintenance tooling.
-
-## Setup flow
-
-Use `$setup` or the script directly:
+The repository remote and the planning source are separate choices:
 
 ```powershell
-python .\setup\scripts\bootstrap_repo.py status --root .
-python .\setup\scripts\bootstrap_repo.py demo --root .
+# Git-managed planning repository
+python .\setup\scripts\bootstrap_repo.py configure --root . `
+  --planning-provider git `
+  --planning-url <git-planning-url> `
+  --planning-branch main `
+  --planning-id planning
+python .\setup\scripts\bootstrap_repo.py planning-sync --root .
+
+# SVN-managed source
+python .\setup\scripts\bootstrap_repo.py configure --root . `
+  --planning-provider svn `
+  --planning-url <svn-url> `
+  --planning-revision <revision>
+
+# Existing local folder, never updated by setup
+python .\setup\scripts\bootstrap_repo.py configure --root . `
+  --planning-provider local `
+  --planning-path <folder>
 ```
 
-Setup never requires a particular Git host, a DA console, or a production database.
+Use `--planning-provider none` when the project is not ready to bind a planning source. Provider,
+URL, branch, revision, and local checkout metadata live in ignored `.local/`; credentials stay in
+your native Git/SVN credential mechanism.
 
-Git is the default source-control dependency, not a specific hosting service. Configure any
-GitHub, GitLab, self-hosted, SSH, or local Git remote with `--remote`. Configure planning tables
-independently with `--planning-provider git|svn|local|none`; use `planning-sync` after choosing
-`git` or `svn`. Provider metadata is stored in ignored `.local/setup-config.json`.
+## From question to delivery
 
-## Development
-
-```powershell
-python -m unittest discover -s .\sql-engineering\tests -p "test_*.py"
-python -m unittest discover -s .\setup\scripts -p "test_*.py"
-python .\tools\public_release.py validate --root .
+```text
+question
+  -> discover requirements, sources, and rules
+  -> save a versioned workspace query
+  -> verify its exact receipt
+  -> optionally run one read-only query and attach the result
+  -> review and validate
+  -> explicitly formalize a reusable asset or dashboard derivative
 ```
 
-See [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md), and
-[docs/PROJECT_OVERVIEW.md](docs/PROJECT_OVERVIEW.md) for the public contracts.
+Execution state, result presentation, and long-term asset value remain separate. A result does not
+silently promote a query, and a lifecycle label does not claim correctness by itself.
+
+## Safety and privacy
+
+- The public tree contains fictional examples, not production SQL, results, private schemas, or credentials.
+- External SQL is treated as input and is never overwritten in place.
+- Automatic execution is read-only. Optional browser execution consumes an exact receipt through
+  the Chrome plugin and the user's own session; no endpoint or credential is bundled here.
+- `tools/public_release.py` validates the public tree and can produce a local SHA-256 manifest.
+
+## Explore the modules
+
+- [Setup onboarding](setup/references/onboarding.md)
+- [SQL Engineering contract](sql-engineering/SKILL.md)
+- [Project overview](docs/PROJECT_OVERVIEW.md)
+- [User manual](docs/USER_MANUAL.md)
+- [Planning-source providers](sql-engineering/references/planning-source.md)
+- [Public maintenance boundary](docs/PUBLIC_MAINTENANCE.md)
+- [Offline Excel report visualizer](excel-report-visualizer/README.md)
+
+## Official site
+
+The website brings the modules together with examples and product-facing guidance:
+
+**[Visit fairy.sumimi.jp](https://fairy.sumimi.jp/)**
 
 Licensed under the Apache License 2.0.
