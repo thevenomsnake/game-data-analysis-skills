@@ -17,6 +17,7 @@ class PublicOnboardingTests(unittest.TestCase):
             "README.zh-TW.md",
             "setup/SKILL.md",
             "setup/scripts/bootstrap_repo.py",
+            "setup/schemas/setup-config.json",
             "sql-engineering/SKILL.md",
             "sql-engineering/scripts/sql_workspace.py",
             "sql-engineering/assets/examples/daily-active-users.sql",

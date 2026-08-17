@@ -21,6 +21,7 @@ use the compatibility commands in `scripts/sql_workspace.py`; advanced flows use
 `scripts/sql_project.py` and the capability registry.
 
 ```powershell
+python .\setup\scripts\bootstrap_repo.py configure --root . --planning-provider none
 python .\setup\scripts\bootstrap_repo.py demo --root .
 python .\sql-engineering\scripts\sql_workspace.py save `
   --root .\sql-projects\example `
@@ -84,3 +85,6 @@ The public repository contains fictional examples only. Never commit production 
 credentials, private endpoints, private table definitions, local absolute paths, or personal
 workspaces. The setup flow does not request or store secrets. See `SECURITY.md` and
 `tools/public_release.py` before publishing a derived snapshot.
+
+Git is the setup baseline, while GitHub/GitLab/self-hosted/local remotes are configuration. The
+planning source is independently configured as Git, SVN, a local folder, or `none`.

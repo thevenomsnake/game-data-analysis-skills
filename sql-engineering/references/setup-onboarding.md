@@ -3,13 +3,16 @@
 The public edition uses a local-only, status-first setup flow.
 
 1. Check the selected folder with `setup/scripts/bootstrap_repo.py status`.
-2. Clone or fast-forward only an empty folder or a clean checkout with `sync`.
-3. Install `sql-engineering/` into the local Codex skills directory.
-4. Create the fictional `example` project with `bootstrap_repo.py demo`.
-5. Configure a local read-only adapter only when the user has one; otherwise use manual handoff.
+2. Clone or fast-forward only an empty folder or a clean checkout with `sync --remote <git-url>`.
+3. Run `configure` to record the Git host/remote/branch and choose `git`, `svn`, `local`, or
+   `none` for planning sources.
+4. Install `setup/` and `sql-engineering/` into the local Codex skills directory.
+5. Run `planning-sync` when Git or SVN owns the planning source.
+6. Create the fictional `example` project with `bootstrap_repo.py demo`.
+7. Configure a local read-only adapter only when the user has one; otherwise use manual handoff.
 
-No step requires a company account, LDAP identity, private Git host, browser session, or database
-password. Project-specific source files and rules are supplied later by the user and remain local.
+Git is required, but the hosting service is not fixed. Credentials remain in the user's Git/SVN
+credential mechanism. Project-specific source files and rules stay local and ignored.
 
 The setup scripts refuse to overwrite dirty worktrees and preserve existing project files. Their
 outputs are JSON so a caller can inspect status without guessing from console text.

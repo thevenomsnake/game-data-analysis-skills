@@ -15,3 +15,7 @@ The export boundary is strict:
 
 The `release-manifest.json` command output is a local audit artifact and is intentionally ignored by
 Git. A public release should have a clean commit containing only the validated tree.
+
+Installation is transport-neutral: Git is the baseline dependency, while the remote host is a
+configuration value. Planning sources are independent and may use Git, SVN, a local folder, or
+`none`; provider metadata belongs in ignored `.local/setup-config.json`, never in the public source.

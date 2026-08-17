@@ -13,7 +13,7 @@ from pathlib import Path
 
 TEXT_SUFFIXES = {".md", ".py", ".json", ".yaml", ".yml", ".toml", ".txt", ".sql", ".ps1", ".cmd"}
 ALLOWED_ROOT_FILES = {"README.md", "README.zh-CN.md", "README.zh-TW.md", "README.ja.md", "README.ko.md", "README.es.md", "LICENSE", "CONTRIBUTING.md", "SECURITY.md", ".gitignore"}
-FORBIDDEN_TOP_LEVEL = {"betterxml", "knowledge-base", "planning-sources", "outputs", "work", ".local"}
+FORBIDDEN_TOP_LEVEL = {"betterxml", "knowledge-base", "planning-sources", "outputs", "work"}
 FORBIDDEN_SUFFIXES = {".xlsx", ".xls", ".parquet", ".db", ".sqlite", ".pem", ".key", ".xml", ".csv", ".tsv"}
 FORBIDDEN_PATTERNS = (
     ("internal_host", re.compile(r"gitlab\.wd\.com", re.I)),
@@ -27,7 +27,7 @@ FORBIDDEN_PATTERNS = (
 
 
 def files(root: Path) -> list[Path]:
-    ignored = {".git", "__pycache__", ".tmp", ".test-tmp", "dist"}
+    ignored = {".git", "__pycache__", ".tmp", ".test-tmp", ".local", "dist"}
     result = []
     for path in root.rglob("*"):
         if not path.is_file() or any(part in ignored for part in path.parts):
@@ -81,7 +81,7 @@ def validate(root: Path) -> dict[str, object]:
                 compile(text, relative, "exec")
             except SyntaxError as error:
                 findings.append({"id": "python_syntax", "path": relative, "detail": str(error)})
-    for required in ("README.md", "README.zh-CN.md", "setup/SKILL.md", "setup/scripts/bootstrap_repo.py", "sql-engineering/SKILL.md"):
+    for required in ("README.md", "README.zh-CN.md", "setup/SKILL.md", "setup/scripts/bootstrap_repo.py", "setup/schemas/setup-config.json", "sql-engineering/SKILL.md"):
         if not (root / required).is_file():
             findings.append({"id": "required_path_missing", "path": required})
     return {

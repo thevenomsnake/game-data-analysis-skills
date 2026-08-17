@@ -568,7 +568,7 @@
       "function_ids": [
         "PLANNING_SOURCE"
       ],
-      "description": "选择本地自管或远程托管策划源，按产品和阶段检查、同步并封存精确版本，维护项目 source release 绑定。"
+      "description": "安装时选择 Git、SVN、本地目录或 none；同步到本地后按产品和阶段封存精确版本并维护 source release 绑定。"
     },
     {
       "id": "MANAGE_PROJECT",
@@ -754,11 +754,11 @@
       "label": "策划源空间",
       "governance_mode": "SOURCE_INTAKE",
       "audience": "common",
-      "use_when": "配置、修改、检查、同步或查看一个产品阶段的策划源版本；用户明确选择本地自管或远程托管，调用时按统一接口封存精确 SVN revision，非 SVN 来源才封存完整目录。",
+      "use_when": "配置、修改、检查、同步或查看一个产品阶段的策划源；安装层先选择 Git、SVN、本地目录或 none，正式生命周期再封存精确 SVN revision 或本地目录快照。",
       "required_context": [
         "SQL 项目",
         "产品与阶段",
-        "本地自管路径或远程托管 SVN URL",
+        "安装时选择的 Git/SVN/local provider 与本地同步路径",
         "明确的管理方式"
       ],
       "entrypoints": [
@@ -775,7 +775,7 @@
       "outputs": [
         "planning_source_release_v2",
         "planning_source_binding_v2",
-        "SVN revision/目录 diff",
+        "Git/SVN revision 或目录 diff",
         "本机同步配置"
       ],
       "aliases": [

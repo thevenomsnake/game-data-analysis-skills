@@ -3,6 +3,7 @@
 ## First run
 
 ```powershell
+python .\setup\scripts\bootstrap_repo.py configure --root . --planning-provider none
 python .\setup\scripts\bootstrap_repo.py demo --root .
 Copy-Item -Recurse .\setup "$HOME\.codex\skills\setup"
 Copy-Item -Recurse .\sql-engineering "$HOME\.codex\skills\sql-engineering"
@@ -10,6 +11,9 @@ Copy-Item -Recurse .\sql-engineering "$HOME\.codex\skills\sql-engineering"
 
 Use `$sql-engineering` after refreshing Codex. The fictional project is safe to inspect and does
 not connect to a database.
+
+During installation, configure the repository Git remote/provider and choose a planning-source
+provider: `git`, `svn`, `local`, or `none`. Run `planning-sync` after configuring Git or SVN.
 
 ## Small SQL workflow
 

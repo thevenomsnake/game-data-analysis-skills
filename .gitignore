@@ -11,6 +11,8 @@ Thumbs.db
 /release-manifest.json
 /.tmp/
 /.test-tmp/
+/.local/
+**/.svn/
 /sql-projects/*/
 !/sql-projects/README.md
 **/.sql-engineering/connections.local.json

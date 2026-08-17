@@ -18,7 +18,7 @@ This file is generated from `references/capabilities.json`. Edit the registry, t
 | 管理口径 | `RULES` | 查看或经明确授权写入项目 canonical rules。 |
 | 查询 / 管理资料库 | `KNOWLEDGE` | 优先从项目 active bindings 发现并只读查询映射、枚举、QA/Owner/负责人等可变参考信息；显式授权后才登记、刷新或绑定资料。 |
 | 初始化 / 扫描资料目录 | `SOURCE_WORKSPACE` | 配置本机未确认代码、TLOG 文档或外部参考目录，生成候选文件索引，并选择一个准确来源供后续 KNOWLEDGE 审查。 |
-| 配置 / 同步策划表 | `PLANNING_SOURCE` | 选择本地自管或远程托管策划源，按产品和阶段检查、同步并封存精确版本，维护项目 source release 绑定。 |
+| 配置 / 同步策划表 | `PLANNING_SOURCE` | 安装时选择 Git、SVN、本地目录或 none；同步到本地后按产品和阶段封存精确版本并维护 source release 绑定。 |
 | 开始配置 / 修改配置 | `PROJECT_ADMIN` | 检查尚未配置的项目项，让用户逐阶段确认、复制或停用内网/DA 数据服务绑定，并持久化策划源、本机凭据和本地身份；也支持显式修改已有配置。 |
 | 同步资料 | `COLLABORATION_SUBMIT` | 生成本地安全提交计划；不自动推送，不读取生产项目或结果。 |
 
@@ -31,7 +31,7 @@ This file is generated from `references/capabilities.json`. Edit the registry, t
 | 【口径管理】 `[RULES]` | `RULES` | `common` | `sql_project.py show-rules|rule-report|add-rule`<br>`rule_review.py`<br>`rule_dictionary.py`<br>`rule_authorization_governance.py` | `optional_semantic_structuring` | `canonical_rule_write` | canonical rule；口径审查或字典 |
 | 【来源/XML同步】 `[SOURCE_INTAKE]` | `SOURCE_INTAKE` | `advanced` | `xml_catalog.py` | `none` | `source_intake` | xml_catalog.json；项目来源证据 |
 | 【候选资料目录】 `[SOURCE_WORKSPACE]` | `SOURCE_INTAKE` | `common` | `source_workspace.py configure|list|scan|select` | `none_for_discovery_optional_for_later_knowledge_review` | `local_only_unconfirmed_no_implicit_promotion` | 本机 source root 配置；候选资料索引；selected_not_reviewed 选择凭据 |
-| 【策划源空间】 `[PLANNING_SOURCE]` | `SOURCE_INTAKE` | `common` | `planning_source.py configure|status|check|sync|validate|history` | `none_for_source_revision_semantic_review_only_for_new_projection` | `exact_svn_revision_or_embedded_folder_relative_project_binding` | planning_source_release_v2；planning_source_binding_v2；SVN revision/目录 diff；本机同步配置 |
+| 【策划源空间】 `[PLANNING_SOURCE]` | `SOURCE_INTAKE` | `common` | `planning_source.py configure|status|check|sync|validate|history` | `none_for_source_revision_semantic_review_only_for_new_projection` | `exact_svn_revision_or_embedded_folder_relative_project_binding` | planning_source_release_v2；planning_source_binding_v2；Git/SVN revision 或目录 diff；本机同步配置 |
 | 【资料库查询与管理】 `[KNOWLEDGE]` | `KNOWLEDGE` | `common` | `config_knowledge.py register|refresh|bind|resolve|validate|list`<br>`rule_mapping_knowledge_migration.py` | `semantic_contract_during_intake_only` | `immutable_source_versioned_projection_explicit_binding` | 来源快照；资料投影版本；使用契约；项目绑定；knowledge_reference_v1；knowledge_usage_v1 |
 | 【需求判定】 `[REQUIREMENT_INTAKE]` | `REQUIREMENT_INTAKE` | `integration` | `requirement_intake.py` | `none` | `read_only_rule_aware_intake` | requirement_intake_v2 JSON；blocking business decisions |
 | 【开发库只读检查】 `[DEV_SQL_INSPECT]` | `DEV_SQL_INSPECT` | `common` | `dev_sql_inspect.py ping|tables|describe|enum|query|history|migrate-history` | `summarize_local_result_only` | `readonly_bounded_development_inspection` | 本地 query.sql；本地 result.csv；dev_sql_inspection_receipt_v2；dev_sql_inspection_index_v2 |
@@ -69,7 +69,7 @@ This file is generated from `references/capabilities.json`. Edit the registry, t
 - `DEV_SQL_INSPECT`: context=项目阶段及已确认 development_inspection 服务；表或日志；检查字段或只读 SQL；有界日期范围; references=`data-services.md`、`dev-sql-inspection.md`、`operating-contract.md`.
 - `INTERMEDIATE_TABLE`: context=项目；用途；粒度；来源；刷新策略; references=`intermediate-tables.md`.
 - `KNOWLEDGE`: context=目标项目；查询用途或资料管理请求；资料来源或已审核导出规格（仅登记/刷新时）; references=`knowledge-management.md`.
-- `PLANNING_SOURCE`: context=SQL 项目；产品与阶段；本地自管路径或远程托管 SVN URL；明确的管理方式; references=`planning-source.md`、`knowledge-management.md`、`operating-contract.md`.
+- `PLANNING_SOURCE`: context=SQL 项目；产品与阶段；安装时选择的 Git/SVN/local provider 与本地同步路径；明确的管理方式; references=`planning-source.md`、`knowledge-management.md`、`operating-contract.md`.
 - `PROJECT_ADMIN`: context=项目 slug 或项目根目录; references=`setup-onboarding.md`、`data-services.md`、`local-setup.md`、`planning-source.md`、`operating-contract.md`、`project-workflow.md`.
 - `PROJECT_HEALTH`: context=项目根目录; references=`project-workflow.md`.
 - `QUERY`: context=项目；业务问题；用户时间范围或可解析的项目默认窗口；输出粒度/指标，或诊断主体与有界证据范围; references=`project-workflow.md`、`sql-taxonomy.md`、`core-rules.md`、`query-workspace.md`、`execution-routing.md`、`time-integrity.md`、`dialects/<selected-execution-profile>.md`.

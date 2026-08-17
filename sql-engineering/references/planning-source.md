@@ -1,5 +1,23 @@
 # Planning Source Space
 
+## Installation Provider
+
+Public setup chooses the transport before SQL work starts:
+
+- `git`: clone or fast-forward the selected branch into ignored `.local/planning-sources/<id>`;
+- `svn`: checkout or update into the same ignored local area;
+- `local`: use an existing user-managed folder without copying it;
+- `none`: defer planning-source configuration.
+
+Run `setup/scripts/bootstrap_repo.py configure` and `planning-sync`. Git is the baseline repository
+dependency; GitHub, GitLab, self-hosted Git, SSH, and local repositories differ only by configured
+remote URL. Credentials stay in the user's Git/SVN credential mechanism and are never written to
+`setup-config.json`.
+
+The formal `planning_source.py` lifecycle consumes the resulting local folder as a user-managed
+folder source, or may use its native SVN provider for an exact SVN revision. This keeps transport
+configuration separate from immutable planning-release creation.
+
 Use `PLANNING_SOURCE` for product/stage planning and config sources. Keep source control, source
 release, Knowledge version, SQL project, and business rule as separate identities.
 
@@ -9,14 +27,15 @@ Configuration starts with one ownership choice and persists it locally:
 
 | Management mode | Source input | Revision selected when called | Source mutation |
 |---|---|---|---|
-| `user_managed` | Local SVN working copy or non-SVN folder | User-selected local state; exact revision is required only for explicit sync | Never update, compare with remote HEAD, switch, clean, or overwrite the source |
+| `user_managed` | Local SVN working copy, setup-synced Git checkout, or ordinary folder | User-selected local state; exact revision is required only for explicit sync | Never update, compare with remote HEAD, switch, clean, or overwrite the source |
 | `tool_managed` | Canonical SVN URL plus a secure credential reference | Remote revision current at explicit `check`/`sync` | Never create or modify a user working copy |
 
 This contract does not define who invokes the commands or when. Scheduling, deployment, and
 consumer integration remain outside SQL Engineering.
 
-Prefer `svn` when setup receives a valid SVN working copy or canonical SVN URL. Use `folder` only
-for sources that are not version-controlled in SVN.
+Prefer the native `svn` provider when setup receives a valid SVN working copy or canonical SVN
+URL. A Git planning source is synchronized by setup first, then enters the formal lifecycle as a
+local folder snapshot.
 
 | Provider | PSR contents | Source bytes used by Knowledge |
 |---|---|---|

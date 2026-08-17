@@ -5,6 +5,7 @@
 
 ```powershell
 python .\setup\scripts\bootstrap_repo.py demo --root .
+python .\setup\scripts\bootstrap_repo.py configure --root . --planning-provider none
 Copy-Item -Recurse .\setup "$HOME\.codex\skills\setup"
 Copy-Item -Recurse .\sql-engineering "$HOME\.codex\skills\sql-engineering"
 ```

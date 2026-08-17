@@ -1,13 +1,17 @@
 # Public Onboarding
 
-The public edition is self-contained. It does not require GitLab, LDAP, SVN, a DA console, or a
-company database.
+The public edition is self-contained. Git is the baseline dependency; GitHub, GitLab, self-hosted
+Git, and local Git are transport choices. SVN is optional when the planning source uses it. No
+company database or DA console is required for setup.
 
 ## Recommended path
 
 ```powershell
 python .\setup\scripts\bootstrap_repo.py status --root .
 python .\setup\scripts\bootstrap_repo.py sync --root .
+python .\setup\scripts\bootstrap_repo.py configure --root . `
+  --remote https://github.com/thevenomsnake/game-data-analysis-skills.git `
+  --planning-provider none
 python .\setup\scripts\bootstrap_repo.py demo --root .
 Copy-Item -Recurse .\setup "$HOME\.codex\skills\setup"
 Copy-Item -Recurse .\sql-engineering "$HOME\.codex\skills\sql-engineering"
@@ -15,6 +19,23 @@ Copy-Item -Recurse .\sql-engineering "$HOME\.codex\skills\sql-engineering"
 
 Run `sync` only in an empty folder or a clean checkout. Run `demo` whenever you want a fictional
 project scaffold; it preserves an existing project.
+
+The repository remote is always Git, while the hosting service is inferred from the URL and can be
+GitHub, GitLab, a self-hosted service, SSH, or a local repository. Configure the planning source
+separately:
+
+```powershell
+python .\setup\scripts\bootstrap_repo.py configure --root . `
+  --planning-provider git --planning-url <git-url> --planning-branch main
+python .\setup\scripts\bootstrap_repo.py planning-sync --root .
+```
+
+Replace `git` with `svn`, `local`, or `none` as appropriate. The configuration is stored under
+ignored `.local/`; only non-secret provider, URL, branch, and revision metadata is written.
+Passing `--planning-path` selects a user-managed checkout and setup does not mutate it. Passing
+`--planning-url` lets setup maintain its own checkout under `.local/planning-sources/`.
+`configure` also writes `/.local/` to `.git/info/exclude`; this is local Git metadata and does not
+change the downstream repository's tracked `.gitignore`.
 
 ## First SQL exercise
 

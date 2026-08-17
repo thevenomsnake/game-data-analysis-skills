@@ -4,7 +4,7 @@ Game Data Analysis Skills has four public layers:
 
 ```text
 setup
-  -> local repository and fictional project bootstrap
+  -> Git remote, planning-source provider, local checkout, and fictional project bootstrap
 sql-engineering
   -> rules, schemas, templates, workspace, review, validation, and formal assets
 sql-projects

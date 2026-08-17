@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:game-data-analysis-skills:setup-config:v1",
+  "title": "Public Setup Configuration",
+  "type": "object",
+  "required": ["schema_version", "git", "planning_source"],
+  "properties": {
+    "schema_version": { "const": "public_setup_config_v1" },
+    "git": {
+      "type": "object",
+      "required": ["provider", "remote", "branch"],
+      "properties": {
+        "provider": { "enum": ["github", "gitlab", "self_hosted", "local"] },
+        "remote": { "type": "string", "minLength": 1 },
+        "branch": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "planning_source": {
+      "type": "object",
+      "required": ["provider", "checkout"],
+      "properties": {
+        "provider": { "enum": ["none", "git", "svn", "local"] },
+        "remote": { "type": ["string", "null"] },
+        "path": { "type": ["string", "null"] },
+        "branch": { "type": ["string", "null"] },
+        "revision": { "type": ["integer", "null"] },
+        "checkout": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

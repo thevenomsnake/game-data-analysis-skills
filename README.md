@@ -13,6 +13,7 @@ Requirements: Python 3.11+ and Git. No third-party Python dependency is needed f
 ```powershell
 git clone https://github.com/thevenomsnake/game-data-analysis-skills.git
 Set-Location .\game-data-analysis-skills
+python .\setup\scripts\bootstrap_repo.py configure --root . --planning-provider none
 python .\setup\scripts\bootstrap_repo.py demo --root .
 Copy-Item -Recurse .\setup "$HOME\.codex\skills\setup"
 Copy-Item -Recurse .\sql-engineering "$HOME\.codex\skills\sql-engineering"
@@ -52,7 +53,12 @@ python .\setup\scripts\bootstrap_repo.py status --root .
 python .\setup\scripts\bootstrap_repo.py demo --root .
 ```
 
-Setup is local-only. It never requires LDAP, GitLab, a DA console, or a production database.
+Setup never requires a particular Git host, a DA console, or a production database.
+
+Git is the default source-control dependency, not a specific hosting service. Configure any
+GitHub, GitLab, self-hosted, SSH, or local Git remote with `--remote`. Configure planning tables
+independently with `--planning-provider git|svn|local|none`; use `planning-sync` after choosing
+`git` or `svn`. Provider metadata is stored in ignored `.local/setup-config.json`.
 
 ## Development
 

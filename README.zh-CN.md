@@ -12,6 +12,7 @@ Game Data Analysis Skills 是一个面向 Codex 的公开 SQL 工作区。它把
 ```powershell
 git clone https://github.com/thevenomsnake/game-data-analysis-skills.git
 Set-Location .\game-data-analysis-skills
+python .\setup\scripts\bootstrap_repo.py configure --root . --planning-provider none
 python .\setup\scripts\bootstrap_repo.py demo --root .
 Copy-Item -Recurse .\setup "$HOME\.codex\skills\setup"
 Copy-Item -Recurse .\sql-engineering "$HOME\.codex\skills\sql-engineering"
@@ -49,7 +50,12 @@ python .\setup\scripts\bootstrap_repo.py status --root .
 python .\setup\scripts\bootstrap_repo.py demo --root .
 ```
 
-Setup 只在本地工作，不需要 LDAP、GitLab、DA 网页控制台或生产数据库。
+Setup 不绑定特定 Git 托管平台，也不需要 DA 网页控制台或生产数据库。
+
+默认依赖是 Git，而不是某一个托管平台。可以通过 `--remote` 配置 GitHub、GitLab、自建
+Git、SSH 或本地 Git 仓库；策划表单独选择 `--planning-provider git|svn|local|none`，选择
+`git` 或 `svn` 后再运行 `planning-sync`。provider、URL、分支和 revision 等非敏感信息保存在
+被忽略的 `.local/setup-config.json` 中。
 
 ## 开发校验
 
