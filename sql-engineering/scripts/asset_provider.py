@@ -35,6 +35,7 @@ SUPPORTED_CONTRACT_VERSIONS = {
     "asset_group_registry": "sql_asset_group_registry_v2",
     "formal_asset_package": "formal_asset_package_v1",
     "asset_provider_snapshot": SCHEMA_VERSION,
+    "provider_consumer_attach": "provider_consumer_attach_v1",
 }
 
 
@@ -194,6 +195,10 @@ def _contract_files(repo_root: Path) -> list[tuple[Path, str]]:
         (repo_root / "sql-engineering" / "schemas" / "formal_asset_package.json", "contract_schema"),
         (repo_root / "sql-engineering" / "schemas" / "asset_provider_snapshot.json", "contract_schema"),
         (repo_root / "sql-engineering" / "schemas" / "asset_provider_manifest.json", "contract_schema"),
+        (
+            repo_root / "sql-engineering" / "schemas" / "provider_consumer_attach_contract.json",
+            "consumer_contract",
+        ),
         (repo_root / "docs" / "READONLY_ASSET_CONSUMER_GUIDE.md", "consumer_contract"),
     ]
 
@@ -301,6 +306,7 @@ def build_snapshot(
             "organization": "sql-projects/_asset_catalog/asset_organization.json",
             "group_registry": "sql-projects/_asset_catalog/asset_group_registry.json",
             "formal_packages": "sql-projects/<PROJECT>/formal_assets/<PACKAGE>/manifest.json",
+            "consumer_contract": "sql-engineering/schemas/provider_consumer_attach_contract.json",
         },
         "forbidden_local_surfaces": sorted(FORBIDDEN_PARTS),
     }

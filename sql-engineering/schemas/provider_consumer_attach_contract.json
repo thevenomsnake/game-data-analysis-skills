@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "provider_consumer_attach_contract_v1",
+  "title": "Provider Consumer Attach Contract v1",
+  "description": "The additive, read-only contract a consumer uses to attach to a published Provider Snapshot.",
+  "type": "object",
+  "required": [
+    "contract_version",
+    "provider_lock",
+    "entrypoints",
+    "access_policy",
+    "source_reference",
+    "drift_policy"
+  ],
+  "properties": {
+    "contract_version": { "const": "provider_consumer_attach_v1" },
+    "provider_lock": { "$ref": "#/$defs/provider_lock" },
+    "entrypoints": { "$ref": "#/$defs/entrypoints" },
+    "access_policy": { "$ref": "#/$defs/access_policy" },
+    "source_reference": { "$ref": "#/$defs/source_reference" },
+    "drift_policy": { "$ref": "#/$defs/drift_policy" }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{7,64}$"
+    },
+    "relative_path": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?![A-Za-z]:)(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*(?:^|/)(?:query_workspace|credentials|cache|\\.local|\\.tmp)(?:/|$))(?!.*(?:^|/)(?:promotion_ledger\\.json|unregistered_inventory\\.json)(?:/|$)).+"
+    },
+    "provider_lock": {
+      "type": "object",
+      "required": ["provider_id", "source_commit", "snapshot_digest", "contract_version"],
+      "properties": {
+        "provider_id": { "type": "string", "minLength": 3, "pattern": "^[^\\\\/]+/.+" },
+        "source_commit": { "$ref": "#/$defs/commit" },
+        "snapshot_digest": { "$ref": "#/$defs/sha256" },
+        "contract_version": { "const": "provider_consumer_attach_v1" }
+      },
+      "additionalProperties": false
+    },
+    "entrypoints": {
+      "type": "object",
+      "required": ["manifest", "snapshot", "catalog"],
+      "properties": {
+        "manifest": { "$ref": "#/$defs/relative_path" },
+        "snapshot": { "$ref": "#/$defs/relative_path" },
+        "catalog": { "$ref": "#/$defs/relative_path" },
+        "organization": { "$ref": "#/$defs/relative_path" },
+        "group_registry": { "$ref": "#/$defs/relative_path" },
+        "contract": { "$ref": "#/$defs/relative_path" }
+      },
+      "additionalProperties": false
+    },
+    "access_policy": {
+      "type": "object",
+      "required": [
+        "access_mode",
+        "workspace_access",
+        "absolute_paths",
+        "receipt_access",
+        "git_operations",
+        "provider_refresh",
+        "write_back",
+        "file_hash"
+      ],
+      "properties": {
+        "access_mode": { "const": "read_only" },
+        "workspace_access": { "const": "forbidden" },
+        "absolute_paths": { "const": "forbidden" },
+        "receipt_access": { "const": "not_required" },
+        "git_operations": { "const": "forbidden" },
+        "provider_refresh": { "const": "forbidden" },
+        "write_back": { "const": "forbidden" },
+        "file_hash": { "const": "on_demand" }
+      },
+      "additionalProperties": false
+    },
+    "source_reference": {
+      "type": "object",
+      "required": [
+        "provider_id",
+        "source_commit",
+        "snapshot_digest",
+        "project_id",
+        "asset_id",
+        "package_id",
+        "member_path",
+        "fingerprint"
+      ],
+      "properties": {
+        "provider_id": { "type": "string", "minLength": 3 },
+        "source_commit": { "$ref": "#/$defs/commit" },
+        "snapshot_digest": { "$ref": "#/$defs/sha256" },
+        "project_id": { "type": "string", "minLength": 1 },
+        "asset_id": { "type": "string", "minLength": 1 },
+        "package_id": { "type": "string", "pattern": "^FA-[0-9]{4,}$" },
+        "member_path": { "$ref": "#/$defs/relative_path" },
+        "fingerprint": { "$ref": "#/$defs/sha256" }
+      },
+      "additionalProperties": false
+    },
+    "drift_policy": {
+      "type": "object",
+      "required": ["attach", "member_file"],
+      "properties": {
+        "attach": { "const": "identity_digest_entrypoints_path_policy" },
+        "member_file": { "const": "non_blocking_on_attach" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

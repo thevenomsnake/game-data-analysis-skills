@@ -62,7 +62,7 @@ GitHub 的直接建议是：README 只包含开发者开始使用和参与项目
 
 成功时应看到：...
 
-[其他环境](docs/installation.md) · [故障排查](docs/troubleshooting.md)
+其他环境：docs/installation.md · 故障排查：docs/troubleshooting.md
 ```
 
 ## 快速开始怎么写

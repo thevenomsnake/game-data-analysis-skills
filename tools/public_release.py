@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 
 
-TEXT_SUFFIXES = {".md", ".py", ".json", ".yaml", ".yml", ".toml", ".txt", ".sql", ".ps1", ".cmd"}
+TEXT_SUFFIXES = {".md", ".py", ".js", ".json", ".yaml", ".yml", ".toml", ".txt", ".sql", ".ps1", ".cmd"}
 ALLOWED_ROOT_FILES = {"README.md", "README.zh-CN.md", "README.zh-TW.md", "README.ja.md", "README.ko.md", "README.es.md", "LICENSE", "CONTRIBUTING.md", "SECURITY.md", ".gitignore"}
 FORBIDDEN_TOP_LEVEL = {"betterxml", "knowledge-base", "planning-sources", "outputs", "work"}
 FORBIDDEN_SUFFIXES = {".xlsx", ".xls", ".parquet", ".db", ".sqlite", ".pem", ".key", ".xml", ".csv", ".tsv"}
