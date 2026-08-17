@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Reviewed Static Knowledge Import Contract",
+  "type": "object",
+  "required": ["schema_version", "status", "source_kind", "source_file", "projections"],
+  "properties": {
+    "schema_version": { "const": "knowledge_static_import_v1" },
+    "status": { "const": "active" },
+    "source_kind": { "enum": ["manual_mapping", "external_reference"] },
+    "source_file": { "type": "string", "minLength": 1 },
+    "projections": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["projection_id", "source_file"],
+        "properties": {
+          "projection_id": { "type": "string", "pattern": "^[a-z][a-z0-9_-]{1,79}$" },
+          "source_file": { "type": "string", "minLength": 1 },
+          "note": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "extractor": {
+      "type": "object",
+      "required": ["extractor_id", "projection_id", "class_name", "value_field", "name_field", "expected_row_count"],
+      "properties": {
+        "extractor_id": { "const": "csharp_const_int_v1" },
+        "projection_id": { "type": "string", "pattern": "^[a-z][a-z0-9_-]{1,79}$" },
+        "class_name": { "type": "string", "pattern": "^[A-Za-z_][A-Za-z0-9_]*$" },
+        "value_field": { "type": "string", "pattern": "^[a-z][a-z0-9_-]{1,79}$" },
+        "name_field": { "type": "string", "pattern": "^[a-z][a-z0-9_-]{1,79}$" },
+        "expected_row_count": { "type": "integer", "minimum": 1 },
+        "require_contiguous_values": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "provenance": { "type": "object" }
+  },
+  "additionalProperties": false
+}

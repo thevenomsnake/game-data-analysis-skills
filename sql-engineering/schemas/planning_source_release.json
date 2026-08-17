@@ -1,0 +1,135 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Immutable Planning Source Release",
+  "type": "object",
+  "required": [
+    "contract_version",
+    "release_id",
+    "product_id",
+    "stage_id",
+    "state",
+    "tree_sha256",
+    "file_count",
+    "total_bytes",
+    "files_manifest",
+    "diff_manifest",
+    "sealed_at",
+    "generation_provenance"
+  ],
+  "properties": {
+    "contract_version": {
+      "enum": ["planning_source_release_v1", "planning_source_release_v2"]
+    },
+    "release_id": {
+      "type": "string",
+      "pattern": "^PSR-[A-Z0-9][A-Z0-9_-]{0,31}-[A-Z0-9][A-Z0-9_-]{0,31}-[0-9]{4}$"
+    },
+    "product_id": {
+      "type": "string",
+      "pattern": "^[A-Z0-9][A-Z0-9_-]{0,31}$"
+    },
+    "stage_id": {
+      "type": "string",
+      "pattern": "^[A-Z0-9][A-Z0-9_-]{0,31}$"
+    },
+    "state": { "const": "sealed" },
+    "source_kind": {
+      "enum": ["folder_snapshot", "svn_revision"]
+    },
+    "source_control": {
+      "type": "object",
+      "required": [
+        "contract_version",
+        "provider",
+        "repository_uuid",
+        "repository_root",
+        "source_url",
+        "revision",
+        "repository_revision",
+        "externals_policy",
+        "materialization"
+      ],
+      "properties": {
+        "contract_version": {
+          "enum": ["svn_source_revision_v1", "svn_source_revision_v2"]
+        },
+        "provider": { "const": "svn" },
+        "repository_uuid": { "type": "string", "minLength": 1 },
+        "repository_root": { "type": "string", "pattern": "^(svn|https?)://" },
+        "source_url": { "type": "string", "pattern": "^(svn|https?)://" },
+        "revision": { "type": "integer", "minimum": 1 },
+        "repository_revision": { "type": "integer", "minimum": 1 },
+        "revision_selection": {
+          "enum": ["working_copy_pinned", "remote_latest"]
+        },
+        "last_changed_author": { "type": "string" },
+        "last_changed_at": { "type": "string" },
+        "externals_policy": { "const": "forbidden" },
+        "materialization": { "const": "on_demand_verified" }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "contract_version": { "const": "svn_source_revision_v2" }
+            }
+          },
+          "then": {
+            "required": ["revision_selection"]
+          }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "previous_release_id": { "type": "string" },
+    "tree_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "file_count": { "type": "integer", "minimum": 0 },
+    "total_bytes": { "type": "integer", "minimum": 0 },
+    "files_root": { "const": "files" },
+    "files_manifest": { "const": "files.json" },
+    "diff_manifest": { "const": "diff.json" },
+    "release_manifest": { "type": "string", "pattern": "^planning-sources/" },
+    "source_policy": { "type": "object" },
+    "sealed_at": { "type": "string" },
+    "generation_provenance": { "type": "object" },
+    "audit": { "type": "object" }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "contract_version": { "const": "planning_source_release_v1" }
+        }
+      },
+      "then": {
+        "required": ["files_root"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "contract_version": { "const": "planning_source_release_v2" }
+        }
+      },
+      "then": {
+        "required": ["source_kind"],
+        "oneOf": [
+          {
+            "properties": {
+              "source_kind": { "const": "folder_snapshot" }
+            },
+            "required": ["files_root"]
+          },
+          {
+            "properties": {
+              "source_kind": { "const": "svn_revision" }
+            },
+            "required": ["source_control"],
+            "not": { "required": ["files_root"] }
+          }
+        ]
+      }
+    }
+  ],
+  "additionalProperties": false
+}

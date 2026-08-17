@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Knowledge Dataset Catalog",
+  "type": "object",
+  "required": ["schema_version", "updated_at", "generation_provenance", "datasets"],
+  "properties": {
+    "schema_version": { "const": "knowledge_catalog_v1" },
+    "updated_at": { "type": "string" },
+    "generation_provenance": {
+      "type": "object",
+      "required": ["schema_version", "skill_name", "skill_version", "artifact_kind", "workflow", "generated_by_script", "generated_at"]
+    },
+    "datasets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["dataset_id", "display_name", "contract_path", "latest_version", "versions"]
+      }
+    }
+  },
+  "additionalProperties": false
+}

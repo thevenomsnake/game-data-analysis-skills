@@ -83,7 +83,7 @@ Optional project context and execution routing:
 {
   "context_paths": [
     "context/schema.md",
-    "context/platform-manual.md"
+    "context/platfoexample-manual.md"
   ],
   "execution": {
     "default_environment": "development",

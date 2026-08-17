@@ -1,0 +1,410 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SQL Project Config",
+  "type": "object",
+  "required": [
+    "version",
+    "project_id",
+    "display_name",
+    "sql_dialect",
+    "query_engine",
+    "query_environment",
+    "dashboard_application",
+    "data_services_file",
+    "table_naming_profile",
+    "partition_policy",
+    "table_overrides",
+    "generation_contract"
+  ],
+  "properties": {
+    "version": { "type": "integer" },
+    "project_id": { "type": "string" },
+    "business_scope": { "$ref": "#/$defs/business_scope" },
+    "subject_identity_policy": { "$ref": "#/$defs/subject_identity_policy" },
+    "display_name": { "type": "string" },
+    "sql_dialect": { "enum": ["Hive", "StarRocks", "missing"] },
+    "query_engine": { "type": "string" },
+    "query_environment": {
+      "type": "object",
+      "required": ["name", "status"],
+      "properties": {
+        "name": { "type": "string" },
+        "status": { "enum": ["configured", "missing"] },
+        "notes": { "type": "string" }
+      }
+    },
+    "dashboard_application": {
+      "type": "object",
+      "required": ["name", "status"],
+      "properties": {
+        "name": { "type": "string" },
+        "status": { "enum": ["configured", "missing"] },
+        "notes": { "type": "string" }
+      }
+    },
+    "data_services_file": { "const": "data_services.json" },
+    "table_naming_profile": {
+      "type": "object",
+      "required": ["name", "status"],
+      "properties": {
+        "name": { "enum": ["demo_abtest_hive", "demo_hive", "demo_starrocks", "missing"] },
+        "status": { "enum": ["configured", "missing"] },
+        "dialect": { "enum": ["Hive", "StarRocks"] },
+        "database": { "type": "string" },
+        "pattern": { "type": "string" },
+        "description": { "type": "string" }
+      }
+    },
+    "partition_policy": {
+      "type": "object",
+      "required": ["name", "required_for_tlog", "strict_generation"],
+      "properties": {
+        "name": { "type": "string" },
+        "required_for_tlog": { "type": "boolean" },
+        "partition_field": { "type": "string" },
+        "partition_format": { "type": "string" },
+        "partition_bounds": { "enum": ["inclusive", "half_open"] },
+        "whole_day_filter_mode": { "enum": ["partition_only", "partition_and_business_time"] },
+        "business_time_field": { "type": "string" },
+        "business_time_required": { "type": "boolean" },
+        "business_time_required_when": { "enum": ["always", "detailed_time_logic", "never"] },
+        "detail_time_bounds": { "enum": ["inclusive", "half_open"] },
+        "strict_generation": { "const": true },
+        "requires_schema_confirmation": { "type": "boolean" }
+      }
+    },
+    "identifier_policy": { "$ref": "#/$defs/identifier_policy" },
+    "time_integrity_policy": { "$ref": "#/$defs/time_integrity_policy" },
+    "default_query_window": {
+      "type": "object",
+      "required": ["mode", "project_start_date", "timezone_offset", "materialization"],
+      "properties": {
+        "mode": { "enum": ["project_start_to_yesterday", "missing"] },
+        "project_start_date": { "type": "string" },
+        "timezone_offset": {
+          "type": "string",
+          "pattern": "^[+-](?:0\\d|1[0-4]):[0-5]\\d$"
+        },
+        "materialization": { "const": "fixed_literals" }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "mode": { "const": "project_start_to_yesterday" } },
+            "required": ["mode"]
+          },
+          "then": {
+            "properties": {
+              "project_start_date": { "pattern": "^\\d{4}-\\d{2}-\\d{2}$" }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "mode": { "const": "missing" } },
+            "required": ["mode"]
+          },
+          "then": {
+            "properties": { "project_start_date": { "const": "" } }
+          }
+        }
+      ]
+    },
+    "execution_adapters": {
+      "type": "object",
+      "required": [
+        "contract_version",
+        "default_profile",
+        "project_table_prefix",
+        "routing_policy",
+        "profiles",
+        "passthrough_tables"
+      ],
+      "properties": {
+        "contract_version": { "const": "execution_adapters_v2" },
+        "default_profile": { "type": "string", "minLength": 1 },
+        "project_table_prefix": { "type": "string", "minLength": 1 },
+        "volume_reference": { "type": "string" },
+        "routing_policy": {
+          "type": "object",
+          "required": [
+            "primary_signal",
+            "minimum_structural_score_to_stable",
+            "score_to_stable",
+            "density_multipliers",
+            "date_amplifier"
+          ],
+          "properties": {
+            "primary_signal": { "const": "structural_complexity_x_data_amplification" },
+            "minimum_structural_score_to_stable": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "score_to_stable": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "density_multipliers": {
+              "type": "object",
+              "required": ["extreme", "high", "medium", "low", "unknown"],
+              "properties": {
+                "extreme": { "type": "number", "exclusiveMinimum": 0 },
+                "high": { "type": "number", "exclusiveMinimum": 0 },
+                "medium": { "type": "number", "exclusiveMinimum": 0 },
+                "low": { "type": "number", "exclusiveMinimum": 0 },
+                "unknown": { "type": "number", "exclusiveMinimum": 0 }
+              },
+              "additionalProperties": false
+            },
+            "date_amplifier": {
+              "type": "object",
+              "required": ["base_days", "exponent", "max_multiplier"],
+              "properties": {
+                "base_days": { "type": "integer", "minimum": 1 },
+                "exponent": { "type": "number", "exclusiveMinimum": 0 },
+                "max_multiplier": { "type": "number", "minimum": 1 }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        "passthrough_tables": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "profiles": {
+          "type": "object",
+          "minProperties": 2,
+          "additionalProperties": {
+            "type": "object",
+            "required": [
+              "routing_role",
+              "sql_dialect",
+              "query_engine",
+              "query_environment",
+              "database",
+              "table_pattern",
+              "partition_policy"
+            ],
+            "properties": {
+              "routing_role": { "enum": ["fast", "stable"] },
+              "sql_dialect": { "enum": ["Hive", "StarRocks"] },
+              "query_engine": { "type": "string" },
+              "query_environment": { "type": "object" },
+              "database": { "type": "string" },
+              "table_pattern": { "type": "string" },
+              "table_profile_name": { "type": "string" },
+              "description": { "type": "string" },
+              "partition_policy": { "$ref": "#/properties/partition_policy" },
+              "identifier_policy": { "$ref": "#/$defs/identifier_policy" },
+              "time_integrity_policy": { "$ref": "#/$defs/time_integrity_policy" }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "table_overrides": {
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    },
+    "generation_contract": {
+      "type": "object",
+      "required": [
+        "strict_dialect_rules",
+        "require_query_environment_for_query",
+        "require_dashboard_application_for_dashboard",
+        "block_formal_sql_when_config_missing"
+      ],
+      "properties": {
+        "strict_dialect_rules": { "const": true },
+        "require_query_environment_for_query": { "const": true },
+        "require_dashboard_application_for_dashboard": { "const": true },
+        "block_formal_sql_when_config_missing": { "const": true }
+      }
+    },
+    "updated_at": { "type": "string" }
+  },
+  "$defs": {
+    "identifier_policy": {
+      "type": "object",
+      "required": ["quote_style", "case_sensitive_fields"],
+      "properties": {
+        "quote_style": { "const": "backtick" },
+        "case_sensitive_fields": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      },
+      "additionalProperties": false
+    },
+    "time_integrity_policy": {
+      "type": "object",
+      "required": [
+        "contract_version",
+        "mode",
+        "calendar",
+        "date_field",
+        "time_field",
+        "date_match",
+        "mismatch_action",
+        "timezone_offset"
+      ],
+      "properties": {
+        "contract_version": { "const": "time_integrity_policy_v1" },
+        "mode": {
+          "enum": [
+            "disabled",
+            "report_only",
+            "optional",
+            "required_when_today",
+            "required_when_event_time_or_today",
+            "always"
+          ]
+        },
+        "calendar": { "const": "gregorian" },
+        "date_field": { "type": "string" },
+        "time_field": { "type": "string" },
+        "date_match": { "const": "same_local_date" },
+        "mismatch_action": { "const": "exclude" },
+        "timezone_offset": {
+          "type": "string",
+          "pattern": "^[+-](?:0\\d|1[0-4]):[0-5]\\d$"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "mode": {
+                "enum": ["optional", "required_when_today", "required_when_event_time_or_today", "always"]
+              }
+            },
+            "required": ["mode"]
+          },
+          "then": {
+            "properties": {
+              "date_field": { "minLength": 1 },
+              "time_field": { "minLength": 1 }
+            }
+          }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "business_scope": {
+      "type": "object",
+      "required": ["contract_version", "default_zone", "zone_identifier"],
+      "properties": {
+        "contract_version": { "const": "project_business_scope_v1" },
+        "default_zone": {
+          "type": "object",
+          "required": ["field", "value", "parameter_alias", "required_when_available"],
+          "properties": {
+            "field": { "const": "iZoneAreaID" },
+            "value": { "type": "integer" },
+            "parameter_alias": { "type": "string", "minLength": 1 },
+            "required_when_available": { "type": "boolean" }
+          },
+          "additionalProperties": false
+        },
+        "zone_identifier": {
+          "type": "object",
+          "required": ["business_field", "non_equivalent_fields"],
+          "properties": {
+            "business_field": { "const": "iZoneAreaID" },
+            "non_equivalent_fields": {
+              "type": "array",
+              "items": { "type": "string", "minLength": 1 },
+              "minItems": 1,
+              "uniqueItems": true
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "subject_identity_policy": {
+      "type": "object",
+      "required": [
+        "contract_version",
+        "business_subject",
+        "default_key",
+        "key_definitions",
+        "namespace_relationship",
+        "native_role_fields",
+        "selection_policy"
+      ],
+      "properties": {
+        "contract_version": { "const": "subject_identity_policy_v1" },
+        "business_subject": { "const": "player" },
+        "default_key": { "type": "string", "minLength": 1 },
+        "key_definitions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["key", "namespace", "unique_per_person", "uniqueness_scope"],
+            "properties": {
+              "key": { "type": "string", "minLength": 1 },
+              "namespace": { "type": "string", "minLength": 1 },
+              "unique_per_person": { "const": true },
+              "uniqueness_scope": { "type": "string", "minLength": 1 }
+            },
+            "additionalProperties": false
+          }
+        },
+        "namespace_relationship": {
+          "type": "object",
+          "required": ["relation", "direct_comparison_allowed", "coalesce_allowed"],
+          "properties": {
+            "relation": { "const": "same_person_distinct_namespaces" },
+            "direct_comparison_allowed": { "const": false },
+            "coalesce_allowed": { "const": false }
+          },
+          "additionalProperties": false
+        },
+        "native_role_fields": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["role", "field", "key", "canonical_alias", "metric_terms"],
+            "properties": {
+              "role": { "type": "string", "minLength": 1 },
+              "field": { "type": "string", "minLength": 1 },
+              "key": { "type": "string", "minLength": 1 },
+              "canonical_alias": { "type": "string", "minLength": 1 },
+              "metric_terms": {
+                "type": "array",
+                "items": { "type": "string", "minLength": 1 },
+                "uniqueItems": true
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "selection_policy": {
+          "type": "object",
+          "required": [
+            "prefer_default_when_equal_cost",
+            "prefer_native_role_when_avoids_bridge",
+            "forbid_bridge_only_for_default_key"
+          ],
+          "properties": {
+            "prefer_default_when_equal_cost": { "type": "boolean" },
+            "prefer_native_role_when_avoids_bridge": { "type": "boolean" },
+            "forbid_bridge_only_for_default_key": { "type": "boolean" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

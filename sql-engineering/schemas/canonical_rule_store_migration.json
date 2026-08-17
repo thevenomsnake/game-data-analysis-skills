@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Canonical Rule Store Migration Receipt",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "status",
+    "project_id",
+    "source",
+    "target",
+    "record_mappings",
+    "current_selection",
+    "anomalies",
+    "validation"
+  ],
+  "properties": {
+    "schema_version": { "const": "canonical_rule_store_migration_v2" },
+    "status": { "const": "verified" },
+    "project_id": { "type": "string", "minLength": 1 },
+    "source": { "type": "object" },
+    "target": { "type": "object" },
+    "record_mappings": { "type": "array", "items": { "type": "object" } },
+    "current_selection": { "type": "object" },
+    "anomalies": { "type": "object" },
+    "validation": { "type": "object" }
+  },
+  "additionalProperties": false
+}

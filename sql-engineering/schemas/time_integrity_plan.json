@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SQL Time Integrity Plan",
+  "type": "object",
+  "required": [
+    "contract_version",
+    "policy_fingerprint",
+    "mode",
+    "policy",
+    "window",
+    "uses_time_field",
+    "apply_match_filter",
+    "actual_range_required",
+    "actual_range_runtime_conditional",
+    "actual_range_output",
+    "source_aliases",
+    "filter_expression"
+  ],
+  "properties": {
+    "contract_version": { "const": "time_integrity_policy_v1" },
+    "policy_fingerprint": { "type": "string", "pattern": "^[0-9a-f]{16}$" },
+    "mode": {
+      "enum": [
+        "disabled",
+        "report_only",
+        "optional",
+        "required_when_today",
+        "required_when_event_time_or_today",
+        "always"
+      ]
+    },
+    "policy": {
+      "type": "object",
+      "required": ["calendar", "date_field", "time_field", "date_match", "mismatch_action"],
+      "properties": {
+        "calendar": { "const": "gregorian" },
+        "date_field": { "type": "string" },
+        "time_field": { "type": "string" },
+        "date_match": { "const": "same_local_date" },
+        "mismatch_action": { "const": "exclude" }
+      },
+      "additionalProperties": false
+    },
+    "window": { "$ref": "#/$defs/window" },
+    "uses_time_field": { "type": "boolean" },
+    "apply_match_filter": { "type": "boolean" },
+    "actual_range_required": { "type": "boolean" },
+    "actual_range_runtime_conditional": { "type": "boolean" },
+    "actual_range_output": {
+      "type": "object",
+      "required": ["status", "basis", "fields", "rejected_fields"],
+      "properties": {
+        "status": { "enum": ["not_required", "observable", "missing", "unresolved"] },
+        "basis": { "type": "string", "minLength": 1 },
+        "fields": { "type": "array", "items": { "type": "object" } },
+        "rejected_fields": { "type": "array", "items": { "type": "object" } }
+      },
+      "additionalProperties": false
+    },
+    "source_aliases": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "filter_expression": { "enum": ["", "same_local_date"] }
+  },
+  "$defs": {
+    "window": {
+      "type": "object",
+      "required": [
+        "start_date",
+        "end_date",
+        "comparison_precision",
+        "comparison_start",
+        "comparison_end",
+        "comparison_start_operator",
+        "comparison_end_operator",
+        "comparison_field",
+        "basis",
+        "dynamic",
+        "today_included",
+        "as_of_date",
+        "timezone_offset"
+      ],
+      "properties": {
+        "start_date": { "type": "string" },
+        "end_date": { "type": "string" },
+        "comparison_precision": { "enum": ["date", "datetime", "unknown"] },
+        "comparison_start": { "type": "string" },
+        "comparison_end": { "type": "string" },
+        "comparison_start_operator": { "enum": ["", ">", ">="] },
+        "comparison_end_operator": { "enum": ["", "<", "<="] },
+        "comparison_field": { "type": "string" },
+        "basis": { "type": "string", "minLength": 1 },
+        "dynamic": { "type": "boolean" },
+        "today_included": { "type": ["boolean", "null"] },
+        "as_of_date": { "type": "string" },
+        "timezone_offset": { "type": "string", "pattern": "^[+-][0-9]{2}:[0-9]{2}$" }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

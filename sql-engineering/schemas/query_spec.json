@@ -1,0 +1,704 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SQL Query Spec",
+  "type": "object",
+  "required": [
+    "spec_meta",
+    "dialect_profile",
+    "project_context",
+    "performance_level",
+    "query_intent",
+    "parameters",
+    "data_sources",
+    "query_logic",
+    "output_fields",
+    "query_output_contract",
+    "quality_gate"
+  ],
+  "properties": {
+    "spec_meta": {
+      "type": "object",
+      "required": [
+        "spec_version",
+        "lifecycle_stage",
+        "sql_type",
+        "target_engine"
+      ]
+    },
+    "dialect_profile": {
+      "type": "object",
+      "required": [
+        "current_dialect",
+        "status"
+      ],
+      "properties": {
+        "current_dialect": {
+          "enum": [
+            "Hive",
+            "StarRocks"
+          ]
+        },
+        "status": {
+          "const": "enabled"
+        }
+      }
+    },
+    "project_context": {
+      "type": "object",
+      "required": [
+        "project_id",
+        "display_name",
+        "query_engine",
+        "query_environment",
+        "table_naming_profile"
+      ],
+      "properties": {
+        "project_id": {
+          "type": "string"
+        },
+        "display_name": {
+          "type": "string"
+        },
+        "query_engine": {
+          "type": "string"
+        },
+        "query_environment": {
+          "type": "string"
+        },
+        "dashboard_application": {
+          "type": "string"
+        },
+        "table_naming_profile": {
+          "type": "string"
+        },
+        "table_resolution_rule": {
+          "type": "string"
+        }
+      }
+    },
+    "canonical_rule_context": {
+      "type": "object",
+      "properties": {
+        "rule_context_command": {
+          "type": "string"
+        },
+        "request_envelope": { "$ref": "request_envelope.json" },
+        "rule_application": { "$ref": "rule_application.json" },
+        "intent_frame": {
+          "type": "object",
+          "properties": {
+            "domains": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "source_logs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "source_fields": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "metric_families": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "grain": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": true
+        },
+        "applied_rules": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "active_rules": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "hard_constraints": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "rejected_rules_summary": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "candidate_sql_check": {
+          "type": "object"
+        },
+        "inherited_rules": { "type": "array", "items": { "type": "object" } },
+        "excluded_rules": { "type": "array", "items": { "type": "object" } },
+        "project_contract_check": {
+          "type": "object"
+        },
+        "generation_gate": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    },
+    "execution_route": { "$ref": "execution_route_result.json" },
+    "knowledge_references": {
+      "type": "array",
+      "description": "Exact project-bound reference datasets used to author, filter, map, or enrich this SQL artifact.",
+      "items": { "$ref": "knowledge_reference.json" }
+    },
+    "knowledge_usage": { "$ref": "knowledge_usage.json" },
+    "performance_level": {
+      "type": "object",
+      "required": [
+        "grade",
+        "judgement",
+        "optimization_tier",
+        "preflight_score",
+        "preflight_triggers",
+        "optimization_reference",
+        "full_guide_required",
+        "equivalence_preserved",
+        "scan_partition_days",
+        "log_table_count"
+      ],
+      "properties": {
+        "optimization_tier": {
+          "enum": [
+            "L0_perf_lite",
+            "L1_perf_standard",
+            "L2_perf_deep",
+            "L3_perf_blocking"
+          ]
+        },
+        "preflight_score": {
+          "type": [
+            "integer",
+            "number"
+          ]
+        },
+        "preflight_triggers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "optimization_reference": {
+          "type": "string"
+        },
+        "full_guide_required": {
+          "type": "boolean"
+        },
+        "equivalence_preserved": {
+          "type": "boolean"
+        },
+        "performance_fingerprint": {
+          "type": "string"
+        }
+      }
+    },
+    "query_intent": {
+      "type": "object",
+      "required": [
+        "title",
+        "description",
+        "query_type",
+        "result_mode",
+        "default_usage"
+      ]
+    },
+    "parameters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "type",
+          "required",
+          "sql_usage"
+        ]
+      }
+    },
+    "data_sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "table",
+          "table_type",
+          "required_fields"
+        ]
+      }
+    },
+    "intermediate_tables": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "table",
+          "registry_status",
+          "purpose",
+          "grain"
+        ],
+        "properties": {
+          "table": {
+            "type": "string"
+          },
+          "registry_status": {
+            "type": "string"
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "grain": {
+            "type": "string"
+          },
+          "availability_status": {
+            "enum": [
+              "unknown",
+              "available",
+              "unavailable"
+            ]
+          },
+          "source_contract_mode": {
+            "enum": [
+              "dual_path",
+              "intermediate_preferred",
+              "intermediate_only",
+              "raw_logs_only"
+            ]
+          },
+          "fallback_policy": {
+            "type": "string"
+          },
+          "fallback_source_tables": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "fallback_sql_reference": {
+            "type": "string"
+          },
+          "canonical_rule_refs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "xml_source_refs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "field_contract": {
+            "type": "string"
+          },
+          "grain_contract": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "query_logic": {
+      "type": "object",
+      "required": [
+        "business_context",
+        "business_rules",
+        "metric_definitions",
+        "filter_rules",
+        "exclusion_rules",
+        "time_range",
+        "partition_range",
+        "calculation_path",
+        "assumptions",
+        "conflict_notes"
+      ]
+    },
+    "output_fields": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "field",
+          "label",
+          "source",
+          "privacy"
+        ]
+      }
+    },
+    "query_output_contract": {
+      "type": "object",
+      "required": [
+        "one_row_means",
+        "output_grain",
+        "expected_fields",
+        "forbidden_fields"
+      ]
+    },
+    "result_time_coverage": { "$ref": "result_time_coverage.json" },
+    "repository_summary": {
+      "type": "object",
+      "description": "Compact product-facing summary used by the formal SQL repository viewer. Repository HTML reads this sidecar field and never ingests raw review batches.",
+      "required": [
+        "display_title",
+        "business_topic",
+        "purpose",
+        "business_question",
+        "base_population",
+        "grain",
+        "metrics",
+        "metric_groups",
+        "dimensions",
+        "filters",
+        "source_logs",
+        "logic_summary",
+        "applied_criteria",
+        "canonical_rule_status",
+        "canonical_rule_checks",
+        "result_evidence"
+      ],
+      "properties": {
+        "display_title": {
+          "type": "string"
+        },
+        "business_topic": {
+          "type": "string"
+        },
+        "purpose": {
+          "type": "string"
+        },
+        "business_question": {
+          "type": "string"
+        },
+        "base_population": {
+          "type": "string"
+        },
+        "grain": {
+          "type": "string"
+        },
+        "metrics": {
+          "type": "array"
+        },
+        "metric_groups": {
+          "type": "array",
+          "description": "Human-facing grouped metrics that share the same base, dimensions, filters, and dedup/aggregation logic.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "metrics": {
+                "type": "array"
+              },
+              "shared_dedup_key": {
+                "type": "string"
+              },
+              "shared_dimensions": {
+                "type": "array"
+              },
+              "shared_filters": {
+                "type": "array",
+                "description": "Core business filters shown in the main repository metric card."
+              },
+              "quality_filters": {
+                "type": "array",
+                "description": "Technical null/parser/data-quality guards folded by default."
+              },
+              "metric_notes": {
+                "type": "array"
+              },
+              "ratio_notes": {
+                "type": "array"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "dimensions": {
+          "type": "array"
+        },
+        "filters": {
+          "type": "array"
+        },
+        "source_logs": {
+          "type": "array",
+          "description": "XML-resolved original log names only, formatted as LogName【Chinese description】.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "external_sources": {
+          "type": "array",
+          "description": "Non-XML authoritative or partner-provided physical sources used by this SQL, such as DA platform tables.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source_type": { "type": "string" },
+              "table": { "type": "string" },
+              "business_role": { "type": "string" },
+              "availability_status": { "type": "string" },
+              "date_field": { "type": "string" },
+              "default_filter": { "type": "string" }
+            },
+            "additionalProperties": true
+          }
+        },
+        "logic_summary": {
+          "type": "array"
+        },
+        "applied_criteria": {
+          "type": "array",
+          "description": "Actual criteria used by this SQL, each marked as matched/conflict/needs_manual_check/unique against saved project rules.",
+          "items": {
+            "type": "object",
+            "required": [
+              "category",
+              "name",
+              "saved_rule_status"
+            ],
+            "properties": {
+              "category": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "saved_rule_status": {
+                "type": "string",
+                "enum": [
+                  "matched",
+                  "conflict",
+                  "needs_manual_check",
+                  "unique"
+                ]
+              },
+              "rule_id": {
+                "type": "string"
+              },
+              "concept_key": {
+                "type": "string"
+              },
+              "rule_title": {
+                "type": "string"
+              },
+              "rule_summary": {
+                "type": "string"
+              },
+              "full_rule": {
+                "type": "string"
+              },
+              "evidence": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "canonical_rule_status": {
+          "type": "string",
+          "enum": [
+            "matched",
+            "conflict",
+            "needs_manual_check",
+            "unique"
+          ],
+          "description": "Saved-rule crosscheck state for the repository viewer: matched, conflict, needs_manual_check, or unique when no saved rule applies."
+        },
+        "canonical_rule_checks": {
+          "type": "array"
+        },
+        "result_evidence": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    },
+    "formalize_bundle": {
+      "type": "object",
+      "description": "Single fact package shared by formal QUERY, validation, dashboard derivation, and repository viewers.",
+      "required": ["schema_version", "sql_fingerprint", "logic_fingerprint", "sql_facts"],
+      "properties": {
+        "schema_version": {
+          "enum": ["formalize_bundle_v1", "formalize_bundle_v2"]
+        },
+        "sql_fingerprint": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "logic_fingerprint": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "sql_facts": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    },
+    "quality_gate": {
+      "type": "object"
+    },
+    "generation_provenance": {
+      "$ref": "#/$defs/generation_provenance"
+    },
+    "origin_query_workspace": {
+      "type": "object",
+      "description": "Project-local temporary query version from which this formal QUERY was promoted.",
+      "required": [
+        "contract_version",
+        "query_id",
+        "version",
+        "path",
+        "meta_path",
+        "source_status",
+        "source_sql_fingerprint",
+        "purpose"
+      ],
+      "properties": {
+        "contract_version": {
+          "const": "query_workspace_origin_v1"
+        },
+        "query_id": {
+          "type": "string",
+          "pattern": "^qw-[a-z0-9-]+$"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "path": {
+          "type": "string",
+          "pattern": "^query_workspace/"
+        },
+        "meta_path": {
+          "type": "string",
+          "pattern": "^query_workspace/"
+        },
+        "formalize_seed_path": {
+          "type": "string",
+          "pattern": "^$|^query_workspace/.+\\.formalize_seed\\.json$"
+        },
+        "source_status": {
+          "type": "string"
+        },
+        "source_sql_fingerprint": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "source_logic_fingerprint": {
+          "type": "string",
+          "pattern": "^$|^[a-f0-9]{64}$"
+        },
+        "purpose": {
+          "type": "string"
+        },
+        "change_type": {
+          "enum": ["new", "correction", "replacement", "superset", "parameter_refresh", "branch", "migration", ""]
+        },
+        "coverage_relation": {
+          "enum": ["same_contract", "strict_superset", "partial_overlap", "different_contract", "independent", "unknown", ""]
+        },
+        "branch_of": {
+          "type": "object"
+        },
+        "request_envelope": { "$ref": "request_envelope.json" },
+        "rule_application": { "$ref": "rule_application.json" },
+        "derived_output_count": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "generation_provenance": {
+      "type": "object",
+      "description": "Skill/script provenance for formal SQL artifact generation and historical backfill audits.",
+      "required": [
+        "schema_version",
+        "skill_name",
+        "skill_version",
+        "sql_spec_version",
+        "workflow",
+        "generated_by_script",
+        "generated_at"
+      ],
+      "properties": {
+        "schema_version": {
+          "type": "string",
+          "const": "asset_generation_v1"
+        },
+        "skill_name": {
+          "type": "string"
+        },
+        "skill_version": {
+          "type": "string"
+        },
+        "sql_spec_version": {
+          "type": "string"
+        },
+        "artifact_kind": {
+          "type": "string"
+        },
+        "workflow": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "generated_by_script": {
+          "type": "string"
+        },
+        "generated_at": {
+          "type": "string"
+        },
+        "saved_at": {
+          "type": "string"
+        },
+        "saved_by_script": {
+          "type": "string"
+        },
+        "backfilled_by_script": {
+          "type": "string"
+        },
+        "backfilled_by_skill_version": {
+          "type": "string"
+        },
+        "backfilled_at": {
+          "type": "string"
+        },
+        "original_generated_by": {
+          "type": "string"
+        },
+        "original_skill_version": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Game Data Analysis Skills Setup"
+  short_description: "Initialize a local public SQL Engineering workspace"
+  default_prompt: "Use $setup to check or initialize this public workspace, create the fictional demo project, and install the local SQL Engineering skill."

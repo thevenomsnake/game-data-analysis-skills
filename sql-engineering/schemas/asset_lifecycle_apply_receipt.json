@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Asset Lifecycle Apply Receipt",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "status",
+    "project_id",
+    "candidate_key",
+    "decision",
+    "workspace_unchanged",
+    "ledger_receipt",
+    "repository_receipt",
+    "sync_ready"
+  ],
+  "properties": {
+    "schema_version": { "const": "asset_lifecycle_apply_receipt_v1" },
+    "status": { "enum": ["dry_run", "applied", "unchanged_skipped"] },
+    "project_id": { "type": "string", "minLength": 1 },
+    "candidate_key": { "type": "string", "minLength": 1 },
+    "decision": { "enum": ["promote", "deferred", "excluded"] },
+    "workspace_unchanged": { "const": true },
+    "ledger_receipt": { "type": "object" },
+    "repository_receipt": { "type": "object" },
+    "repository_plan": { "type": "object" },
+    "sync_ready": { "type": "boolean" }
+  },
+  "additionalProperties": false
+}

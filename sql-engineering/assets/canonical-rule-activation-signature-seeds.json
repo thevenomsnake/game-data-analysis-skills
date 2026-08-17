@@ -1,0 +1,111 @@
+{
+  "schema_version": "canonical_rule_activation_signature_seeds_v1",
+  "description": "Project-neutral proposal vocabulary. Runtime activation always consumes the project plan and stored rule contract, never this file.",
+  "concepts": {
+    "base-raid-impact-battle-server-status": [
+      { "label": "被抄家后去留", "any_of": ["被抄家后", "被抄家影响", "被抄家后换服", "被抄家后退游"] }
+    ],
+    "battle-gamemode-experience-flags": [
+      { "label": "首日模式体验", "any_of": ["首日模式体验", "首日战斗模式", "模式体验分类", "has_normal", "has_fast", "has_newbie"] }
+    ],
+    "battle-pcu-onlinecnt-battle": [
+      { "label": "整体局内PCU", "any_of": ["整体局内PCU", "局内在线人数", "Battle OnlineCnt"] }
+    ],
+    "battle-server-open-time": [
+      { "label": "战斗服开服时间", "any_of": ["战斗服开服时间", "服务器开服时间", "BattleSrvId开服时间", "server_open_ts"] }
+    ],
+    "battleloginout-default-mode-scope": [
+      { "label": "默认模式范围", "any_of": ["BattleLogInOut默认模式范围", "局内默认模式范围", "默认模式范围"] }
+    ],
+    "commercial-lottery-revenue-allocation": [
+      { "label": "抽奖卡池收入", "any_of": ["卡池收入", "卡池消费", "抽奖收入", "抽奖分摊"] },
+      { "label": "抽奖收入组合", "all_of": ["抽奖", "收入"] }
+    ],
+    "creation-level-craft-item-map": [
+      { "label": "造物等级", "any_of": ["造物等级", "养成等级", "工作台造物等级", "制作等级", "制造等级"] },
+      { "label": "工作台等级", "all_of": ["工作台", "等级"] }
+    ],
+    "death-impact-battle-server-status": [
+      { "label": "被击杀后去留", "any_of": ["被击杀后", "被击杀影响", "被击杀后换服", "被击杀后退游"] }
+    ],
+    "first-day-battle-progress-tag": [
+      { "label": "首日战斗进度", "any_of": ["首日战斗进度", "首日进度标签", "首日战斗进度标签"] }
+    ],
+    "game-current-rank-definition": [
+      { "label": "当前游戏段位", "any_of": ["当前游戏段位", "最终游戏段位", "当前段位", "最终段位"] }
+    ],
+    "game-mode-map": [
+      { "label": "GameMode映射", "any_of": ["模式映射", "模式名称", "模式大类", "序章模式", "新手服模式"] },
+      { "label": "GameMode模式", "all_of": ["GameMode", "模式"] },
+      { "label": "GameMode新手服", "all_of": ["GameMode", "新手服"] }
+    ],
+    "game-mode-name-type-boundary": [
+      { "label": "模式名称与类型边界", "any_of": ["模式名称与模式类型", "模式名称和模式类型", "mode_name", "mode_type", "mode_category"] }
+    ],
+    "game-total-active-duration": [
+      { "label": "累计非挂机时长", "any_of": ["累计游戏时长", "累计非挂机时长", "游戏非挂机时长", "TotalActiveDuration"] }
+    ],
+    "game-total-active-duration-minute-buckets": [
+      { "label": "累计游戏时长分布", "any_of": ["累计游戏时长分布", "游戏时长分布", "非挂机时长分布", "累计时长分布"] }
+    ],
+    "game-pcu-onlinecnt-lobby": [
+      { "label": "游戏整体PCU", "any_of": ["游戏整体PCU", "大厅PCU", "Lobby OnlineCnt"] }
+    ],
+    "game-pcu-player-loginout": [
+      { "label": "游戏PCU", "any_of": ["游戏PCU", "游戏整体PCU", "大厅PCU"] }
+    ],
+    "loginout-event-boundary": [
+      { "label": "登录登出事件边界", "any_of": ["登录登出事件边界", "登录/登出边界", "玩家登录登出", "局内登录登出", "局内登入登出"] }
+    ],
+    "item-acquisition-presence-event": [
+      { "label": "道具获得渗透", "any_of": ["道具是否获得", "物品是否获得", "道具获得渗透", "物品获得渗透", "道具渗透"] },
+      { "label": "道具是否有", "all_of": ["道具", "是否有"] },
+      { "label": "物品是否有", "all_of": ["物品", "是否有"] }
+    ],
+    "item-acquisition-quantity": [
+      { "label": "道具获得数量", "any_of": ["道具获得数量", "物品获得数量", "道具新增数量"] }
+    ],
+    "item-consumption-event": [
+      { "label": "道具消耗", "any_of": ["道具消耗", "物品消耗", "消耗道具", "道具消耗量", "物品消耗量"] }
+    ],
+    "mode-pcu-battleloginout": [
+      { "label": "模式PCU", "any_of": ["模式PCU", "特定模式PCU", "局内PCU"] }
+    ],
+    "new-user-window-cohort": [
+      { "label": "新增用户", "any_of": ["新增用户", "新增玩家", "新增人数", "新增日期", "新进用户", "新进玩家", "新进人数", "注册人数", "注册玩家"] }
+    ],
+    "player-base-raid-attacker-event": [
+      { "label": "抄家别人", "any_of": ["抄家别人", "主动抄家", "抄家攻击方"] }
+    ],
+    "player-base-raided-event": [
+      { "label": "被抄家", "any_of": ["被抄家", "抄家受害者", "抄家被攻击方"] }
+    ],
+    "player-kill-event": [
+      { "label": "击杀别人", "any_of": ["击杀别人", "击杀者", "凶手玩家"] }
+    ],
+    "player-killed-event": [
+      { "label": "被击杀", "any_of": ["被击杀", "被击杀玩家", "被害者玩家"] }
+    ],
+    "player-territory-attack-event": [
+      { "label": "遇袭别人", "any_of": ["遇袭别人", "领地攻击方", "主动遇袭"] }
+    ],
+    "player-territory-attacked-event": [
+      { "label": "被遇袭", "any_of": ["被遇袭", "领地遇袭", "遇袭受害者"] }
+    ],
+    "rank-score-interval-map": [
+      { "label": "段位积分区间", "any_of": ["段位积分区间", "段位区间映射", "段位映射", "rank_map"] }
+    ],
+    "rank-score-eligible-gamemode": [
+      { "label": "可开段位模式", "any_of": ["可开段位", "可获得段位积分", "段位积分模式", "段位常规模式样本"] }
+    ],
+    "rank-score-source": [
+      { "label": "段位积分来源", "any_of": ["段位积分来源", "段位积分", "rank_score"] }
+    ],
+    "retention-active-login-or-logout": [
+      { "label": "留存活跃判定", "any_of": ["留存活跃", "登录登出都算活跃", "Login和Logout都算活跃"] }
+    ],
+    "retention-x-day-definition": [
+      { "label": "留存定义", "any_of": ["次留", "三留", "七留", "X留", "留存率", "留存定义"] }
+    ]
+  }
+}

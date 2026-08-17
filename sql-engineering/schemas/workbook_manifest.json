@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Bounded Reusable Workbook Manifest",
+  "type": "object",
+  "required": ["schema_version", "sheet_count", "sheets", "chart_count", "chart_titles", "display_metadata"],
+  "properties": {
+    "schema_version": { "const": "workbook_manifest_v1" },
+    "sheet_count": { "type": "integer", "minimum": 1 },
+    "sheets": {
+      "type": "array",
+      "maxItems": 64,
+      "items": {
+        "type": "object",
+        "required": ["name", "visibility"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1, "maxLength": 200 },
+          "visibility": { "enum": ["visible", "hidden", "veryhidden"] }
+        },
+        "additionalProperties": false
+      }
+    },
+    "chart_count": { "type": "integer", "minimum": 0 },
+    "chart_titles": { "type": "array", "maxItems": 64, "items": { "type": "string", "maxLength": 200 } },
+    "display_metadata": {
+      "type": "object",
+      "required": [
+        "source", "bounded", "max_sheet_entries", "max_chart_titles",
+        "sheets_truncated", "chart_titles_truncated"
+      ],
+      "properties": {
+        "source": { "const": "xlsx_package_structure" },
+        "bounded": { "const": true },
+        "max_sheet_entries": { "const": 64 },
+        "max_chart_titles": { "const": 64 },
+        "sheets_truncated": { "type": "boolean" },
+        "chart_titles_truncated": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

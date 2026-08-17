@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Asset Provider Manifest",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "repository_id",
+    "snapshot_path",
+    "snapshot_digest",
+    "project_ids",
+    "supported_contract_versions",
+    "entry_points",
+    "consumer_contract"
+  ],
+  "properties": {
+    "schema_version": { "const": "asset_provider_manifest_v1" },
+    "repository_id": { "type": "string", "minLength": 3 },
+    "snapshot_path": { "type": "string", "pattern": "^(?![A-Za-z]:)(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+" },
+    "snapshot_digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "project_ids": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+    "asset_count": { "type": "integer", "minimum": 0 },
+    "generated_at": { "type": "string" },
+    "supported_contract_versions": { "type": "object", "additionalProperties": { "type": "string", "minLength": 1 } },
+    "entry_points": { "type": "object", "additionalProperties": { "type": "string", "minLength": 1 } },
+    "consumer_contract": { "type": "object" }
+  },
+  "additionalProperties": false
+}

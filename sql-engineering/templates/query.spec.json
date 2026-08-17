@@ -1,0 +1,122 @@
+{
+  "spec_meta": {
+    "spec_version": "4.8",
+    "spec_storage": "sidecar_json",
+    "lifecycle_stage": "QUERY",
+    "sql_type": "sql_data_query",
+    "target_engine": "StarRocks"
+  },
+  "dialect_profile": {
+    "current_dialect": "StarRocks",
+    "status": "enabled"
+  },
+  "project_context": {
+    "project_id": "<project_id>",
+    "display_name": "<display_name>",
+    "query_engine": "<query_engine>",
+    "query_environment": "<query_environment>",
+    "dashboard_application": "missing_allowed_for_query",
+    "table_naming_profile": "<table_naming_profile>",
+    "table_resolution_rule": "Use scripts/sql_project.py resolve-table unless the user provides a physical table."
+  },
+  "canonical_rule_context": {
+    "applied_rules": [],
+    "hard_constraints": [],
+    "candidate_sql_check": {
+      "status": "not_run",
+      "blockers": []
+    },
+    "project_contract_check": {
+      "status": "not_run",
+      "blockers": []
+    },
+    "generation_gate": {
+      "status": "not_run",
+      "blockers": []
+    }
+  },
+  "performance_level": {
+    "grade": "B",
+    "judgement": "<performance summary>",
+    "optimization_tier": "L1_perf_standard",
+    "preflight_score": 0,
+    "preflight_triggers": [],
+    "optimization_reference": "references/performance-routing.md",
+    "full_guide_required": false,
+    "optimization_applied": [],
+    "optimization_rejected": [],
+    "equivalence_preserved": true,
+    "performance_fingerprint": "<fingerprint>",
+    "scan_partition_days": 0,
+    "log_table_count": 1
+  },
+  "query_intent": {
+    "title": "<query title>",
+    "description": "<business question>",
+    "query_type": "aggregate_query",
+    "result_mode": "aggregate_table",
+    "default_usage": "<how the result will be used>"
+  },
+  "parameters": [
+    {
+      "name": "pt_start",
+      "type": "project_partition_value",
+      "required": true,
+      "sql_usage": "Top params CTE partition/date lower bound; use the project-configured field, value format, and lower operator."
+    },
+    {
+      "name": "pt_end",
+      "type": "project_partition_value",
+      "required": true,
+      "sql_usage": "Top params CTE partition/date upper bound; whole-day Demo SQL uses the actual end date with <=. Add ts_start/ts_end separately only for explicit detailed-time filtering."
+    },
+    {
+      "name": "zone_id",
+      "type": "integer",
+      "required": false,
+      "sql_usage": "Top params CTE zone/server scope such as iZoneAreaID = p.zone_id when the query is scoped to one zone."
+    }
+  ],
+  "data_sources": [],
+  "intermediate_tables": [],
+  "query_logic": {
+    "business_context": "<base and business scope>",
+    "business_rules": [],
+    "metric_definitions": [],
+    "filter_rules": [],
+    "exclusion_rules": [],
+    "time_range": "<business time range>",
+    "partition_range": "<dialect partition/time rule>",
+    "calculation_path": "<human-readable calculation path>",
+    "assumptions": [],
+    "conflict_notes": []
+  },
+  "output_fields": [],
+  "query_output_contract": {
+    "one_row_means": "<row meaning>",
+    "output_grain": "<grain>",
+    "expected_fields": [],
+    "forbidden_fields": []
+  },
+  "repository_summary": {
+    "display_title": "<stable title without raw file/order prefix>",
+    "business_topic": "<business topic>",
+    "purpose": "<what this SQL is for>",
+    "business_question": "<business question>",
+    "base_population": "<Base / statistical population>",
+    "grain": "<one row means>",
+    "metrics": [],
+    "metric_groups": [],
+    "dimensions": [],
+    "filters": [],
+    "source_logs": [],
+    "logic_summary": [],
+    "applied_criteria": [],
+    "canonical_rule_status": "unique",
+    "canonical_rule_checks": [],
+    "result_evidence": {}
+  },
+  "quality_gate": {
+    "must_pass": []
+  }
+}

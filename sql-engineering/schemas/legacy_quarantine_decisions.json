@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Legacy Quarantine Decisions",
+  "type": "object",
+  "required": ["schema_version", "project_id", "decisions"],
+  "properties": {
+    "schema_version": { "const": "legacy_quarantine_decisions_v1" },
+    "project_id": { "type": "string", "minLength": 1 },
+    "decisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["source_path", "source_sha256", "action", "reason"],
+        "properties": {
+          "source_path": { "type": "string", "pattern": "^archive/" },
+          "source_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "action": { "enum": ["remove_duplicate", "move_to_package", "move_to_source", "keep_local"] },
+          "target_path": { "type": "string" },
+          "package_id": { "type": "string", "pattern": "^FA-[0-9]{4,}$" },
+          "member_role": { "type": "string" },
+          "lifecycle_state": { "enum": ["current", "history", "archived"] },
+          "reason": { "type": "string", "minLength": 4 },
+          "user_request": { "type": "string" },
+          "confirmed_by": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

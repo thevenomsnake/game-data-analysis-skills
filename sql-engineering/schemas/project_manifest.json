@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Compact SQL Project Manifest",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "project_name",
+    "created_at",
+    "updated_at",
+    "project_config_file",
+    "canonical_rule_store",
+    "formal_asset_repository",
+    "packages"
+  ],
+  "properties": {
+    "schema_version": { "const": "project_manifest_v2" },
+    "project_name": { "type": "string", "minLength": 1 },
+    "created_at": { "type": "string" },
+    "updated_at": { "type": "string" },
+    "project_config_file": { "const": "project_config.json" },
+    "taxonomy_version": { "type": "integer" },
+    "canonical_rule_store": {
+      "type": "object",
+      "required": ["contract_version", "store", "activation_index", "definitions_root"],
+      "properties": {
+        "contract_version": { "const": "canonical_rule_store_v2" },
+        "store": { "const": "rules/store.json" },
+        "activation_index": { "const": "rules/activation-index.json" },
+        "definitions_root": { "const": "rules/definitions" }
+      },
+      "additionalProperties": false
+    },
+    "formal_asset_repository": {
+      "type": "object",
+      "required": ["index", "migration_map", "package_count"],
+      "properties": {
+        "index": { "const": "formal_assets/index.json" },
+        "migration_map": { "const": "formal_assets/migration-map.v1.json" },
+        "package_count": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "packages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "package_id",
+          "slug",
+          "title",
+          "lifecycle_state",
+          "revision",
+          "directory",
+          "manifest_path",
+          "manifest_sha256",
+          "current",
+          "latest_receipt",
+          "updated_at"
+        ],
+        "properties": {
+          "package_id": { "type": "string", "pattern": "^FA-[0-9]{4,}$" },
+          "slug": { "type": "string" },
+          "title": { "type": "string" },
+          "lifecycle_state": { "enum": ["current", "history", "archived"] },
+          "revision": { "type": "integer", "minimum": 1 },
+          "directory": { "type": "string", "pattern": "^formal_assets/FA-[0-9]{4,}-" },
+          "manifest_path": { "type": "string", "pattern": "^formal_assets/FA-[0-9]{4,}-.+/manifest\\.json$" },
+          "manifest_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "current": { "type": "object" },
+          "latest_receipt": { "type": "string", "pattern": "^formal_assets/.+/receipts/R[0-9]{4,}\\.json$" },
+          "updated_at": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "intermediate_table_counters": { "type": "object" },
+    "intermediate_tables": { "type": "array", "items": { "type": "object" } },
+    "notes": { "type": "array", "items": { "type": "object" } }
+  },
+  "additionalProperties": true
+}

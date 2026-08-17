@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Canonical Rule Activation Amendment v2",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "project_id",
+    "concept_key",
+    "rationale",
+    "activation_policy",
+    "request_signatures"
+  ],
+  "properties": {
+    "schema_version": { "const": "canonical_rule_activation_amendment_v2" },
+    "project_id": { "type": "string", "minLength": 1 },
+    "concept_key": { "type": "string", "pattern": "^[a-z0-9][a-z0-9_-]*$" },
+    "rationale": { "type": "string", "minLength": 1 },
+    "activation_policy": {
+      "$ref": "canonical_rule_activation_contract.json#/properties/activation_policy"
+    },
+    "request_signatures": {
+      "$ref": "canonical_rule_activation_contract.json#/properties/request_signatures"
+    },
+    "source_signature": { "type": "object" },
+    "event_signature": { "type": "object" },
+    "excludes_when": { "type": "array", "items": { "type": "string" } },
+    "created_at": { "type": "string" }
+  },
+  "additionalProperties": false
+}

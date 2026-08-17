@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Canonical Rule Store v2",
+  "type": "object",
+  "required": ["schema_version", "project_id", "updated_at", "authorization_contract", "concepts"],
+  "properties": {
+    "schema_version": { "const": "canonical_rule_store_v2" },
+    "project_id": { "type": "string", "minLength": 1 },
+    "updated_at": { "type": "string" },
+    "authorization_contract": { "type": "object" },
+    "concepts": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "concept_key",
+          "latest_store_version",
+          "latest_rule_version",
+          "current_confirmed",
+          "proposed_versions",
+          "deprecated_versions",
+          "versions"
+        ],
+        "properties": {
+          "concept_key": { "type": "string", "pattern": "^[a-z0-9][a-z0-9_-]*$" },
+          "latest_store_version": { "type": "integer", "minimum": 0 },
+          "latest_rule_version": { "type": "integer", "minimum": 0 },
+          "current_confirmed": {
+            "oneOf": [
+              { "type": "null" },
+              { "$ref": "#/$defs/reference" }
+            ]
+          },
+          "proposed_versions": {
+            "type": "array",
+            "items": { "$ref": "#/$defs/reference" }
+          },
+          "deprecated_versions": {
+            "type": "array",
+            "items": { "$ref": "#/$defs/reference" }
+          },
+          "versions": {
+            "type": "array",
+            "items": { "$ref": "#/$defs/versionReference" }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "$defs": {
+    "reference": {
+      "type": "object",
+      "required": [
+        "store_version",
+        "rule_id",
+        "rule_version",
+        "effective_status",
+        "path",
+        "record_sha256",
+        "file_sha256"
+      ],
+      "properties": {
+        "store_version": { "type": "integer", "minimum": 1 },
+        "rule_id": { "type": "string", "minLength": 1 },
+        "rule_version": { "type": "integer", "minimum": 1 },
+        "effective_status": { "enum": ["proposed", "confirmed", "deprecated", "superseded"] },
+        "path": { "type": "string", "pattern": "^rules/definitions/" },
+        "record_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "file_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "created_at": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "versionReference": {
+      "allOf": [
+        { "$ref": "#/$defs/reference" },
+        { "type": "object", "required": ["created_at"] }
+      ]
+    }
+  },
+  "additionalProperties": false
+}

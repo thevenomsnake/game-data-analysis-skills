@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Project Knowledge Dataset Bindings",
+  "type": "object",
+  "required": ["schema_version", "project_id", "updated_at", "bindings"],
+  "properties": {
+    "schema_version": { "const": "knowledge_project_bindings_v1" },
+    "project_id": { "type": "string", "minLength": 2 },
+    "updated_at": { "type": "string" },
+    "bindings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "dataset_id",
+          "dataset_version",
+          "content_hash",
+          "state",
+          "contract_path",
+          "contract_version",
+          "contract_sha256",
+          "materialized_dimension_approved",
+          "dataset_manifest_path",
+          "activated_at",
+          "activation_reason",
+          "replaces_version",
+          "audit",
+          "generation_provenance"
+        ],
+        "properties": {
+          "dataset_id": { "type": "string", "pattern": "^[a-z][a-z0-9_-]{1,79}$" },
+          "dataset_version": { "type": "string", "pattern": "^kdv-[a-f0-9]{12}$" },
+          "content_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "state": { "const": "active" },
+          "contract_path": { "type": "string", "pattern": "^knowledge-base/" },
+          "contract_version": { "type": "string", "minLength": 1 },
+          "contract_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "materialized_dimension_approved": { "type": "boolean" },
+          "dataset_manifest_path": { "type": "string", "pattern": "^knowledge-base/" },
+          "activated_at": { "type": "string" },
+          "activation_reason": { "type": "string", "minLength": 4 },
+          "replaces_version": { "type": "string" },
+          "audit": {
+            "type": "object",
+            "properties": {
+              "binding_change": {
+                "type": "object",
+                "required": [
+                  "schema_version",
+                  "change_class",
+                  "compatible",
+                  "rule_version_required",
+                  "previous_version",
+                  "target_version",
+                  "affected_rules",
+                  "blockers",
+                  "checked_at"
+                ],
+                "properties": {
+                  "schema_version": { "const": "knowledge_binding_impact_v1" },
+                  "change_class": {
+                    "enum": ["initial", "provenance_only", "projection_changed", "contract_changed"]
+                  },
+                  "compatible": { "type": "boolean" },
+                  "rule_version_required": { "const": false },
+                  "previous_version": { "type": "string" },
+                  "target_version": { "type": "string", "pattern": "^kdv-[a-f0-9]{12}$" },
+                  "affected_rules": { "type": "array", "items": { "type": "object" } },
+                  "blockers": { "type": "array", "items": { "type": "string" } },
+                  "checked_at": { "type": "string" }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": true
+          },
+          "generation_provenance": {
+            "type": "object",
+            "required": ["schema_version", "skill_name", "skill_version", "artifact_kind", "workflow", "generated_by_script", "generated_at"]
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

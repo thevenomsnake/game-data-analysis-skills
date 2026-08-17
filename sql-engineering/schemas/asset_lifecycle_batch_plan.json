@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Asset Lifecycle Batch Plan",
+  "type": "object",
+  "required": ["schema_version", "project_id", "created_at", "scan", "candidate_plans", "summary", "plan_fingerprint"],
+  "properties": {
+    "schema_version": { "const": "asset_lifecycle_batch_plan_v1" },
+    "project_id": { "type": "string", "minLength": 1 },
+    "created_at": { "type": "string", "minLength": 1 },
+    "scan": { "type": "object" },
+    "candidate_plans": { "type": "array", "items": { "type": "object" } },
+    "closeout_plan_digest": { "type": "string", "pattern": "^$|^[a-f0-9]{64}$" },
+    "closeout_family_count": { "type": "integer", "minimum": 0 },
+    "closeout_expected_project_counts": { "type": "object", "additionalProperties": { "type": "integer", "minimum": 0 } },
+    "confirmation": { "type": "object" },
+    "summary": { "type": "object" },
+    "plan_fingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  },
+  "additionalProperties": false
+}

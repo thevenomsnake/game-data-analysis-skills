@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Grouped Summary Feasibility",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "grouped_output",
+    "group_dimensions",
+    "retained_dimensions",
+    "group_partition",
+    "target_overall_grain",
+    "routing",
+    "metrics",
+    "overall_required_fields",
+    "decision_reason",
+    "metric_contract_fingerprint"
+  ],
+  "properties": {
+    "schema_version": { "const": "summary_feasibility_v1" },
+    "grouped_output": { "type": "boolean" },
+    "group_dimensions": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+    "retained_dimensions": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+    "group_partition": {
+      "enum": ["exclusive_exhaustive", "overlapping", "unknown", "not_applicable"]
+    },
+    "target_overall_grain": { "type": "string", "minLength": 1 },
+    "routing": {
+      "enum": ["not_grouped", "no_overall_needed", "single_exact", "single_with_components", "grouped_plus_overall"]
+    },
+    "metrics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "metric",
+          "semantic_type",
+          "overall_statistic",
+          "feasibility",
+          "grouped_fields",
+          "numerator_field",
+          "denominator_field",
+          "overall_fields",
+          "reason"
+        ],
+        "properties": {
+          "metric": { "type": "string", "minLength": 1 },
+          "semantic_type": {
+            "enum": ["additive", "distinct_count", "mean", "rate", "minimum", "maximum", "percentile", "distribution", "other"]
+          },
+          "overall_statistic": { "type": "string", "minLength": 1 },
+          "feasibility": {
+            "enum": ["exact_from_grouped", "exact_with_components", "requires_overall_query", "not_meaningful"]
+          },
+          "grouped_fields": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+          "numerator_field": { "type": "string" },
+          "denominator_field": { "type": "string" },
+          "overall_fields": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+          "reason": { "type": "string", "minLength": 6 }
+        },
+        "additionalProperties": false
+      }
+    },
+    "overall_required_fields": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+    "decision_reason": { "type": "string", "minLength": 6 },
+    "metric_contract_fingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  },
+  "additionalProperties": false
+}

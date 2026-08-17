@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Project Stage Data Service Bindings",
+  "type": "object",
+  "required": [
+    "contract_version",
+    "project_id",
+    "product_id",
+    "stage_id",
+    "bindings"
+  ],
+  "properties": {
+    "contract_version": {
+      "const": "stage_data_service_bindings_v1"
+    },
+    "project_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "product_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "stage_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "bindings": {
+      "type": "object",
+      "required": [
+        "development_inspection",
+        "production_query"
+      ],
+      "properties": {
+        "development_inspection": {
+          "$ref": "#/$defs/binding"
+        },
+        "production_query": {
+          "$ref": "#/$defs/binding"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "binding": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "unbound"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "confirmation"
+          ],
+          "properties": {
+            "status": {
+              "const": "not_enabled"
+            },
+            "confirmation": {
+              "$ref": "#/$defs/confirmation"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "service_id",
+            "target",
+            "confirmation"
+          ],
+          "properties": {
+            "status": {
+              "const": "confirmed"
+            },
+            "service_id": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9-]*$"
+            },
+            "target": {
+              "type": "object"
+            },
+            "confirmation": {
+              "$ref": "#/$defs/confirmation"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "confirmation": {
+      "type": "object",
+      "required": [
+        "method",
+        "confirmed_by_ldap",
+        "confirmed_at"
+      ],
+      "properties": {
+        "method": {
+          "enum": [
+            "migrated_explicit_config",
+            "user_confirmed_binding",
+            "user_confirmed_copy",
+            "user_confirmed_not_enabled"
+          ]
+        },
+        "confirmed_by_ldap": {
+          "type": "string",
+          "minLength": 1
+        },
+        "confirmed_at": {
+          "type": "string"
+        },
+        "copied_from_project_id": {
+          "type": "string"
+        },
+        "copied_from_stage_id": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

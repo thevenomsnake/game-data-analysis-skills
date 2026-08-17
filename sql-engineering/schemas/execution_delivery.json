@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SQL Execution Delivery Consumer Projection",
+  "type": "object",
+  "required": [
+    "schema_version", "asset_id", "status", "materialized_engine_key", "sql_dialect",
+    "query_engine", "profile_id", "routing_role", "route_status", "has_execution_evidence",
+    "execution_evidence", "portable_template", "variant_status", "logical_revision_id",
+    "variant_group_id", "variant_key", "exact_variant_asset_ids",
+    "recommended_variant_asset_id", "is_recommended_variant"
+  ],
+  "properties": {
+    "schema_version": { "const": "execution_delivery_v1" },
+    "asset_id": { "type": "string", "minLength": 3 },
+    "status": { "enum": ["materialized", "legacy_unlabeled"] },
+    "materialized_engine_key": { "enum": ["starrocks", "hive", "unlabeled"] },
+    "sql_dialect": { "type": "string" },
+    "query_engine": { "type": "string" },
+    "profile_id": { "type": "string" },
+    "routing_role": { "type": "string" },
+    "route_status": { "enum": ["ready", "blocked", "not_available"] },
+    "has_execution_evidence": { "type": "boolean" },
+    "execution_evidence": {
+      "type": "object",
+      "required": [
+        "schema_version", "selection_mode", "routing_reasons", "blockers",
+        "source_tlog_count", "passthrough_table_count", "rendered_sql_sha256"
+      ],
+      "properties": {
+        "schema_version": { "type": "string" },
+        "selection_mode": { "type": "string" },
+        "routing_reasons": { "type": "array", "maxItems": 8, "items": { "type": "string", "maxLength": 240 } },
+        "blockers": { "type": "array", "maxItems": 8, "items": { "type": "string", "maxLength": 240 } },
+        "source_tlog_count": { "type": "integer", "minimum": 0 },
+        "passthrough_table_count": { "type": "integer", "minimum": 0 },
+        "rendered_sql_sha256": { "type": "string", "pattern": "^$|^[a-f0-9]{64}$" }
+      },
+      "additionalProperties": false
+    },
+    "portable_template": {
+      "type": "object",
+      "required": ["available", "contract", "path"],
+      "properties": {
+        "available": { "type": "boolean" },
+        "contract": { "type": "string" },
+        "path": { "type": "string", "pattern": "^$|^(?![A-Za-z]:)(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+" }
+      },
+      "additionalProperties": false
+    },
+    "variant_status": { "enum": ["not_grouped", "pending_explicit_group", "grouped", "identity_conflict"] },
+    "logical_revision_id": { "type": "string" },
+    "variant_group_id": { "type": "string" },
+    "variant_key": { "enum": ["", "starrocks", "hive", "other"] },
+    "exact_variant_asset_ids": { "type": "array", "items": { "type": "string", "minLength": 3 }, "uniqueItems": true },
+    "recommended_variant_asset_id": { "type": "string" },
+    "is_recommended_variant": { "type": "boolean" }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SQL Query Workspace Search Index",
+  "description": "Compact search rows and immutable version pointers. query_workspace_meta.json owns version facts.",
+  "type": "object",
+  "required": ["schema_version", "project_id", "project_name", "updated_at", "entries"],
+  "properties": {
+    "schema_version": { "const": "query_workspace_index_v2" },
+    "project_id": { "type": "string", "minLength": 1 },
+    "project_name": { "type": "string", "minLength": 1 },
+    "updated_at": { "type": "string", "minLength": 1 },
+    "entries": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/query_entry" }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "query_status": {
+      "enum": ["draft", "runnable", "run_failed", "result_confirmed", "discarded", "archived", "superseded", "promoted"]
+    },
+    "change_type": {
+      "enum": ["new", "correction", "replacement", "superset", "parameter_refresh", "branch", "migration"]
+    },
+    "coverage_relation": {
+      "enum": ["same_contract", "strict_superset", "partial_overlap", "different_contract", "independent", "unknown"]
+    },
+    "usage_class": {
+      "enum": ["personal_diagnosis", "reusable_diagnostic", "ad_hoc_analysis", "reusable_analysis", "recurring_delivery", "unclassified"]
+    },
+    "string_array": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "query_reference": {
+      "oneOf": [
+        { "type": "object", "maxProperties": 0 },
+        {
+          "type": "object",
+          "required": ["query_id", "version", "path"],
+          "properties": {
+            "query_id": { "type": "string", "pattern": "^qw-[a-z0-9-]+$" },
+            "version": { "type": "integer", "minimum": 1 },
+            "path": { "type": "string", "pattern": "^query_workspace/.+\\.sql$" }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "version_pointer": {
+      "type": "object",
+      "required": ["version", "path", "meta_path", "sql_fingerprint"],
+      "properties": {
+        "version": { "type": "integer", "minimum": 1 },
+        "path": { "type": "string", "pattern": "^query_workspace/.+\\.sql$" },
+        "meta_path": { "type": "string", "pattern": "^query_workspace/.+\\.meta\\.json$" },
+        "formalize_seed_path": { "type": "string", "pattern": "^$|^query_workspace/.+\\.formalize_seed\\.json$" },
+        "sql_fingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "logic_fingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "previous_version_path": { "type": "string", "pattern": "^$|^query_workspace/.+\\.sql$" },
+        "next_version_path": { "type": "string", "pattern": "^$|^query_workspace/.+\\.sql$" }
+        ,"workspace_role": { "enum": ["query", "dashboard_delivery", "unknown"] }
+        ,"role_lineage": { "type": "object" }
+      },
+      "additionalProperties": false
+    },
+    "query_entry": {
+      "type": "object",
+      "required": [
+        "query_id", "title", "purpose", "business_question", "status", "current_version",
+        "current_path", "sql_fingerprint", "formal_artifacts", "change_type", "coverage_relation",
+        "branch_of", "derived_output_count", "business_category", "analysis_type", "source_logs",
+        "tables", "metrics", "dimensions", "filters", "grain", "time_grain", "tags",
+        "created_at", "updated_at", "versions"
+      ],
+      "properties": {
+        "query_id": { "type": "string", "pattern": "^qw-[a-z0-9-]+$" },
+        "title": { "type": "string", "minLength": 2 },
+        "purpose": { "type": "string", "minLength": 6 },
+        "business_question": { "type": "string" },
+        "status": { "$ref": "#/$defs/query_status" },
+        "current_version": { "type": "integer", "minimum": 1 },
+        "current_path": { "type": "string", "pattern": "^query_workspace/.+\\.sql$" },
+        "sql_fingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "logic_fingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "usage_class": { "$ref": "#/$defs/usage_class" },
+        "workspace_role": { "enum": ["query", "dashboard_delivery", "unknown"] },
+        "role_lineage": { "type": "object" },
+        "formal_artifacts": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^(?:formal_assets/FA-[0-9]{4,}-[^/]+/members/.+|query_sql/.+)\\.sql$"
+          }
+        },
+        "change_type": { "$ref": "#/$defs/change_type" },
+        "coverage_relation": { "$ref": "#/$defs/coverage_relation" },
+        "branch_of": { "$ref": "#/$defs/query_reference" },
+        "derived_output_count": { "type": "integer", "minimum": 0 },
+        "business_category": { "type": "string" },
+        "analysis_type": { "type": "string" },
+        "source_logs": { "$ref": "#/$defs/string_array" },
+        "tables": { "$ref": "#/$defs/string_array" },
+        "metrics": { "$ref": "#/$defs/string_array" },
+        "dimensions": { "$ref": "#/$defs/string_array" },
+        "filters": { "$ref": "#/$defs/string_array" },
+        "grain": { "type": "string" },
+        "time_grain": { "type": "string" },
+        "tags": { "$ref": "#/$defs/string_array" },
+        "created_at": { "type": "string", "minLength": 1 },
+        "updated_at": { "type": "string", "minLength": 1 },
+        "versions": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/version_pointer" }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

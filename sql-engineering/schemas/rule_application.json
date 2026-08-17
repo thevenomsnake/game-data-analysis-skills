@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Request-bound Canonical Rule Application",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "status",
+    "request_envelope",
+    "mode",
+    "lifecycle_stage",
+    "inheritance_contract",
+    "applied_rules",
+    "inherited_rules",
+    "excluded_rules",
+    "diagnostics",
+    "application_sha256"
+  ],
+  "properties": {
+    "schema_version": { "const": "rule_application_v1" },
+    "status": { "enum": ["evaluated", "legacy_unlabeled"] },
+    "request_envelope": { "$ref": "request_envelope.json" },
+    "mode": { "type": "string" },
+    "lifecycle_stage": { "type": "string" },
+    "inheritance_contract": {
+      "type": "object",
+      "required": [
+        "mode",
+        "change_type",
+        "coverage_relation",
+        "same_execution_fingerprint",
+        "same_logic_contract",
+        "parent_asset"
+      ],
+      "properties": {
+        "mode": {
+          "enum": [
+            "none",
+            "same_contract_revision",
+            "lifecycle_promotion_exact_sql",
+            "dashboard_derivative_same_contract"
+          ]
+        },
+        "change_type": { "type": "string" },
+        "coverage_relation": { "type": "string" },
+        "same_execution_fingerprint": { "type": "boolean" },
+        "same_logic_contract": { "type": "boolean" },
+        "parent_asset": { "type": "object" }
+      },
+      "additionalProperties": false
+    },
+    "applied_rules": { "$ref": "#/$defs/rule_rows" },
+    "inherited_rules": { "$ref": "#/$defs/rule_rows" },
+    "excluded_rules": { "$ref": "#/$defs/rule_rows" },
+    "diagnostics": { "type": "array", "items": { "type": "object" } },
+    "application_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  },
+  "$defs": {
+    "rule_rows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "rule_id",
+          "concept_key",
+          "version",
+          "application_class",
+          "source",
+          "evidence"
+        ],
+        "properties": {
+          "rule_id": { "type": "string", "minLength": 1 },
+          "concept_key": { "type": "string", "minLength": 1 },
+          "version": { "type": "integer", "minimum": 1 },
+          "application_class": {
+            "enum": ["intent_required", "explicit_only", "audit_only"]
+          },
+          "source": { "type": "string", "minLength": 1 },
+          "evidence": { "type": "array", "items": { "type": "object" } },
+          "parent_application_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "parent_asset": { "type": "object" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

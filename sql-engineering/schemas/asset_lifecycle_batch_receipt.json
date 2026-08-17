@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Asset Lifecycle Batch Receipt",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "status",
+    "project_id",
+    "candidate_receipts",
+    "shared_read_models_refreshed",
+    "sync_ready"
+  ],
+  "properties": {
+    "schema_version": { "const": "asset_lifecycle_batch_receipt_v1" },
+    "status": { "enum": ["dry_run", "arranged"] },
+    "project_id": { "type": "string", "minLength": 1 },
+    "candidate_receipts": { "type": "array", "items": { "type": "object" } },
+    "package_receipts": { "type": "array", "items": { "type": "object" } },
+    "shared_read_models_refreshed": { "type": "boolean" },
+    "shared_read_models_receipt": { "type": "object" },
+    "provider_snapshot": { "type": "object" },
+    "closeout_confirmation": { "type": "object" },
+    "run_receipt_path": { "type": "string" },
+    "collaboration_plan": { "type": "object" },
+    "sync_ready": { "type": "boolean" },
+    "sync_result": { "type": "object" }
+  },
+  "additionalProperties": false
+}

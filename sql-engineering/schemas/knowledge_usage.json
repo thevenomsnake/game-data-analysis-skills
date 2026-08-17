@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Knowledge Usage State for One SQL Version",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "status",
+    "reference_count",
+    "dataset_ids",
+    "active_dataset_ids_at_save",
+    "declaration_source"
+  ],
+  "properties": {
+    "schema_version": { "const": "knowledge_usage_v1" },
+    "status": { "enum": ["used", "not_used", "not_available", "legacy_unknown"] },
+    "reference_count": { "type": "integer", "minimum": 0 },
+    "dataset_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^[a-z][a-z0-9_-]{1,79}$" }
+    },
+    "active_dataset_ids_at_save": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^[a-z][a-z0-9_-]{1,79}$" }
+    },
+    "declaration_source": { "type": "string", "minLength": 2 }
+  },
+  "additionalProperties": false
+}

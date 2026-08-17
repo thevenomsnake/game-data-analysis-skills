@@ -1,0 +1,150 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Query Workspace Semantic Organization Overlay",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "project_id",
+    "updated_at",
+    "index_fingerprint",
+    "entries",
+    "clusters"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "query_workspace_organization_v1"
+    },
+    "project_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "updated_at": {
+      "type": "string"
+    },
+    "index_fingerprint": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "entries": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/organization_entry"
+      }
+    },
+    "clusters": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/organization_cluster"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "organization_entry": {
+      "type": "object",
+      "required": [
+        "business_topic",
+        "summary",
+        "curation_state",
+        "confidence",
+        "classification_source",
+        "notes",
+        "tags",
+        "related_query_ids",
+        "duplicate_cluster_id",
+        "reviewed_at"
+      ],
+      "properties": {
+        "business_topic": {
+          "type": "string",
+          "minLength": 2
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 6
+        },
+        "curation_state": {
+          "enum": [
+            "reusable_candidate",
+            "keep_history",
+            "discard_candidate",
+            "needs_summary",
+            "duplicate_candidate",
+            "reviewed"
+          ]
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "classification_source": {
+          "enum": ["llm", "human", "deterministic"]
+        },
+        "notes": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "related_query_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^qw-[a-z0-9-]+$"
+          }
+        },
+        "duplicate_cluster_id": {
+          "type": "string"
+        },
+        "reviewed_at": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "organization_cluster": {
+      "type": "object",
+      "required": [
+        "cluster_id",
+        "label",
+        "relation",
+        "confidence",
+        "query_ids",
+        "notes"
+      ],
+      "properties": {
+        "cluster_id": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "relation": {
+          "type": "string"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "query_ids": {
+          "type": "array",
+          "minItems": 2,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^qw-[a-z0-9-]+$"
+          }
+        },
+        "notes": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

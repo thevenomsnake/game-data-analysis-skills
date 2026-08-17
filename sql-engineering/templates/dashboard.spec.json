@@ -1,0 +1,164 @@
+{
+  "spec_meta": {
+    "spec_version": "4.8",
+    "spec_storage": "sidecar_json",
+    "lifecycle_stage": "DASHBOARD",
+    "sql_type": "da_dashboard_sql",
+    "target_engine": "StarRocks"
+  },
+  "dialect_profile": {
+    "current_dialect": "StarRocks",
+    "status": "enabled"
+  },
+  "project_context": {
+    "project_id": "<project_id>",
+    "display_name": "<display_name>",
+    "query_engine": "<query_engine>",
+    "query_environment": "<query_environment>",
+    "dashboard_application": "<dashboard_application>",
+    "table_naming_profile": "<table_naming_profile>",
+    "table_resolution_rule": "Use scripts/sql_project.py resolve-table unless the user provides a physical table."
+  },
+  "canonical_rule_context": {
+    "applied_rules": [],
+    "hard_constraints": [],
+    "candidate_sql_check": {
+      "status": "not_run",
+      "blockers": []
+    }
+  },
+  "machine_review_contract": {
+    "contract_version": "dashboard_review_v1",
+    "parse_required": true,
+    "parser": "scripts/dashboard_review.py",
+    "contract_preview_required": true,
+    "review_state_file": "reviews/dashboard_review_state.json",
+    "skip_approved_on_next_review": true,
+    "result_sample_policy": "use_saved_result_file_else_auto_sample"
+  },
+  "validation_reference": {
+    "validation_status": "promoted",
+    "confidence_score": 0.85,
+    "promotion_decision": "promote_to_dashboard",
+    "verification_status": "verified",
+    "user_run_evidence": "<run evidence path>",
+    "result_file_reference": "<csv or xlsx result file>",
+    "user_run_status": "passed",
+    "definition_project": null,
+    "execution_project": null,
+    "delivery_project": null,
+    "concept_keys": [],
+    "proxy_limitations": null,
+    "future_verification_plan": null
+  },
+  "performance_level": {
+    "grade": "B",
+    "judgement": "<performance summary>",
+    "optimization_tier": "L1_perf_standard",
+    "preflight_score": 0,
+    "preflight_triggers": [],
+    "optimization_reference": "references/performance-routing.md",
+    "full_guide_required": false,
+    "equivalence_preserved": true,
+    "performance_fingerprint": "<fingerprint>",
+    "scan_partition_days": 0,
+    "log_table_count": 1,
+    "risk_items": []
+  },
+  "dashboard_intent": {
+    "title": "<dashboard title>",
+    "description": "<dashboard purpose>",
+    "result_shape": "table_dataset",
+    "visualization_owner": "DA",
+    "result_mode": "period_total_table",
+    "time_grain": "none",
+    "default_usage": "默认按 DA 选择的日期范围输出区间结果；按日或合计必须由 SQL/spec 显式声明。"
+  },
+  "refresh_contract": {
+    "da_decides_realtime_refresh": true,
+    "required_da_decisions": ["date_range", "realtime_refresh"],
+    "sql_date_range_parameters": ["start_date", "end_date"],
+    "sql_outputs_daily_rows": false,
+    "sql_outputs_total_row": false,
+    "sql_outputs_period_total": true,
+    "sql_output_shape_note": "按 DA 日期范围输出的区间结果",
+    "note": "DA only decides date range and realtime refresh; SQL defaults to a date-range result unless the spec declares daily or total rows."
+  },
+  "da_delivery_contract": {
+    "language": "zh-CN",
+    "da_owner_note": "DA only chooses date range and realtime refresh. Dashboard SQL defaults to one result for the selected date range unless SQL/spec explicitly declares daily or total rows.",
+    "dashboard_boundary": {
+      "sql_provides": ["表格输出字段", "日期范围参数", "显式输出形态", "明确声明的筛选项", "展示格式规则"],
+      "da_decides": ["查询日期范围", "是否需要实时刷新", "展示布局", "可视化呈现", "交互样式"]
+    },
+    "grouping_total_policy": {
+      "grouping_fields": [],
+      "sql_contains_total_rows": false,
+      "da_generate_total": false,
+      "total_label": null,
+      "total_scope": "默认按 DA 选择的日期范围输出区间结果；只有 SQL/spec 明确声明合计行时才按合计行解释，DA 不额外生成合计。",
+      "total_source": "sql_declared_output",
+      "avoid_duplicate_scan": true,
+      "total_metric_rules": []
+    }
+  },
+  "da_output_contract": {
+    "result_shape": "table_dataset",
+    "visualization_owner": "DA",
+    "table_fields": [],
+    "sql_responsibility": "提供稳定中文表格输出字段、日期范围参数、显式输出形态和必要展示格式规则。",
+    "da_responsibility": "只决定查询日期范围、是否需要实时刷新，以及展示布局/可视化呈现。",
+    "output_usage_note": "默认看板 SQL 输出一个日期区间结果；DA 不另行生成日期维度或合计。"
+  },
+  "da_filter_contract": {
+    "time_range": {
+      "parameter_names": ["start_date", "end_date"],
+      "label": "时间范围",
+      "default_range": "custom",
+      "default_label": "<default label>",
+      "business_time_field": "<business_time_field>",
+      "business_time_mapping": "<business time mapping>",
+      "partition_parameters": [],
+      "partition_mapping": "<partition mapping>"
+    },
+    "sql_parameter_filters": [],
+    "filterable_fields": [],
+    "fixed_sql_filters": [],
+    "future_filters": []
+  },
+  "parameters": [],
+  "data_sources": [],
+  "intermediate_tables": [],
+  "business_logic": {
+    "source_query_logic_reference": "<source query path>",
+    "logic_consistency": "Keep source query metric definitions, filters, exclusions, dedup grain, and calculation path unchanged.",
+    "dashboard_adaptation_scope": ["table_output_contract"],
+    "business_logic_changed": false,
+    "change_validation_requirement": "If business logic changes, rerun validation or mark the dashboard artifact unverified."
+  },
+  "dimensions": [],
+  "metrics": [],
+  "sql_output_contract": {
+    "one_row_means": "<row meaning>",
+    "output_grain": "按 DA 日期范围输出的区间结果",
+    "output_shape": {
+      "result_mode": "period_total_table",
+      "time_grain": "none",
+      "label": "区间合计",
+      "output_grain": "按 DA 日期范围输出的区间结果",
+      "contains_total_rows": false,
+      "contains_total_rows_source": "explicit_spec",
+      "sql_outputs_daily_rows": false,
+      "sql_outputs_period_total": true,
+      "default_semantics": "默认看板 SQL 只对 DA 选择的日期范围产出一份区间结果；按日行或合计行必须由 SQL/spec 显式声明。"
+    },
+    "expected_fields": [],
+    "forbidden_fields": [],
+    "contains_total_rows": false,
+    "total_row_indicator_field": "",
+    "total_row_label": ""
+  },
+  "quality_gate": {
+    "must_pass": []
+  }
+}

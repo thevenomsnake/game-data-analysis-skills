@@ -1,4 +1,4 @@
 interface:
   display_name: "SQL Engineering"
-  short_description: "Onboard data context, fix rules, and version SQL"
-  default_prompt: "Use $sql-engineering to inspect or create the project, register raw telemetry and governed knowledge, apply only confirmed versioned rules, save SQL as an immutable indexed file, and execute it through a configured read-only database or return its exact path for manual execution."
+  short_description: "Initialize and govern planning sources, SQL, assets, and delivery"
+  default_prompt: "Use $sql-engineering to route local project setup, governed game-data SQL, reference lookup, result workflow, review, and formal asset requests through the public lifecycle."

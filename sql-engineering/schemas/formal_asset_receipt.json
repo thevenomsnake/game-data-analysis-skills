@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Formal Asset Repository Receipt",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "receipt_id",
+    "project_id",
+    "package_id",
+    "package_revision",
+    "status",
+    "created_at",
+    "package_manifest_path",
+    "project_index_path",
+    "project_index_sha256",
+    "files"
+  ],
+  "properties": {
+    "schema_version": { "const": "formal_asset_repository_receipt_v1" },
+    "receipt_id": { "type": "string", "pattern": "^R[0-9]{4,}$" },
+    "project_id": { "type": "string", "minLength": 1 },
+    "package_id": { "type": "string", "pattern": "^FA-[0-9]{4,}$" },
+    "package_revision": { "type": "integer", "minimum": 1 },
+    "status": { "const": "ready" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "package_manifest_path": {
+      "type": "string",
+      "pattern": "^formal_assets/FA-[0-9]{4,}-[^/]+/manifests/R[0-9]{4,}\\.json$"
+    },
+    "project_index_path": { "const": "formal_assets/index.json" },
+    "project_index_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "files": {
+      "type": "array",
+      "minItems": 4,
+      "items": {
+        "type": "object",
+        "required": ["path", "sha256", "size_bytes", "role"],
+        "properties": {
+          "path": { "type": "string", "pattern": "^formal_assets/" },
+          "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "size_bytes": { "type": "integer", "minimum": 0 },
+          "role": { "type": "string", "minLength": 1 }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

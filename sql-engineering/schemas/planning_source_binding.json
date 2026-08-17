@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Project Planning Source Binding",
+  "type": "object",
+  "required": [
+    "contract_version",
+    "project_id",
+    "product_id",
+    "stage_id",
+    "active_release_id",
+    "release_manifest",
+    "tree_sha256",
+    "bound_at",
+    "generation_provenance"
+  ],
+  "properties": {
+    "contract_version": {
+      "enum": ["planning_source_binding_v1", "planning_source_binding_v2"]
+    },
+    "project_id": { "type": "string", "minLength": 1 },
+    "product_id": {
+      "type": "string",
+      "pattern": "^[A-Z0-9][A-Z0-9_-]{0,31}$"
+    },
+    "stage_id": {
+      "type": "string",
+      "pattern": "^[A-Z0-9][A-Z0-9_-]{0,31}$"
+    },
+    "active_release_id": { "type": "string", "pattern": "^PSR-" },
+    "release_manifest": { "type": "string", "minLength": 1 },
+    "source_kind": {
+      "enum": ["folder_snapshot", "svn_revision"]
+    },
+    "source_revision": { "type": "integer", "minimum": 1 },
+    "tree_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "bound_at": { "type": "string" },
+    "binding_reason": { "type": "string" },
+    "generation_provenance": { "type": "object" }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "contract_version": { "const": "planning_source_binding_v2" }
+        }
+      },
+      "then": {
+        "required": ["source_kind"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "source_kind": { "const": "svn_revision" }
+        },
+        "required": ["source_kind"]
+      },
+      "then": {
+        "required": ["source_revision"]
+      }
+    }
+  ],
+  "additionalProperties": false
+}

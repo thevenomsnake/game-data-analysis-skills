@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Immutable Canonical Rule Version",
+  "type": "object",
+  "required": ["schema_version", "project_id", "concept_key", "store_version", "record"],
+  "properties": {
+    "schema_version": { "const": "canonical_rule_version_v2" },
+    "project_id": { "type": "string", "minLength": 1 },
+    "concept_key": { "type": "string", "pattern": "^[a-z0-9][a-z0-9_-]*$" },
+    "store_version": { "type": "integer", "minimum": 1 },
+    "record": { "$ref": "canonical_rule_record.json" }
+  },
+  "additionalProperties": false
+}

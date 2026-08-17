@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SQL Execution Route",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "status",
+    "selection_mode",
+    "selected_profile",
+    "routing_role",
+    "sql_dialect",
+    "query_engine",
+    "source_tlogs",
+    "passthrough_tables",
+    "routing_reasons",
+    "blockers"
+  ],
+  "properties": {
+    "schema_version": { "const": "execution_route_v1" },
+    "status": { "enum": ["ready", "blocked"] },
+    "selection_mode": { "enum": ["auto", "explicit", "detected_from_materialized_sql"] },
+    "selected_profile": { "type": "string" },
+    "routing_role": { "enum": ["fast", "stable", "fixed", "passthrough"] },
+    "sql_dialect": { "type": "string" },
+    "query_engine": { "type": "string" },
+    "database": { "type": "string" },
+    "partition_policy": { "type": "object" },
+    "identifier_policy": { "type": "object" },
+    "time_integrity": { "$ref": "time_integrity_plan.json" },
+    "time_contract": { "type": "object" },
+    "sql_fingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "config_fingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "logical_window": { "type": "object" },
+    "source_tlogs": { "type": "array", "items": { "type": "object" } },
+    "passthrough_tables": { "type": "array", "items": { "type": "string" } },
+    "routing_reasons": { "type": "array", "items": { "type": "string" } },
+    "complexity": { "type": "object" },
+    "scan_assessment": { "type": "object" },
+    "volume_evidence": { "type": "object" },
+    "blockers": { "type": "array", "items": { "type": "string" } },
+    "rendered_sql": { "type": "string" },
+    "rendered_sql_sha256": { "type": "string" },
+    "template_contract": { "type": "string" },
+    "portable_template_path": {
+      "type": "string",
+      "pattern": "^$|^(?![A-Za-z]:)(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+"
+    },
+    "execution_variant_identity": { "$ref": "execution_variant_identity.json" },
+    "route_receipt": { "type": "string" }
+  },
+  "additionalProperties": false
+}

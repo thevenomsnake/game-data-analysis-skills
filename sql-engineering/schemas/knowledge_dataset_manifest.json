@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Versioned Knowledge Dataset Manifest",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "dataset_id",
+    "display_name",
+    "version",
+    "content_hash",
+    "build_status",
+    "source_snapshot",
+    "contract_path",
+    "contract_source_path",
+    "contract_version",
+    "contract_sha256",
+    "adapter",
+    "projections",
+    "diff_path",
+    "built_at",
+    "generation",
+    "audit"
+  ],
+  "properties": {
+    "schema_version": { "const": "knowledge_dataset_manifest_v1" },
+    "dataset_id": { "type": "string", "pattern": "^[a-z][a-z0-9_-]{1,79}$" },
+    "display_name": { "type": "string", "minLength": 2 },
+    "version": { "type": "string", "pattern": "^kdv-[a-f0-9]{12}$" },
+    "content_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "content_hash_contract": { "enum": ["knowledge_content_v2"] },
+    "build_status": { "const": "validated" },
+    "source_snapshot": { "type": "string", "pattern": "^knowledge-base/" },
+    "contract_path": { "type": "string", "pattern": "^knowledge-base/" },
+    "contract_source_path": { "type": "string", "pattern": "^knowledge-base/contracts/" },
+    "contract_version": { "type": "string", "minLength": 1 },
+    "contract_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "adapter": {
+      "type": "object",
+      "required": ["adapter_id", "spec_path", "spec_sha256", "spec_snapshot_path", "review_status", "run_mode"],
+      "properties": {
+        "adapter_id": { "type": "string", "minLength": 2 },
+        "spec_path": { "type": "string" },
+        "spec_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "spec_snapshot_path": { "type": "string", "pattern": "^knowledge-base/" },
+        "review_status": { "const": "active" },
+        "run_mode": { "enum": ["executed", "reused_reviewed_output"] }
+      },
+      "additionalProperties": false
+    },
+    "projections": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "projection_id",
+          "format",
+          "data_path",
+          "schema_path",
+          "profile_path",
+          "preview_path",
+          "sha256",
+          "row_count",
+          "column_count",
+          "primary_key"
+        ],
+        "properties": {
+          "projection_id": { "type": "string" },
+          "description": { "type": "string" },
+          "format": { "const": "csv" },
+          "data_path": { "type": "string", "pattern": "^knowledge-base/" },
+          "schema_path": { "type": "string", "pattern": "^knowledge-base/" },
+          "profile_path": { "type": "string", "pattern": "^knowledge-base/" },
+          "preview_path": { "type": "string", "pattern": "^knowledge-base/" },
+          "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "schema_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "profile_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "preview_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "row_count": { "type": "integer", "minimum": 0 },
+          "column_count": { "type": "integer", "minimum": 1 },
+          "primary_key": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+        },
+        "additionalProperties": false
+      }
+    },
+    "diff_path": { "type": "string", "pattern": "^knowledge-base/" },
+    "built_at": { "type": "string" },
+    "generation": {
+      "type": "object",
+      "required": ["schema_version", "skill_name", "skill_version", "artifact_kind", "workflow", "generated_by_script", "generated_at"]
+    },
+    "audit": { "type": "object" }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "content_hash_contract": { "const": "knowledge_content_v2" } },
+        "required": ["content_hash_contract"]
+      },
+      "then": {
+        "properties": {
+          "projections": {
+            "items": {
+              "required": ["schema_sha256", "profile_sha256", "preview_sha256"]
+            }
+          }
+        }
+      }
+    }
+  ],
+  "additionalProperties": false
+}

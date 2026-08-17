@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Exact Knowledge Dataset Reference Used by an Artifact",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "project_id",
+    "dataset_id",
+    "dataset_version",
+    "content_hash",
+    "dataset_skill_version",
+    "projection_id",
+    "projection_sha256",
+    "usage_mode",
+    "fields",
+    "key_field",
+    "contract_path",
+    "contract_version",
+    "contract_sha256",
+    "dataset_manifest_path",
+    "selection",
+    "resolution_fingerprint"
+  ],
+  "properties": {
+    "schema_version": { "const": "knowledge_reference_v1" },
+    "project_id": { "type": "string", "minLength": 2 },
+    "dataset_id": { "type": "string", "pattern": "^[a-z][a-z0-9_-]{1,79}$" },
+    "dataset_version": { "type": "string", "pattern": "^kdv-[a-f0-9]{12}$" },
+    "content_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "dataset_skill_version": { "type": "string", "minLength": 1 },
+    "projection_id": { "type": "string", "pattern": "^[a-z][a-z0-9_-]{1,79}$" },
+    "projection_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "usage_mode": {
+      "enum": ["inline_mapping", "filter_set", "result_enrichment", "authoring_reference", "materialized_dimension"]
+    },
+    "fields": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string" } },
+    "key_field": { "type": "string" },
+    "contract_path": { "type": "string", "pattern": "^knowledge-base/" },
+    "contract_version": { "type": "string", "minLength": 1 },
+    "contract_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "dataset_manifest_path": { "type": "string", "pattern": "^knowledge-base/" },
+    "selection": {
+      "type": "object",
+      "required": [
+        "mode",
+        "key_field",
+        "requested_key_count",
+        "requested_keys_sha256",
+        "matched_row_count",
+        "selected_row_count",
+        "selected_rows_sha256",
+        "truncated",
+        "missing_key_count"
+      ],
+      "properties": {
+        "mode": { "enum": ["keys", "bounded_projection"] },
+        "key_field": { "type": "string" },
+        "requested_key_count": { "type": "integer", "minimum": 0 },
+        "requested_keys_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "matched_row_count": { "type": "integer", "minimum": 0 },
+        "selected_row_count": { "type": "integer", "minimum": 0 },
+        "selected_rows_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "truncated": { "type": "boolean" },
+        "missing_key_count": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "resolution_fingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  },
+  "additionalProperties": false
+}

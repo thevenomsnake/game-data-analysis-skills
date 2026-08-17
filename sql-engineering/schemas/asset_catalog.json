@@ -1,0 +1,229 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SQL Engineering Package-Backed Shared Asset Catalog",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "source_model",
+    "generated_at",
+    "source_root",
+    "source_control",
+    "generation_provenance",
+    "visibility_policy",
+    "summary",
+    "assets",
+    "files",
+    "relationships",
+    "issues"
+  ],
+  "properties": {
+    "schema_version": { "const": "sql_asset_catalog_v2" },
+    "source_model": { "const": "formal_asset_packages_v1" },
+    "generated_at": { "type": "string", "minLength": 1 },
+    "source_root": { "const": "." },
+    "source_control": {
+      "type": "object",
+      "required": ["commit", "branch", "worktree_dirty"],
+      "properties": {
+        "commit": { "type": "string" },
+        "branch": { "type": "string" },
+        "worktree_dirty": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "generation_provenance": { "type": "object" },
+    "visibility_policy": {
+      "type": "object",
+      "required": [
+        "mode",
+        "status_is_descriptive_only",
+        "hidden_lifecycle_states",
+        "local_workspace_included",
+        "excluded_local_surfaces",
+        "excluded_legacy_surfaces",
+        "excluded_non_assets"
+      ],
+      "properties": {
+        "mode": { "const": "package_backed_shared_assets" },
+        "status_is_descriptive_only": { "const": true },
+        "hidden_lifecycle_states": { "type": "array", "maxItems": 0 },
+        "local_workspace_included": { "const": false },
+        "excluded_local_surfaces": {
+          "type": "array",
+          "contains": { "const": "query_workspace" },
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "excluded_non_assets": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "excluded_legacy_surfaces": {
+          "type": "array",
+          "contains": { "const": "archive" },
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "asset_count",
+        "formal_asset_package_count",
+        "formal_asset_member_count",
+        "file_count",
+        "relationship_count",
+        "issue_count",
+        "assets_by_kind",
+        "assets_by_state",
+        "assets_by_project"
+      ],
+      "properties": {
+        "asset_count": { "type": "integer", "minimum": 0 },
+        "formal_asset_package_count": { "type": "integer", "minimum": 0 },
+        "formal_asset_member_count": { "type": "integer", "minimum": 0 },
+        "file_count": { "type": "integer", "minimum": 0 },
+        "relationship_count": { "type": "integer", "minimum": 0 },
+        "issue_count": { "type": "integer", "minimum": 0 },
+        "assets_by_kind": { "$ref": "#/$defs/count_map" },
+        "assets_by_state": { "$ref": "#/$defs/count_map" },
+        "assets_by_project": { "$ref": "#/$defs/count_map" }
+      },
+      "additionalProperties": false
+    },
+    "assets": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/asset" }
+    },
+    "files": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/file" }
+    },
+    "relationships": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/relationship" }
+    },
+    "issues": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/issue" }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "count_map": {
+      "type": "object",
+      "additionalProperties": { "type": "integer", "minimum": 0 }
+    },
+    "relative_path": {
+      "type": "string",
+      "pattern": "^(?![A-Za-z]:)(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+"
+    },
+    "asset": {
+      "type": "object",
+      "required": [
+        "asset_id",
+        "asset_kind",
+        "project_id",
+        "formal_asset_id",
+        "formal_member_id",
+        "title",
+        "summary",
+        "lifecycle_state",
+        "verification_state",
+        "version",
+        "primary_path",
+        "file_paths",
+        "source_index",
+        "generation_provenance",
+        "facts",
+        "created_at",
+        "updated_at"
+      ],
+      "properties": {
+        "asset_id": { "type": "string", "minLength": 3 },
+        "asset_kind": { "type": "string", "minLength": 2 },
+        "project_id": { "type": "string", "minLength": 2 },
+        "formal_asset_id": { "type": "string" },
+        "formal_member_id": { "type": "string" },
+        "title": { "type": "string", "minLength": 1 },
+        "summary": { "type": "string" },
+        "lifecycle_state": { "type": "string", "minLength": 1 },
+        "verification_state": { "type": "string", "minLength": 1 },
+        "version": { "type": ["string", "integer"] },
+        "primary_path": {
+          "oneOf": [
+            { "const": "" },
+            { "$ref": "#/$defs/relative_path" }
+          ]
+        },
+        "file_paths": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/relative_path" },
+          "uniqueItems": true
+        },
+        "source_index": {
+          "oneOf": [
+            { "const": "" },
+            { "$ref": "#/$defs/relative_path" }
+          ]
+        },
+        "generation_provenance": { "type": "object" },
+        "facts": { "type": "object" },
+        "created_at": { "type": "string" },
+        "updated_at": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "file": {
+      "type": "object",
+      "required": ["path", "exists", "sha256", "size_bytes", "media_type", "roles", "asset_ids"],
+      "properties": {
+        "path": { "$ref": "#/$defs/relative_path" },
+        "exists": { "type": "boolean" },
+        "sha256": { "type": "string", "pattern": "^$|^[a-f0-9]{64}$" },
+        "size_bytes": { "type": "integer", "minimum": 0 },
+        "media_type": { "type": "string", "minLength": 1 },
+        "roles": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "asset_ids": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 3 },
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "relationship": {
+      "type": "object",
+      "required": ["source_asset_id", "relation", "target_asset_id", "target_path", "attributes"],
+      "properties": {
+        "source_asset_id": { "type": "string", "minLength": 3 },
+        "relation": { "type": "string", "minLength": 2 },
+        "target_asset_id": { "type": "string" },
+        "target_path": { "type": "string" },
+        "attributes": { "type": "object" }
+      },
+      "anyOf": [
+        { "properties": { "target_asset_id": { "minLength": 1 } } },
+        { "properties": { "target_path": { "minLength": 1 } } }
+      ],
+      "additionalProperties": false
+    },
+    "issue": {
+      "type": "object",
+      "required": ["code", "message", "path", "asset_id"],
+      "properties": {
+        "code": { "type": "string", "minLength": 2 },
+        "message": { "type": "string", "minLength": 2 },
+        "path": { "type": "string" },
+        "asset_id": { "type": "string" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

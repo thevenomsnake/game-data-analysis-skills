@@ -1,0 +1,1215 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SQL Review Result",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "generated_at",
+    "batch_root",
+    "review_entry",
+    "review_output_model",
+    "action_queue",
+    "summary",
+    "items"
+  ],
+  "properties": {
+    "schema_version": { "const": "sql_review_v14" },
+    "generated_at": { "type": "string" },
+    "batch_root": { "type": "string" },
+    "project": { "type": "string" },
+    "project_root": { "type": "string" },
+    "review_entry": { "type": "string" },
+    "review_output_model": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "action_queue": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/action_queue_item" }
+    },
+    "role_context": { "type": "object" },
+    "summary": { "type": "object" },
+    "items": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/review_item" }
+    },
+    "orphan_result_files": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "$defs": {
+    "action_queue_item": {
+      "type": "object",
+      "required": ["bucket", "label", "count", "files", "top_actions"],
+      "properties": {
+        "bucket": { "type": "string" },
+        "label": { "type": "string" },
+        "count": { "type": "integer" },
+        "files": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "top_actions": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "review_item": {
+      "type": "object",
+      "required": [
+        "path",
+        "name",
+        "dimensions",
+        "product_view",
+        "code_view"
+      ],
+      "properties": {
+        "path": { "type": "string" },
+        "name": { "type": "string" },
+        "grade": { "type": "string" },
+        "dimensions": { "type": "object" },
+        "next_focus": { "type": "string" },
+        "source_tables": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "metrics": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "business_filters": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/business_filter" }
+        },
+        "product_view": { "$ref": "#/$defs/product_view" },
+        "product_review_evidence": { "type": "object" },
+        "code_view": { "$ref": "#/$defs/code_view" }
+      }
+    },
+    "product_view": {
+      "type": "object",
+      "required": [
+        "title",
+        "conclusion",
+        "one_sentence",
+        "business_question",
+        "analysis_pattern",
+        "source_logs",
+        "business_scope",
+        "base",
+        "grouping",
+        "logic_steps",
+        "walkthrough_sections",
+        "metrics",
+        "key_filters",
+        "reviewer_should_check",
+        "unknowns_to_confirm",
+        "evidence_note",
+        "project_roles",
+        "metric_overview",
+        "metric_cards",
+        "common_filters",
+        "shared_confirmations",
+        "event_contracts",
+        "evidence_sections"
+      ],
+      "properties": {
+        "product_review_version": { "type": "string" },
+        "product_review_mode": { "enum": ["llm", "evidence-only", "off"] },
+        "semantic_review_status": { "type": "string" },
+        "semantic_review_note": { "type": "string" },
+        "conclusion": { "$ref": "#/$defs/product_conclusion" },
+        "title": { "type": "string" },
+        "one_sentence": { "type": "string" },
+        "business_question": { "type": "string" },
+        "analysis_pattern": { "type": "string" },
+        "source_logs": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "business_scope": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "base": { "type": "string" },
+        "grouping": { "type": "string" },
+        "logic_steps": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "walkthrough_sections": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/product_walkthrough_section" }
+        },
+        "metrics": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/product_metric" }
+        },
+        "key_filters": {
+          "type": "array",
+          "items": { "type": "object" }
+        },
+        "reviewer_should_check": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "unknowns_to_confirm": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "evidence_note": { "type": "string" },
+        "project_roles": { "type": "object" },
+        "execution_evidence": { "$ref": "#/$defs/product_execution_evidence" },
+        "business_story_cards": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/product_story_card" }
+        },
+        "metric_path_cards": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/product_metric_path_card" }
+        },
+        "output_contract": { "$ref": "#/$defs/product_output_contract" },
+        "event_contracts": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/product_event_contract" }
+        },
+        "event_index": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/product_event_index_row" }
+        },
+        "risk_register": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/product_risk_register_row" }
+        },
+        "metric_summary_table": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/product_metric_summary_row" }
+        },
+        "review_actions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/product_review_action" }
+        },
+        "metric_overview": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/product_metric_overview" }
+        },
+        "metric_cards": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/product_metric_card_v13" }
+        },
+        "dimension_overview": {
+          "type": "array",
+          "items": { "type": "object" }
+        },
+        "common_filters": {
+          "type": "array",
+          "items": { "type": "object" }
+        },
+        "shared_confirmations": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/product_metric_confirmation" }
+        },
+        "evidence_sections": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/product_evidence_section" }
+        }
+      }
+    },
+    "product_conclusion": {
+      "type": "object",
+      "required": [
+        "status",
+        "business_question",
+        "analysis_pattern",
+        "base",
+        "grouping",
+        "evidence_status",
+        "semantic_review_status"
+      ],
+      "properties": {
+        "status": { "enum": ["pass", "warn", "needs_confirmation", "fail", "error", ""] },
+        "business_question": { "type": "string" },
+        "analysis_pattern": { "type": "string" },
+        "base": { "type": "string" },
+        "grouping": { "type": "string" },
+        "evidence_status": { "type": "string" },
+        "semantic_review_status": { "type": "string" }
+      }
+    },
+    "product_execution_evidence": {
+      "type": "object",
+      "properties": {
+        "current_sql_role": { "type": "string" },
+        "review_subject": { "type": "string" },
+        "result_evidence_role": { "type": "string" },
+        "sql_files": { "type": "array", "items": { "type": "string" } },
+        "result_files": { "type": "array", "items": { "type": "string" } },
+        "selected_result_file": { "type": "string" },
+        "result_pairing_method": { "type": "string" },
+        "result_status": { "type": "string" },
+        "result_rows": { "type": ["integer", "null"] },
+        "execution_project": { "type": "string" },
+        "delivery_project": { "type": "string" },
+        "evidence_status": { "type": "string" }
+      }
+    },
+    "product_story_card": {
+      "type": "object",
+      "required": ["title", "body", "evidence_ref"],
+      "properties": {
+        "title": { "type": "string" },
+        "body": { "type": "string" },
+        "evidence_ref": { "type": "string" }
+      }
+    },
+    "product_metric_path_card": {
+      "type": "object",
+      "required": ["metric_name", "title", "body", "formula", "base", "caveat", "confidence"],
+      "properties": {
+        "metric_name": { "type": "string" },
+        "title": { "type": "string" },
+        "body": { "type": "string" },
+        "formula": { "type": "string" },
+        "base": { "type": "string" },
+        "caveat": { "type": "string" },
+        "confidence": { "type": "string" }
+      }
+    },
+    "product_output_contract": {
+      "type": "object",
+      "properties": {
+        "fields": { "type": "array", "items": { "type": "string" } },
+        "result_columns": { "type": "array", "items": { "type": "string" } },
+        "product_check": { "type": "string" },
+        "warning": { "type": "string" }
+      }
+    },
+    "product_event_contract": {
+      "type": "object",
+      "required": [
+        "event_name",
+        "source_logs_or_tables",
+        "event_condition",
+        "statistic_object",
+        "sql_evidence_refs",
+        "confidence"
+      ],
+      "properties": {
+        "event_id": { "type": "string" },
+        "event_name": { "type": "string" },
+        "event_family": { "type": "string" },
+        "source_logs_or_tables": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "event_condition": { "type": "string" },
+        "id_or_mapping": { "type": "string" },
+        "statistic_object": { "type": "string" },
+        "first_or_final_rule": { "type": "string" },
+        "join_or_backfill_rule": { "type": "string" },
+        "source_fields": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "product_interpretation": { "type": "string" },
+        "business_risk": { "type": "string" },
+        "sql_evidence_refs": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "sql_evidence": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/product_sql_evidence_snippet" }
+        },
+        "confidence": { "enum": ["high", "medium", "low"] }
+      }
+    },
+    "product_event_index_row": {
+      "type": "object",
+      "properties": {
+        "event_id": { "type": "string" },
+        "event_name": { "type": "string" },
+        "event_condition": { "type": "string" },
+        "statistic_object": { "type": "string" },
+        "source_logs_or_tables": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "source_fields": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "risk_summary": { "type": "string" },
+        "confidence": { "type": "string" }
+      }
+    },
+    "product_risk_register_row": {
+      "type": "object",
+      "properties": {
+        "risk_id": { "type": "string" },
+        "title": { "type": "string" },
+        "severity": { "enum": ["high", "medium", "low", ""] },
+        "description": { "type": "string" },
+        "conflict_object": { "type": "string" },
+        "sql_current": { "type": "string" },
+        "expected_or_standard": { "type": "string" },
+        "difference": { "type": "string" },
+        "impact": { "type": "string" },
+        "affected_metrics": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "action": { "type": "string" },
+        "evidence_refs": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "product_metric_summary_row": {
+      "type": "object",
+      "required": [
+        "metric_name",
+        "metric_type",
+        "calculation",
+        "key_conditions",
+        "numerator",
+        "denominator",
+        "dedup_key",
+        "grain",
+        "event_refs",
+        "risk_refs",
+        "confidence",
+        "review_status"
+      ],
+      "properties": {
+        "metric_name": { "type": "string" },
+        "metric_type": { "type": "string" },
+        "business_meaning": { "type": "string" },
+        "calculation": { "type": "string" },
+        "key_conditions": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "numerator": { "type": "string" },
+        "denominator": { "type": "string" },
+        "dedup_key": { "type": "string" },
+        "grain": { "type": "string" },
+        "event_refs": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "risk_refs": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "confidence": { "type": "string" },
+        "review_status": { "type": "string" }
+      }
+    },
+    "product_review_action": {
+      "type": "object",
+      "properties": {
+        "action_id": { "type": "string" },
+        "source_ref": { "type": "string" },
+        "owner_hint": { "type": "string" },
+        "action": { "type": "string" },
+        "why": { "type": "string" }
+      }
+    },
+    "product_sql_evidence_snippet": {
+      "type": "object",
+      "properties": {
+        "ref": { "type": "string" },
+        "snippet": { "type": "string" }
+      }
+    },
+    "product_metric_overview": {
+      "type": "object",
+      "required": ["metric_name", "metric_type", "review_status", "main_risk", "confidence", "confirmation_count"],
+      "properties": {
+        "metric_name": { "type": "string" },
+        "metric_type": { "type": "string" },
+        "review_status": { "type": "string" },
+        "main_risk": { "type": "string" },
+        "confidence": { "enum": ["high", "medium", "low", ""] },
+        "confirmation_count": { "type": "integer" }
+      }
+    },
+    "product_metric_card_v13": {
+      "type": "object",
+      "required": [
+        "metric_name",
+        "business_meaning",
+        "metric_type",
+        "calculation",
+        "key_conditions",
+        "numerator",
+        "denominator",
+        "dedup_key",
+        "aggregation_dimensions",
+        "row_grain_explanation",
+        "source_logs_fields",
+        "metric_filters",
+        "standard_rule_alignment",
+        "metric_confirmations",
+        "sql_evidence_refs",
+        "event_refs",
+        "risk_refs",
+        "confidence"
+      ],
+      "properties": {
+        "metric_name": { "type": "string" },
+        "business_meaning": { "type": "string" },
+        "metric_type": { "type": "string" },
+        "calculation": { "type": "string" },
+        "key_conditions": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "numerator": { "type": "string" },
+        "denominator": { "type": "string" },
+        "dedup_key": { "type": "string" },
+        "aggregation_dimensions": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "row_grain_explanation": { "type": "string" },
+        "source_logs_fields": {
+          "type": "array",
+          "items": { "type": "object" }
+        },
+        "metric_filters": {
+          "type": "array",
+          "items": { "type": "object" }
+        },
+        "standard_rule_alignment": { "type": "string" },
+        "metric_confirmations": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/product_metric_confirmation" }
+        },
+        "sql_evidence_refs": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "event_refs": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "risk_refs": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "risk_notes": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "confidence": { "enum": ["high", "medium", "low"] },
+        "review_status": { "type": "string" }
+      }
+    },
+    "product_metric_confirmation": {
+      "type": "object",
+      "required": ["metric_name", "question", "reason", "evidence_ref"],
+      "properties": {
+        "metric_name": { "type": "string" },
+        "question": { "type": "string" },
+        "reason": { "type": "string" },
+        "evidence_ref": { "type": "string" }
+      }
+    },
+    "product_evidence_section": {
+      "type": "object",
+      "required": ["title", "default_collapsed", "summary", "items"],
+      "properties": {
+        "title": { "type": "string" },
+        "default_collapsed": { "type": "boolean" },
+        "summary": { "type": "string" },
+        "items": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "product_walkthrough_section": {
+      "type": "object",
+      "required": ["title", "paragraphs", "table", "bullets"],
+      "properties": {
+        "title": { "type": "string" },
+        "paragraphs": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "table": {
+          "type": "object",
+          "required": ["headers", "rows"],
+          "properties": {
+            "headers": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "rows": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            }
+          }
+        },
+        "bullets": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "product_metric": {
+      "type": "object",
+      "required": [
+        "metric",
+        "business_definition",
+        "base",
+        "numerator",
+        "denominator",
+        "calculation",
+        "how_to_review",
+        "pass_criteria",
+        "confidence"
+      ],
+      "properties": {
+        "metric": { "type": "string" },
+        "business_definition": { "type": "string" },
+        "base": { "type": "string" },
+        "numerator": { "type": "string" },
+        "denominator": { "type": "string" },
+        "calculation": { "type": "string" },
+        "how_to_review": { "type": "string" },
+        "pass_criteria": { "type": "string" },
+        "confidence": { "type": "string" }
+      }
+    },
+    "code_view": {
+      "type": "object",
+      "required": [
+        "reviewer_card",
+        "review_guide",
+        "role_context",
+        "sql_summary",
+        "business_filters",
+        "metric_review_trace",
+        "metric_logic",
+        "performance_preflight",
+        "result_file",
+        "findings",
+        "rule_checks"
+      ],
+      "properties": {
+        "reviewer_card": { "$ref": "#/$defs/reviewer_card" },
+        "review_guide": { "$ref": "#/$defs/review_guide" },
+        "role_context": { "type": "object" },
+        "sql_summary": { "type": "object" },
+        "business_filters": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/business_filter" }
+        },
+        "metric_review_trace": { "$ref": "#/$defs/metric_review" },
+        "metric_logic": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/metric_logic" }
+        },
+        "performance_preflight": {
+          "type": "object",
+          "required": [
+            "status",
+            "tier",
+            "score",
+            "triggers",
+            "required_references",
+            "required_checks",
+            "blockers",
+            "optimization_hint"
+          ],
+          "properties": {
+            "status": { "enum": ["pass", "warn", "block", "error"] },
+            "tier": { "type": "string" },
+            "score": { "type": "integer" },
+            "triggers": { "type": "array", "items": { "type": "string" } },
+            "trigger_details": { "type": "array", "items": { "type": "object" } },
+            "required_references": { "type": "array", "items": { "type": "string" } },
+            "required_checks": { "type": "array", "items": { "type": "string" } },
+            "blockers": { "type": "array", "items": { "type": "string" } },
+            "optimization_hint": { "type": "string" },
+            "full_guide_required": { "type": "boolean" },
+            "performance_fingerprint": { "type": "string" },
+            "facts": { "type": "object" }
+          }
+        },
+        "sql_facts": { "type": "object" },
+        "result_file": { "type": "object" },
+        "findings": {
+          "type": "array",
+          "items": { "type": "object" }
+        },
+        "rule_checks": {
+          "type": "array",
+          "items": { "type": "object" }
+        }
+      }
+    },
+    "reviewer_card": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "bucket",
+        "severity",
+        "title",
+        "action",
+        "why",
+        "reviewer_steps",
+        "blockers",
+        "confirmations",
+        "notes",
+        "result_brief"
+      ],
+      "properties": {
+        "schema_version": { "const": "review_card_v1" },
+        "bucket": { "type": "string" },
+        "severity": { "enum": ["pass", "warn", "fail"] },
+        "priority": { "type": "string" },
+        "title": { "type": "string" },
+        "action": { "type": "string" },
+        "why": { "type": "string" },
+        "reviewer_steps": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "blockers": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/review_issue" }
+        },
+        "confirmations": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/review_issue" }
+        },
+        "notes": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/review_issue" }
+        },
+        "result_brief": { "type": "string" },
+        "execution_brief": { "type": "string" }
+      }
+    },
+    "review_issue": {
+      "type": "object",
+      "required": ["code", "priority", "title", "detail", "source"],
+      "properties": {
+        "code": { "type": "string" },
+        "priority": { "enum": ["P0", "P1", "P2", "INFO"] },
+        "title": { "type": "string" },
+        "detail": { "type": "string" },
+        "source": { "type": "string" }
+      }
+    },
+    "review_guide": {
+      "type": "object",
+      "required": [
+        "goal",
+        "decision_order",
+        "checks",
+        "current_blockers",
+        "current_confirmations",
+        "checked_rule_topics",
+        "business_filters"
+      ],
+      "properties": {
+        "goal": { "type": "string" },
+        "decision_order": { "type": "string" },
+        "checks": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/review_guide_check" }
+        },
+        "current_blockers": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "current_confirmations": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "checked_rule_topics": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "business_filters": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/business_filter" }
+        }
+      }
+    },
+    "review_guide_check": {
+      "type": "object",
+      "required": ["name", "look_at", "how_to_judge", "pass_criteria"],
+      "properties": {
+        "name": { "type": "string" },
+        "look_at": { "type": "string" },
+        "how_to_judge": { "type": "string" },
+        "pass_criteria": { "type": "string" }
+      }
+    },
+    "metric_review": {
+      "type": "object",
+      "required": [
+        "summary",
+        "grouping",
+        "common_base",
+        "calculation_path",
+        "business_review",
+        "dimension_cards",
+        "metric_cards",
+        "review_questions"
+      ],
+      "properties": {
+        "summary": { "type": "string" },
+        "grouping": { "type": "string" },
+        "common_base": { "type": "string" },
+        "calculation_path": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "business_review": { "$ref": "#/$defs/business_review" },
+        "dimension_cards": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/dimension_card" }
+        },
+        "metric_cards": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/metric_card" }
+        },
+        "review_questions": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "business_review": {
+      "type": "object",
+      "required": [
+        "pattern_id",
+        "pattern_label",
+        "business_question",
+        "primary_review_objects",
+        "pattern_cards",
+        "pattern_review_order",
+        "funnel_review",
+        "distribution_review",
+        "reviewer_takeaway"
+      ],
+      "properties": {
+        "pattern_id": { "type": "string" },
+        "pattern_label": { "type": "string" },
+        "business_question": { "type": "string" },
+        "primary_review_objects": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/business_review_object" }
+        },
+        "pattern_cards": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/business_review_object" }
+        },
+        "pattern_review_order": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "funnel_review": { "$ref": "#/$defs/funnel_review" },
+        "distribution_review": { "$ref": "#/$defs/distribution_review" },
+        "duration_logic": { "type": "string" },
+        "reviewer_takeaway": { "type": "string" }
+      }
+    },
+    "business_review_object": {
+      "type": "object",
+      "required": ["name", "what_to_check", "how_to_judge", "pass_criteria"],
+      "properties": {
+        "name": { "type": "string" },
+        "what_to_check": { "type": "string" },
+        "how_to_judge": { "type": "string" },
+        "pass_criteria": { "type": "string" }
+      }
+    },
+    "funnel_review": {
+      "type": "object",
+      "required": ["detected", "steps"],
+      "properties": {
+        "detected": { "type": "boolean" },
+        "type": { "type": "string" },
+        "summary": { "type": "string" },
+        "base": { "type": "string" },
+        "dedup_grain": { "type": "string" },
+        "time_window": { "type": "string" },
+        "partition_window": { "type": "string" },
+        "strict_order_rule": { "type": "string" },
+        "step_count_metric": { "type": "string" },
+        "conversion_metrics": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "steps": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/funnel_step" }
+        },
+        "how_to_review": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "pass_criteria": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "funnel_step": {
+      "type": "object",
+      "required": ["order", "step_name", "reach_rule", "how_to_judge", "pass_criteria"],
+      "properties": {
+        "order": { "type": "integer" },
+        "step_name": { "type": "string" },
+        "source_table": { "type": "string" },
+        "source_cte": { "type": "string" },
+        "first_time_alias": { "type": "string" },
+        "count_alias": { "type": "string" },
+        "prev_count_alias": { "type": "string" },
+        "first_count_alias": { "type": "string" },
+        "reach_rule": { "type": "string" },
+        "how_to_judge": { "type": "string" },
+        "pass_criteria": { "type": "string" }
+      }
+    },
+    "distribution_review": {
+      "type": "object",
+      "required": ["detected", "type", "summary", "bucket_cards", "how_to_review", "pass_criteria"],
+      "properties": {
+        "detected": { "type": "boolean" },
+        "type": { "type": "string" },
+        "summary": { "type": "string" },
+        "bucket_cards": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/bucket_card" }
+        },
+        "how_to_review": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "pass_criteria": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "bucket_card": {
+      "type": "object",
+      "required": ["field", "definitions", "how_to_review", "pass_criteria"],
+      "properties": {
+        "field": { "type": "string" },
+        "definitions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/bucket_definition" }
+        },
+        "how_to_review": { "type": "string" },
+        "pass_criteria": { "type": "string" }
+      }
+    },
+    "bucket_definition": {
+      "type": "object",
+      "required": ["bucket", "condition", "business_effect", "how_to_judge", "pass_criteria"],
+      "properties": {
+        "bucket": { "type": "string" },
+        "condition": { "type": "string" },
+        "business_effect": { "type": "string" },
+        "how_to_judge": { "type": "string" },
+        "pass_criteria": { "type": "string" }
+      }
+    },
+    "dimension_card": {
+      "type": "object",
+      "required": ["field", "role", "description", "source", "confidence"],
+      "properties": {
+        "field": { "type": "string" },
+        "role": { "type": "string" },
+        "description": { "type": "string" },
+        "source": {
+          "enum": [
+            "sql_comment",
+            "cte_comment",
+            "static_inference",
+            "needs_manual_confirmation"
+          ]
+        },
+        "confidence": { "enum": ["high", "medium", "low"] }
+      }
+    },
+    "metric_card": {
+      "type": "object",
+      "required": [
+        "metric",
+        "business_definition",
+        "base",
+        "numerator",
+        "denominator",
+        "calculation",
+        "how_to_review",
+        "pass_criteria",
+        "reviewer_question",
+        "business_filters",
+        "base_business_filters",
+        "metric_business_filters",
+        "metric_conditions",
+        "source",
+        "confidence",
+        "sql_trace"
+      ],
+      "properties": {
+        "metric": { "type": "string" },
+        "business_definition": { "type": "string" },
+        "base": { "type": "string" },
+        "numerator": { "type": "string" },
+        "denominator": { "type": "string" },
+        "calculation": { "type": "string" },
+        "how_to_review": { "type": "string" },
+        "pass_criteria": { "type": "string" },
+        "reviewer_question": { "type": "string" },
+        "business_filters": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/business_filter" }
+        },
+        "base_business_filters": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/business_filter" }
+        },
+        "metric_business_filters": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/business_filter" }
+        },
+        "join_business_filters": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/business_filter" }
+        },
+        "metric_conditions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/metric_condition" }
+        },
+        "source_steps": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/source_step" }
+        },
+        "source": {
+          "enum": [
+            "sql_comment",
+            "cte_comment",
+            "static_inference",
+            "needs_manual_confirmation"
+          ]
+        },
+        "confidence": { "enum": ["high", "medium", "low"] },
+        "related_saved_rule_checks": {
+          "type": "array",
+          "items": { "type": "object" }
+        },
+        "sql_trace": { "type": "object" }
+      }
+    },
+    "metric_logic": {
+      "type": "object",
+      "required": [
+        "metric",
+        "calculation_type",
+        "business_definition",
+        "base_population",
+        "numerator",
+        "denominator",
+        "formula",
+        "description_source",
+        "formula_expression",
+        "confidence",
+        "needs_manual_confirmation"
+      ],
+      "properties": {
+        "metric": { "type": "string" },
+        "calculation_type": {
+          "enum": [
+            "ratio",
+            "unit_conversion",
+            "count_distinct",
+            "row_count",
+            "conditional_sum",
+            "sum",
+            "average",
+            "percentile",
+            "derived_metric"
+          ]
+        },
+        "business_definition": { "type": "string", "minLength": 1 },
+        "base_population": { "type": "string", "minLength": 1 },
+        "numerator": { "type": "string", "minLength": 1 },
+        "denominator": { "type": "string", "minLength": 1 },
+        "formula": { "type": "string", "minLength": 1 },
+        "description_source": {
+          "enum": [
+            "sql_comment",
+            "cte_comment",
+            "static_inference",
+            "needs_manual_confirmation"
+          ]
+        },
+        "formula_expression": { "type": "string" },
+        "source_steps": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/source_step" }
+        },
+        "base_expression": { "type": "string" },
+        "numerator_expression": { "type": "string" },
+        "denominator_expression": { "type": "string" },
+        "metric_filters": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "base_business_filters": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/business_filter" }
+        },
+        "metric_business_filters": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/business_filter" }
+        },
+        "join_business_filters": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/business_filter" }
+        },
+        "metric_condition_cards": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/metric_condition" }
+        },
+        "global_filters": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "join_logic": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "related_saved_rule_checks": {
+          "type": "array",
+          "items": { "type": "object" }
+        },
+        "confidence": { "enum": ["high", "medium", "low"] },
+        "needs_manual_confirmation": { "type": "boolean" }
+      }
+    },
+    "source_step": {
+      "type": "object",
+      "required": [
+        "role",
+        "operand",
+        "source_step",
+        "source_tables",
+        "group_by",
+        "business_filters",
+        "field_expression",
+        "story",
+        "lineage",
+        "source"
+      ],
+      "properties": {
+        "role": { "type": "string" },
+        "operand": { "type": "string" },
+        "source_step": { "type": "string" },
+        "source_tables": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "group_by": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "business_filters": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "field_expression": { "type": "string" },
+        "story": { "type": "string" },
+        "lineage": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "source": { "type": "string" }
+      }
+    },
+    "business_filter": {
+      "type": "object",
+      "required": [
+        "field",
+        "label",
+        "kind",
+        "scope",
+        "scope_label",
+        "operator",
+        "values",
+        "business_effect",
+        "how_to_judge",
+        "pass_criteria",
+        "condition"
+      ],
+      "properties": {
+        "field": { "type": "string" },
+        "label": { "type": "string" },
+        "kind": { "type": "string" },
+        "scope": {
+          "enum": ["base_filter", "metric_filter", "join_mapping"]
+        },
+        "scope_label": { "type": "string" },
+        "operator": { "type": "string" },
+        "values": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "value_mode": { "type": "string" },
+        "fixed_id_range": { "type": "boolean" },
+        "business_effect": { "type": "string" },
+        "mapping": {
+          "type": "array",
+          "items": { "type": "object" }
+        },
+        "unknown_values": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "dynamic_values": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "how_to_judge": { "type": "string" },
+        "pass_criteria": { "type": "string" },
+        "source": { "type": "string" },
+        "condition": { "type": "string" }
+      }
+    },
+    "metric_condition": {
+      "type": "object",
+      "required": [
+        "condition",
+        "business_effect",
+        "how_to_judge",
+        "pass_criteria",
+        "source"
+      ],
+      "properties": {
+        "condition": { "type": "string" },
+        "business_effect": { "type": "string" },
+        "how_to_judge": { "type": "string" },
+        "pass_criteria": { "type": "string" },
+        "source": { "type": "string" }
+      }
+    }
+  }
+}

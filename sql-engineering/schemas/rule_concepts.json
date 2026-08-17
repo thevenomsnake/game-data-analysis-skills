@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Cross-Project Rule Concept Registry",
+  "type": "object",
+  "required": ["version", "updated_at", "description", "concepts"],
+  "properties": {
+    "version": { "type": "integer" },
+    "updated_at": { "type": "string" },
+    "description": { "type": "string" },
+    "concepts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["concept_key", "label", "description", "expected_projects", "keywords", "status"],
+        "properties": {
+          "concept_key": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "label": { "type": "string" },
+          "description": { "type": "string" },
+          "expected_projects": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "keywords": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "status": { "enum": ["active", "deprecated"] },
+          "notes": { "type": "string" }
+        }
+      }
+    }
+  }
+}

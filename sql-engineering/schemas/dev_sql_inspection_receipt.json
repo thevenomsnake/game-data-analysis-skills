@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Development SQL Inspection Receipt",
+  "type": "object",
+  "required": [
+    "contract_version",
+    "inspection_id",
+    "status",
+    "project_id",
+    "command",
+    "database",
+    "request_status",
+    "subject",
+    "result_summary",
+    "files",
+    "row_count",
+    "columns",
+    "executed_at",
+    "reuse_contract"
+  ],
+  "properties": {
+    "contract_version": { "const": "dev_sql_inspection_receipt_v2" },
+    "inspection_id": { "type": "string", "minLength": 1 },
+    "status": { "const": "ready" },
+    "project_id": { "type": "string", "minLength": 1 },
+    "command": { "enum": ["tables", "describe", "enum", "query"] },
+    "database": { "type": "string", "minLength": 1 },
+    "project_relation": {
+      "type": "object",
+      "required": ["scope", "evidence_role"],
+      "properties": {
+        "scope": { "const": "same_project_development_environment" },
+        "evidence_role": { "const": "schema_and_sample_observation_only" }
+      },
+      "additionalProperties": false
+    },
+    "server_capabilities": {
+      "type": "object",
+      "required": ["contract_version", "detection_method", "server_version", "product", "version", "supports_cte", "cte_support_basis"],
+      "properties": {
+        "contract_version": { "const": "development_server_capabilities_v1" },
+        "detection_method": { "const": "select_version" },
+        "server_version": { "type": "string", "minLength": 1 },
+        "product": { "enum": ["mysql", "mariadb", "starrocks"] },
+        "version": {
+          "type": "object",
+          "required": ["major", "minor", "patch"],
+          "properties": {
+            "major": { "type": "integer", "minimum": 0 },
+            "minor": { "type": "integer", "minimum": 0 },
+            "patch": { "type": "integer", "minimum": 0 }
+          },
+          "additionalProperties": false
+        },
+        "supports_cte": { "type": "boolean" },
+        "cte_support_basis": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "user_request": { "type": ["string", "null"] },
+    "request_status": { "enum": ["recorded", "legacy_unavailable"] },
+    "subject": {
+      "type": "object",
+      "required": ["kind", "database", "tables", "subject_fingerprint"],
+      "properties": {
+        "kind": { "enum": ["table_discovery", "table_schema", "field_enum", "custom_diagnostic"] },
+        "database": { "type": "string" },
+        "tables": { "type": "array", "items": { "type": "string" } },
+        "field": { "type": ["string", "null"] },
+        "subject_fingerprint": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+      },
+      "additionalProperties": true
+    },
+    "result_summary": {
+      "type": "object",
+      "required": ["row_count", "columns", "preview_suppressed", "preview", "summary_text"],
+      "properties": {
+        "row_count": { "type": "integer", "minimum": 0 },
+        "columns": { "type": "array", "items": { "type": "string" } },
+        "preview_suppressed": { "type": "boolean" },
+        "preview": { "type": "array", "maxItems": 20 },
+        "summary_text": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "files": {
+      "type": "object",
+      "required": ["sql", "result", "receipt"],
+      "properties": {
+        "sql": { "type": "string", "pattern": "^dev_inspections/" },
+        "result": { "type": "string", "pattern": "^dev_inspections/" },
+        "receipt": { "type": "string", "pattern": "^dev_inspections/" }
+      },
+      "additionalProperties": false
+    },
+    "sql_file": { "type": "string" },
+    "result_file": { "type": "string" },
+    "receipt_file": { "type": "string" },
+    "row_count": { "type": "integer", "minimum": 0 },
+    "columns": { "type": "array", "items": { "type": "string" } },
+    "executed_at": { "type": "string", "minLength": 1 },
+    "sql_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "result_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "local_only": { "const": true },
+    "privacy_owner": { "const": "DA" },
+    "reuse_contract": {
+      "type": "object",
+      "required": ["state", "searchable", "automatic_promotion", "knowledge_route", "business_rule_route"],
+      "properties": {
+        "state": { "const": "observed" },
+        "searchable": { "const": true },
+        "automatic_promotion": { "const": false },
+        "knowledge_route": { "const": "KNOWLEDGE" },
+        "business_rule_route": { "const": "RULES" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": true
+}

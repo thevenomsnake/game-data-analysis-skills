@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Shared SQL Fact Bundle",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "fingerprint_version",
+    "execution_fingerprint",
+    "logic_fingerprint",
+    "analysis",
+    "source_tables",
+    "referenced_tables",
+    "cte_names",
+    "target_tables",
+    "source_logs",
+    "external_sources",
+    "final_fields",
+    "metrics",
+    "dimensions",
+    "filters",
+    "params",
+    "privacy"
+  ],
+  "properties": {
+    "schema_version": { "enum": ["sql_fact_bundle_v1", "sql_fact_bundle_v2", "sql_fact_bundle_v3"] },
+    "fingerprint_version": { "enum": ["sql_fingerprint_v1", "sql_fingerprint_v2"] },
+    "execution_fingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "logic_fingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "analysis": { "type": "object" },
+    "source_tables": { "type": "array", "items": { "type": "string" } },
+    "referenced_tables": { "type": "array", "items": { "type": "string" } },
+    "cte_names": { "type": "array", "items": { "type": "string" } },
+    "target_tables": { "type": "array", "items": { "type": "string" } },
+    "source_logs": { "type": "array", "items": { "type": "string" } },
+    "external_sources": { "type": "array", "items": { "type": "object" } },
+    "final_fields": { "type": "array", "items": { "type": "string" } },
+    "metrics": { "type": "array", "items": { "type": "object" } },
+    "dimensions": { "type": "array", "items": { "type": "object" } },
+    "subject_identity": {
+      "type": "object",
+      "required": [
+        "contract_version",
+        "policy_status",
+        "business_subject",
+        "default_key",
+        "selection_strategy",
+        "namespace_relationship",
+        "subject_entities",
+        "primary_subject",
+        "observed_key_namespaces",
+        "identity_bridge",
+        "complexity_audit"
+      ],
+      "properties": {
+        "contract_version": { "const": "subject_key_selection_v1" },
+        "policy_status": { "enum": ["configured", "legacy_default"] },
+        "business_subject": { "type": "string", "minLength": 1 },
+        "default_key": { "type": "string", "minLength": 1 },
+        "selection_strategy": { "const": "default_key_unless_native_event_key_avoids_identity_bridge" },
+        "namespace_relationship": { "type": "object" },
+        "subject_entities": { "type": "array", "items": { "type": "object" } },
+        "primary_subject": { "type": ["object", "null"] },
+        "observed_key_namespaces": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "identity_bridge": {
+          "type": "object",
+          "required": ["detected", "status", "join_count", "forbidden_when_only_for_default_key"],
+          "properties": {
+            "detected": { "type": "boolean" },
+            "status": { "type": "string", "minLength": 1 },
+            "join_count": { "type": "integer", "minimum": 0 },
+            "forbidden_when_only_for_default_key": { "type": "boolean" }
+          },
+          "additionalProperties": false
+        },
+        "complexity_audit": {
+          "type": "object",
+          "required": ["status", "recommendations"],
+          "properties": {
+            "status": { "enum": ["ok", "optimization_available"] },
+            "recommendations": { "type": "array", "items": { "type": "object" } }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "filters": { "type": "array", "items": { "type": "object" } },
+    "params": { "type": "object", "additionalProperties": { "type": "string" } },
+    "privacy": {
+      "type": "object",
+      "required": ["final_raw_identifier_exposed"],
+      "properties": {
+        "final_raw_identifier_exposed": { "type": "boolean" },
+        "sql_side_deidentification_forbidden": { "type": "boolean" },
+        "sql_side_privacy_transforms": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["function", "expression"],
+            "properties": {
+              "function": { "type": "string" },
+              "expression": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "privacy_handling_owner": { "enum": ["DA"] }
+      },
+      "additionalProperties": true
+    },
+    "performance": { "type": "object" }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "schema_version": { "const": "sql_fact_bundle_v2" } },
+        "required": ["schema_version"]
+      },
+      "then": {
+        "required": ["performance"],
+        "properties": { "fingerprint_version": { "const": "sql_fingerprint_v2" } }
+      }
+    },
+    {
+      "if": {
+        "properties": { "schema_version": { "const": "sql_fact_bundle_v3" } },
+        "required": ["schema_version"]
+      },
+      "then": {
+        "required": ["performance", "subject_identity"],
+        "properties": { "fingerprint_version": { "const": "sql_fingerprint_v2" } }
+      }
+    }
+  ],
+  "additionalProperties": false
+}

@@ -1,23 +1,12 @@
 # Contributing
 
-Contributions should preserve the public edition's narrow contract: file-backed SQL,
-immutable versions, searchable metadata, and exact delivery receipts.
+Keep the public edition generic, reproducible, and safe to publish.
 
-Before opening a pull request:
+- Do not add production results, private schemas, credentials, internal endpoints, or local absolute paths.
+- Keep examples fictional and place local run output under ignored directories.
+- Update the relevant Skill reference and README when a public command or contract changes.
+- Run the focused tests and `python tools/public_release.py validate --root .` before committing.
+- Use the standard library unless a dependency is required by an optional local adapter.
 
-1. Keep organization-specific schemas, table names, rules, URLs, and credentials out of the
-   repository.
-2. Add or update standard-library tests for behavior changes.
-3. Keep `README.md`, `README.zh-CN.md`, `README.ja.md`, `README.es.md`, and
-   `README.ko.md` aligned when onboarding, commands, or user-visible behavior changes.
-4. Run:
-
-   ```powershell
-   python -m unittest discover -s .\sql-engineering\tests -p "test_*.py"
-   python -m py_compile .\sql-engineering\scripts\sql_workspace.py .\sql-engineering\scripts\sql_execute.py
-   ```
-
-5. Explain the user-visible behavior and migration impact in the pull request.
-
-New dependencies require a concrete reason and should not be added for behavior available in
-the Python standard library.
+Pull requests should explain the changed public behavior, the files intentionally excluded, and
+the exact validation command used.

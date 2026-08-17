@@ -1,0 +1,188 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SQL Engineering Cross-Project Asset Organization Overlay",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "source_model",
+    "generated_at",
+    "catalog_path",
+    "catalog_fingerprint",
+    "taxonomy",
+    "policy",
+    "summary",
+    "entries"
+  ],
+  "properties": {
+    "schema_version": { "const": "sql_asset_organization_v2" },
+    "source_model": { "const": "catalog_only" },
+    "generated_at": { "type": "string", "minLength": 1 },
+    "catalog_path": { "$ref": "#/$defs/relative_path" },
+    "catalog_fingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "taxonomy": { "$ref": "#/$defs/taxonomy" },
+    "policy": {
+      "type": "object",
+      "required": [
+        "all_catalog_assets_visible",
+        "lifecycle_state_is_descriptive_only",
+        "organization_mutates_source_assets",
+        "formal_asset_identity_mutated",
+        "semantic_review_scope",
+        "classifier_version"
+      ],
+      "properties": {
+        "all_catalog_assets_visible": { "const": true },
+        "lifecycle_state_is_descriptive_only": { "const": true },
+        "organization_mutates_source_assets": { "const": false },
+        "formal_asset_identity_mutated": { "const": false },
+        "semantic_review_scope": { "const": "new_or_changed_assets_only" },
+        "classifier_version": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "catalog_asset_count",
+        "organization_entry_count",
+        "covered_catalog_asset_count",
+        "needs_semantic_review_count",
+        "catalog_missing_count",
+        "entries_by_curation_state",
+        "entries_by_domain",
+        "entries_by_topic",
+        "entries_by_classification_source"
+      ],
+      "properties": {
+        "catalog_asset_count": { "type": "integer", "minimum": 0 },
+        "organization_entry_count": { "type": "integer", "minimum": 0 },
+        "covered_catalog_asset_count": { "type": "integer", "minimum": 0 },
+        "needs_semantic_review_count": { "type": "integer", "minimum": 0 },
+        "catalog_missing_count": { "type": "integer", "minimum": 0 },
+        "entries_by_curation_state": { "$ref": "#/$defs/count_map" },
+        "entries_by_domain": { "$ref": "#/$defs/count_map" },
+        "entries_by_topic": { "$ref": "#/$defs/count_map" },
+        "entries_by_classification_source": { "$ref": "#/$defs/count_map" }
+      },
+      "additionalProperties": false
+    },
+    "entries": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/entry" }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "relative_path": {
+      "type": "string",
+      "pattern": "^(?![A-Za-z]:)(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+"
+    },
+    "count_map": {
+      "type": "object",
+      "additionalProperties": { "type": "integer", "minimum": 0 }
+    },
+    "taxonomy": {
+      "type": "object",
+      "required": ["schema_version", "taxonomy_version", "domains", "analysis_types"],
+      "properties": {
+        "schema_version": { "const": "sql_asset_taxonomy_v1" },
+        "taxonomy_version": { "type": "string", "minLength": 1 },
+        "domains": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["id", "label", "topics"],
+            "properties": {
+              "id": { "type": "string", "minLength": 1 },
+              "label": { "type": "string", "minLength": 1 },
+              "topics": {
+                "type": "array",
+                "minItems": 1,
+                "items": { "$ref": "#/$defs/taxonomy_item" }
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "analysis_types": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/taxonomy_item" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "taxonomy_item": {
+      "type": "object",
+      "required": ["id", "label"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "label": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "id_label": {
+      "type": "object",
+      "required": ["id", "label"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "label": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "entry": {
+      "type": "object",
+      "required": [
+        "asset_fingerprint",
+        "catalog_presence",
+        "formal_asset_id",
+        "formal_member_id",
+        "business_domain",
+        "business_topic",
+        "navigation_path",
+        "analysis_type",
+        "semantic_summary",
+        "tags",
+        "curation_state",
+        "classification_source",
+        "confidence",
+        "inherited_from_asset_id",
+        "reviewed_at",
+        "notes"
+      ],
+      "properties": {
+        "asset_fingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "catalog_presence": { "type": "boolean" },
+        "formal_asset_id": { "type": "string" },
+        "formal_member_id": { "type": "string" },
+        "business_domain": { "$ref": "#/$defs/id_label" },
+        "business_topic": { "$ref": "#/$defs/id_label" },
+        "navigation_path": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "analysis_type": { "$ref": "#/$defs/id_label" },
+        "semantic_summary": { "type": "string" },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "curation_state": {
+          "enum": ["current", "needs_semantic_review", "stale_semantics", "catalog_missing"]
+        },
+        "classification_source": {
+          "enum": ["deterministic", "inherited", "llm", "human"]
+        },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "inherited_from_asset_id": { "type": "string" },
+        "reviewed_at": { "type": "string", "minLength": 1 },
+        "notes": { "type": "string" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

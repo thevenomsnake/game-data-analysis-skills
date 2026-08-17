@@ -1,28 +1,12 @@
-# Security Policy
+# Security
 
-## Scope
+Do not commit credentials, tokens, private endpoints, production SQL, result files, private table
+definitions, or personal workspace paths. Keep connection profiles in the ignored
+`.sql-engineering/connections.local.json` file and secrets in local environment variables.
 
-Security reports may cover unsafe path handling, workspace corruption, credential exposure, or
-release content that should not be public.
+The public setup flow does not request or store a password. Automatic execution is optional and
+must use a configured read-only DB-API driver or command-line client. Browser and DA-console
+automation is outside this public package.
 
-## Reporting
-
-Do not open a public issue containing credentials or private data. Use GitHub's private
-vulnerability reporting feature for this repository.
-
-## Data Boundary
-
-This project must not contain production SQL results, credentials, private endpoints,
-organization-specific table definitions, or local absolute paths. The public Skill stores SQL
-inside the project selected by the user and never uploads it on its own.
-
-Database execution is optional and read-only. Keep connection options in the ignored
-`.sql-engineering/connections.local.json` file or another local path. Supply passwords and tokens
-through environment variables only. The public Skill does not automate browser or DA-console
-sessions, and local execution results under `.sql-engineering/runs/` are not committed by default.
-Connection profiles select Python modules or executable database clients and must therefore come
-from a trusted local source, never from an unreviewed repository or message attachment.
-
-Registered telemetry definitions, planning tables, confirmed knowledge, rules, SQL, and results may
-contain private project information. Keep them in an appropriately private project repository and do
-not submit them to this public upstream repository. Public examples must remain fictional.
+Report suspected disclosure privately to the repository maintainer. If a private value was
+published, rotate it first and preserve the affected commit hash for cleanup.

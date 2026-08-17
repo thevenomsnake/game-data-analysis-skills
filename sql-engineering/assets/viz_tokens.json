@@ -1,0 +1,109 @@
+{
+  "schema_version": "viz_tokens_v3",
+  "status": "stable",
+  "purpose": "Stable visualization roles and evidence vocabulary shared by pre-bind validation and final binding.",
+  "palette": {
+    "canvas": "#FFFFFF",
+    "section_background": "#F4F5F6",
+    "ink": "#17212B",
+    "secondary_text": "#5F6B76",
+    "divider_grid": "#D9DEE3",
+    "primary_series": "#6F96B8",
+    "primary_dark": "#24445D",
+    "context_series": "#B8C1C9",
+    "positive": "#2F7669",
+    "attention": "#9A7427",
+    "negative": "#9B4A43"
+  },
+  "chart_series": {
+    "single_series": "#24445D",
+    "peer_sequence": ["#24445D", "#6F96B8", "#5B8279", "#A6B0B9"],
+    "highlight": "#C58A3C",
+    "max_equal_weight_colors": 4,
+    "rule": "Use distinct peer colors only for distinct series; keep one focal color plus neutral context beyond four series."
+  },
+  "conditional_formatting": {
+    "percentage_color_scale": {
+      "kind": "color_scale",
+      "scale": "sequential_shared",
+      "minimum": "zero",
+      "maximum": "global_body_max_or_documented_semantic_cap",
+      "low": "#FFFFFF",
+      "mid": "#D2DFE9",
+      "high": "#6F96B8",
+      "foreground": "#17212B",
+      "minimum_contrast_ratio": 4.5
+    },
+    "signed_percentage_color_scale": {
+      "kind": "color_scale",
+      "scale": "diverging_zero_centered",
+      "low": "#C88E88",
+      "mid": "#FFFFFF",
+      "high": "#83ADA3",
+      "foreground": "#17212B",
+      "minimum_contrast_ratio": 4.5
+    },
+    "numeric_data_bar": {
+      "kind": "data_bar",
+      "scale": "shared_non_negative",
+      "minimum": "zero",
+      "maximum": "global_body_max_or_documented_rounded_ceiling",
+      "overall_color": "#AFC6D8",
+      "segment_color": "#D2DFE9",
+      "paired_series_tints": ["#AFC6D8", "#C7D7E3", "#B8D0CA", "#D7DCE0"],
+      "show_value": true,
+      "solid": true,
+      "border": false
+    },
+    "common_rules": {
+      "exclude_headers": true,
+      "exclude_summary_rows": true,
+      "ignore_blanks": true,
+      "one_encoding_per_cell": true
+    }
+  },
+  "evidence": {
+    "base_field_terms": [
+      "base",
+      "denominator",
+      "sample_size",
+      "sample count",
+      "player_count",
+      "user_count",
+      "entity_count",
+      "样本量",
+      "样本数",
+      "分母",
+      "玩家数",
+      "用户数",
+      "人数",
+      "人次",
+      "角色数",
+      "设备数"
+    ],
+    "base_display_terms": [
+      "base",
+      "sample",
+      "denominator",
+      "样本",
+      "分母",
+      "玩家数",
+      "用户数",
+      "人数",
+      "人次",
+      "角色数",
+      "设备数"
+    ],
+    "manual_checks": [
+      "Confirm that the visible Base is the exact denominator for the displayed ratio/distribution.",
+      "Confirm that Base uses the same cohort/date/filter grain as the displayed marks.",
+      "Confirm that every visible Base, absolute value, and percentage adds independent decision value; remove repeated information when it does not.",
+      "Add a small-sample warning when the business threshold is known and triggered."
+    ]
+  },
+  "number_formats": {
+    "count": "#,##0",
+    "percentage": "0.0%",
+    "percentage_point": "0.0\"pp\""
+  }
+}

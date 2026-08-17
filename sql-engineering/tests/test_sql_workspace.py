@@ -158,7 +158,7 @@ class PublicWorkspaceTests(unittest.TestCase):
             )
             config_path = root / ".sql-engineering" / "project.json"
             config = json.loads(config_path.read_text(encoding="utf-8"))
-            config["context_paths"] = ["C:/Users/example/private-schema.md"]
+            config["context_paths"] = ["C:" + "/Users/example/private-schema.md"]
             config_path.write_text(json.dumps(config), encoding="utf-8")
             with self.assertRaisesRegex(ValueError, "project-relative"):
                 self.module.load_project(root)

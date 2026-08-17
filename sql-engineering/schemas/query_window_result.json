@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Resolved Query Window",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "status",
+    "source",
+    "mode",
+    "pt_start",
+    "pt_end",
+    "as_of_date",
+    "timezone_offset",
+    "materialization",
+    "blockers"
+  ],
+  "properties": {
+    "schema_version": { "const": "query_window_v1" },
+    "status": { "enum": ["ready", "blocked"] },
+    "source": { "enum": ["user_explicit", "project_default", "missing"] },
+    "mode": { "enum": ["explicit", "project_start_to_yesterday", "missing"] },
+    "pt_start": { "type": "string" },
+    "pt_end": { "type": "string" },
+    "as_of_date": { "type": "string" },
+    "timezone_offset": { "type": "string" },
+    "materialization": { "const": "fixed_literals" },
+    "blockers": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

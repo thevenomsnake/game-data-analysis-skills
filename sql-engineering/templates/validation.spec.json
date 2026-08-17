@@ -1,0 +1,102 @@
+{
+  "spec_meta": {
+    "spec_version": "4.8",
+    "spec_storage": "sidecar_json",
+    "lifecycle_stage": "VALIDATION",
+    "target_engine": "StarRocks"
+  },
+  "dialect_profile": {
+    "current_dialect": "StarRocks",
+    "status": "enabled"
+  },
+  "project_context": {
+    "project_id": "<project_id>",
+    "display_name": "<display_name>",
+    "query_engine": "<query_engine>",
+    "query_environment": "<query_environment>",
+    "dashboard_application": "<dashboard_application>",
+    "table_naming_profile": "<table_naming_profile>"
+  },
+  "validation_intent": {
+    "title": "<validation title>",
+    "description": "<validation purpose>",
+    "target_lifecycle_stage": "promote_to_dashboard"
+  },
+  "candidate_artifact": {
+    "source": "generated_query",
+    "summary": "<candidate summary>",
+    "sql_reference": "<query sql path>"
+  },
+  "locked_data_sources": [],
+  "locked_grain": {
+    "status": "missing",
+    "grain": "<grain>",
+    "one_row_means": "<row meaning>"
+  },
+  "locked_dimensions": [],
+  "locked_metrics": [],
+  "parameter_contract": {
+    "parameters": []
+  },
+  "business_rule_checks": {
+    "passed": [],
+    "warnings": [],
+    "failed": []
+  },
+  "data_quality_checks": {
+    "required_checks": [],
+    "optional_sql_checks": []
+  },
+  "user_run_evidence": {
+    "required": true,
+    "status": "missing",
+    "evidence_reference": "",
+    "result_file_reference": null,
+    "result_file_type": null,
+    "definition_project": null,
+    "execution_project": null,
+    "delivery_project": null,
+    "concept_keys": [],
+    "proxy_limitations": null,
+    "result_summary": "",
+    "user_confirmed": false,
+    "skip_reason": null,
+    "unverified_dashboard_allowed": false,
+    "unverified_risk_note": null,
+    "future_verification_plan": null,
+    "promotion_blocker": true
+  },
+  "privacy_checks": {
+    "status": "warn",
+    "handling_owner": "DA",
+    "sql_side_deidentification_forbidden": true,
+    "notes": ["Do not hash or mask identifiers in SQL; DA handles privacy."]
+  },
+  "performance_precheck": {
+    "optimization_tier": "L1_perf_standard",
+    "preflight_score": 0,
+    "preflight_triggers": [],
+    "optimization_reference": "references/performance-routing.md",
+    "full_guide_required": false,
+    "equivalence_preserved": true,
+    "performance_fingerprint": "<fingerprint>",
+    "risk_items": []
+  },
+  "confidence_assessment": {
+    "confidence_score": 0.0,
+    "confidence_level": "low",
+    "confidence_basis": [],
+    "confidence_caps_applied": []
+  },
+  "promotion": {
+    "eligible": false,
+    "decision": "blocked",
+    "blockers": [],
+    "required_changes": [],
+    "unverified_output_required": false,
+    "dashboard_template": "templates/dashboard.sql"
+  },
+  "quality_gate": {
+    "must_pass": []
+  }
+}

@@ -1,0 +1,1527 @@
+{
+  "schema_version": "sql_capability_registry_v1",
+  "governance_modes": [
+    "PROJECT_ADMIN",
+    "SKILL_EVOLUTION",
+    "RULES",
+    "SOURCE_INTAKE",
+    "KNOWLEDGE",
+    "REQUIREMENT_INTAKE",
+    "DEV_SQL_INSPECT",
+    "QUERY",
+    "SQL_FORMALIZE",
+    "REVIEW",
+    "VALIDATION",
+    "DASHBOARD",
+    "INTERMEDIATE_TABLE",
+    "QUERY_EXECUTE",
+    "COLLABORATION_SUBMIT"
+  ],
+  "protected_writes": [
+    {
+      "scope": "skill_source",
+      "allowed_function_ids": [
+        "SKILL_EVOLUTION"
+      ],
+      "reason": "SQL generation and project workflows must treat source/runtime skill files as read-only."
+    },
+    {
+      "scope": "canonical_rules",
+      "allowed_function_ids": [
+        "RULES"
+      ],
+      "reason": "Canonical rules and their change log require a separately authorized RULES request."
+    },
+    {
+      "scope": "knowledge_assets",
+      "allowed_function_ids": [
+        "KNOWLEDGE"
+      ],
+      "reason": "Knowledge snapshots, projections, usage contracts, and project bindings require an explicit knowledge-management request."
+    },
+    {
+      "scope": "planning_sources",
+      "allowed_function_ids": [
+        "PLANNING_SOURCE",
+        "PROJECT_ADMIN"
+      ],
+      "reason": "Complete planning releases and project source bindings require the planning-source or setup workflow."
+    }
+  ],
+  "command_routes": {
+    "config_knowledge.py": {
+      "*": [
+        "KNOWLEDGE"
+      ],
+      "list": [
+        "KNOWLEDGE",
+        "QUERY",
+        "REVIEW",
+        "SQL_FORMALIZE",
+        "DASHBOARD",
+        "PROJECT_HEALTH"
+      ],
+      "resolve": [
+        "KNOWLEDGE",
+        "QUERY",
+        "REVIEW",
+        "SQL_FORMALIZE",
+        "DASHBOARD"
+      ],
+      "validate": [
+        "KNOWLEDGE",
+        "PROJECT_HEALTH",
+        "PROJECT_ADMIN"
+      ]
+    },
+    "source_workspace.py": {
+      "*": [
+        "SOURCE_WORKSPACE"
+      ],
+      "list": [
+        "SOURCE_WORKSPACE",
+        "SOURCE_INTAKE",
+        "KNOWLEDGE",
+        "PROJECT_ADMIN"
+      ]
+    },
+    "planning_source.py": {
+      "*": [
+        "PLANNING_SOURCE"
+      ],
+      "configure": [
+        "PLANNING_SOURCE",
+        "PROJECT_ADMIN"
+      ],
+      "status": [
+        "PLANNING_SOURCE",
+        "PROJECT_ADMIN",
+        "KNOWLEDGE"
+      ],
+      "check": [
+        "PLANNING_SOURCE",
+        "PROJECT_ADMIN",
+        "KNOWLEDGE"
+      ],
+      "validate": [
+        "PLANNING_SOURCE",
+        "PROJECT_ADMIN",
+        "KNOWLEDGE",
+        "PROJECT_HEALTH"
+      ],
+      "history": [
+        "PLANNING_SOURCE",
+        "PROJECT_ADMIN",
+        "KNOWLEDGE"
+      ]
+    },
+    "local_setup.py": {
+      "*": [
+        "PROJECT_ADMIN"
+      ]
+    },
+    "data_service.py": {
+      "*": [
+        "PROJECT_ADMIN"
+      ]
+    },
+    "workspace_setup.py": {
+      "*": [
+        "PROJECT_ADMIN"
+      ]
+    },
+    "dashboard_review.py": {
+      "*": [
+        "DASHBOARD_REVIEW_HTML",
+        "REVIEW"
+      ]
+    },
+    "migrate_legacy_sql_work.py": {
+      "*": [
+        "PROJECT_ADMIN"
+      ]
+    },
+    "migrate_query_workspace.py": {
+      "*": [
+        "PROJECT_ADMIN"
+      ]
+    },
+    "migrate_canonical_rule_store.py": {
+      "*": [
+        "SKILL_EVOLUTION",
+        "RULES",
+        "PROJECT_ADMIN"
+      ]
+    },
+    "rule_activation_governance.py": {
+      "*": [
+        "SKILL_EVOLUTION",
+        "RULES"
+      ],
+      "audit": [
+        "SKILL_EVOLUTION",
+        "RULES",
+        "PROJECT_ADMIN"
+      ]
+    },
+    "rule_mapping_knowledge_migration.py": {
+      "*": [
+        "SKILL_EVOLUTION",
+        "RULES",
+        "KNOWLEDGE"
+      ]
+    },
+    "rule_authorization_governance.py": {
+      "*": [
+        "SKILL_EVOLUTION",
+        "RULES"
+      ]
+    },
+    "query_workspace_maintenance.py": {
+      "*": [
+        "QUERY_WORKSPACE_MAINTENANCE"
+      ],
+      "apply": [
+        "QUERY_WORKSPACE_MAINTENANCE",
+        "PROJECT_ADMIN"
+      ]
+    },
+    "result_evidence_maintenance.py": {
+      "*": [
+        "RESULT_EVIDENCE_MAINTENANCE"
+      ],
+      "compact": [
+        "RESULT_EVIDENCE_MAINTENANCE",
+        "PROJECT_ADMIN"
+      ],
+      "refresh": [
+        "RESULT_EVIDENCE_MAINTENANCE",
+        "PROJECT_ADMIN"
+      ]
+    },
+    "query_window.py": {
+      "*": [
+        "QUERY",
+        "REQUIREMENT_INTAKE",
+        "PROJECT_ADMIN"
+      ]
+    },
+    "sql_execution_adapter.py": {
+      "*": [
+        "QUERY",
+        "SQL_FORMALIZE",
+        "REVIEW",
+        "PROJECT_ADMIN"
+      ],
+      "route": [
+        "QUERY",
+        "SQL_FORMALIZE"
+      ],
+      "render": [
+        "QUERY",
+        "SQL_FORMALIZE"
+      ],
+      "inspect": [
+        "QUERY",
+        "SQL_FORMALIZE",
+        "REVIEW",
+        "PROJECT_ADMIN"
+      ]
+    },
+    "requirement_intake.py": {
+      "*": [
+        "REQUIREMENT_INTAKE"
+      ]
+    },
+    "dev_sql_inspect.py": {
+      "*": [
+        "DEV_SQL_INSPECT"
+      ]
+    },
+    "rule_review.py": {
+      "*": [
+        "RULE_REVIEW",
+        "RULES"
+      ]
+    },
+    "sql_formalize.py": {
+      "*": [
+        "SQL_FORMALIZE",
+        "VALIDATION",
+        "DASHBOARD"
+      ]
+    },
+    "sql_formalize_seed.py": {
+      "*": [
+        "QUERY",
+        "SQL_FORMALIZE"
+      ]
+    },
+    "sql_project.py": {
+      "*": [
+        "PROJECT_ADMIN"
+      ],
+      "init": [
+        "PROJECT_ADMIN"
+      ],
+      "set-config": [
+        "PROJECT_ADMIN"
+      ],
+      "add-rule": [
+        "RULES"
+      ],
+      "save-sql": [
+        "QUERY",
+        "VALIDATION",
+        "DASHBOARD"
+      ],
+      "update-artifact": [
+        "PROJECT_ADMIN",
+        "QUERY",
+        "VALIDATION",
+        "DASHBOARD"
+      ],
+      "save-table": [
+        "INTERMEDIATE_TABLE"
+      ],
+      "update-table": [
+        "INTERMEDIATE_TABLE"
+      ],
+      "save-note": [
+        "PROJECT_ADMIN",
+        "RULES",
+        "SOURCE_INTAKE",
+        "REQUIREMENT_INTAKE",
+        "QUERY",
+        "SQL_FORMALIZE",
+        "VALIDATION",
+        "DASHBOARD",
+        "REVIEW",
+        "SQL_REPOSITORY",
+        "DASHBOARD_REVIEW_HTML",
+        "INTERMEDIATE_TABLE",
+        "PROJECT_HEALTH",
+        "RULE_REVIEW",
+        "RULE_DICTIONARY"
+      ],
+      "save-run": [
+        "VALIDATION",
+        "DASHBOARD"
+      ],
+      "rebuild-index": [
+        "PROJECT_ADMIN"
+      ],
+      "describe-sql-write-formalize-seed": [
+        "QUERY",
+        "SQL_FORMALIZE"
+      ]
+    },
+    "sql_query_workspace.py": {
+      "*": [
+        "QUERY"
+      ],
+      "init": [
+        "PROJECT_ADMIN"
+      ],
+      "upgrade-contract": [
+        "PROJECT_ADMIN"
+      ],
+      "receipt": [
+        "QUERY",
+        "QUERY_EXECUTE"
+      ],
+      "attach-output": [
+        "QUERY",
+        "QUERY_EXECUTE",
+        "RESULT_VISUALIZATION"
+      ],
+      "mark": [
+        "QUERY",
+        "QUERY_EXECUTE"
+      ]
+    },
+    "sql_summary_planner.py": {
+      "*": [
+        "QUERY"
+      ],
+      "plan": [
+        "QUERY"
+      ],
+      "create-bundle": [
+        "QUERY"
+      ]
+    },
+    "sql_result_visualization.py": {
+      "*": [
+        "RESULT_VISUALIZATION"
+      ],
+      "migrate": [
+        "RESULT_VISUALIZATION",
+        "PROJECT_ADMIN",
+        "SKILL_EVOLUTION"
+      ]
+    },
+    "validate_style.py": {
+      "*": [
+        "RESULT_VISUALIZATION",
+        "SKILL_EVOLUTION"
+      ]
+    },
+    "result_lineage_organizer.py": {
+      "*": [
+        "RESULT_LINEAGE_ORGANIZATION"
+      ],
+      "inspect": [
+        "RESULT_LINEAGE_ORGANIZATION",
+        "PROJECT_ADMIN",
+        "SKILL_EVOLUTION"
+      ],
+      "apply": [
+        "RESULT_LINEAGE_ORGANIZATION",
+        "PROJECT_ADMIN",
+        "SKILL_EVOLUTION"
+      ]
+    },
+    "sql_repository.py": {
+      "*": [
+        "SQL_REPOSITORY"
+      ]
+    },
+    "asset_catalog.py": {
+      "*": [
+        "ASSET_CATALOG"
+      ]
+    },
+    "asset_lifecycle.py": {
+      "*": [
+        "ASSET_LIFECYCLE"
+      ],
+      "scan": [
+        "ASSET_LIFECYCLE",
+        "PROJECT_ADMIN"
+      ],
+      "inventory": [
+        "ASSET_LIFECYCLE",
+        "PROJECT_ADMIN"
+      ],
+      "closeout-plan": [
+        "ASSET_LIFECYCLE",
+        "PROJECT_ADMIN"
+      ],
+      "plan": [
+        "ASSET_LIFECYCLE",
+        "PROJECT_ADMIN"
+      ],
+      "apply": [
+        "ASSET_LIFECYCLE",
+        "PROJECT_ADMIN"
+      ]
+    },
+    "asset_provider.py": {
+      "*": [
+        "ASSET_PROVIDER_SNAPSHOT"
+      ],
+      "validate": [
+        "ASSET_PROVIDER_SNAPSHOT",
+        "PROJECT_HEALTH"
+      ]
+    },
+    "asset_organization.py": {
+      "*": [
+        "ASSET_ORGANIZATION"
+      ]
+    },
+    "asset_group_registry.py": {
+      "*": [
+        "ASSET_ORGANIZATION"
+      ]
+    },
+    "sql_review.py": {
+      "*": [
+        "REVIEW"
+      ]
+    },
+    "xml_catalog.py": {
+      "*": [
+        "SOURCE_INTAKE"
+      ]
+    },
+    "collaboration_submit.py": {
+      "*": [
+        "COLLABORATION_SUBMIT"
+      ],
+      "plan": [
+        "COLLABORATION_SUBMIT"
+      ],
+      "status": [
+        "COLLABORATION_SUBMIT"
+      ],
+      "submit": [
+        "COLLABORATION_SUBMIT"
+      ]
+    }
+  },
+  "common_actions": [
+    {
+      "id": "INSPECT_DEV_DATA",
+      "label": "检查开发库数据",
+      "function_ids": [
+        "DEV_SQL_INSPECT"
+      ],
+      "description": "检索历史证据，或只读查看开发库表结构、字段枚举和小范围诊断结果。"
+    },
+    {
+      "id": "QUERY_WORK",
+      "label": "查数据 / 修改 SQL",
+      "function_ids": [
+        "QUERY",
+        "QUERY_EXECUTE"
+      ],
+      "description": "生成、修改并保存查询 SQL；需要执行时只消费准确 receipt，并使用公开配置的本地适配器或 Chrome 插件。"
+    },
+    {
+      "id": "FORMALIZE",
+      "label": "固化 SQL",
+      "function_ids": [
+        "SQL_FORMALIZE"
+      ],
+      "description": "把已跑通 SQL 和结果证据固化为正式 QUERY，并按需生成 Dashboard。"
+    },
+    {
+      "id": "VISUALIZE_SQL_RESULT",
+      "label": "可视化 SQL 结果",
+      "function_ids": [
+        "RESULT_VISUALIZATION"
+      ],
+      "description": "准确 SQL 返回结果后，Bug 排查默认生成自包含 HTML，传统分析默认生成 Excel，并绑定准确结果 lineage。"
+    },
+    {
+      "id": "ORGANIZE_RESULT_LINEAGE",
+      "label": "整理结果与可视化",
+      "function_ids": [
+        "RESULT_LINEAGE_ORGANIZATION"
+      ],
+      "description": "定期识别结果、Excel 和可视化的准确来源；LLM 必须讲清关键差异，再逐项由用户确认。"
+    },
+    {
+      "id": "REVIEW_SQL",
+      "label": "审查 SQL",
+      "function_ids": [
+        "REVIEW"
+      ],
+      "description": "从产品和代码两个视角审查原始 SQL。"
+    },
+    {
+      "id": "FIND_SQL",
+      "label": "查找 SQL",
+      "function_ids": [
+        "QUERY",
+        "SQL_REPOSITORY"
+      ],
+      "description": "按用途、指标、日志和筛选查找临时历史或正式资产。"
+    },
+    {
+      "id": "BROWSE_ALL_ASSETS",
+      "label": "浏览全部资产",
+      "function_ids": [
+        "ASSET_CATALOG",
+        "ASSET_ORGANIZATION"
+      ],
+      "description": "按显式定期任务生成共享资产全状态只读目录，排除本地 query workspace，增量整理业务语义，并为分析问题分配永久 AG 编号和主页目录。"
+    },
+    {
+      "id": "CURATE_QUERY_WORKSPACE",
+      "label": "整理临时 SQL",
+      "function_ids": [
+        "QUERY_WORKSPACE_MAINTENANCE",
+        "RESULT_EVIDENCE_MAINTENANCE"
+      ],
+      "description": "定期分类、查重并动态浏览 query workspace；原始结果超过 10 MB 时切片，完整保留可视化，不改 SQL 或生命周期。"
+    },
+    {
+      "id": "MANAGE_RULES",
+      "label": "管理口径",
+      "function_ids": [
+        "RULES"
+      ],
+      "description": "查看或经明确授权写入项目 canonical rules。"
+    },
+    {
+      "id": "MANAGE_KNOWLEDGE",
+      "label": "查询 / 管理资料库",
+      "function_ids": [
+        "KNOWLEDGE"
+      ],
+      "description": "优先从项目 active bindings 发现并只读查询映射、枚举、QA/Owner/负责人等可变参考信息；显式授权后才登记、刷新或绑定资料。"
+    },
+    {
+      "id": "DISCOVER_SOURCE_MATERIALS",
+      "label": "初始化 / 扫描资料目录",
+      "function_ids": [
+        "SOURCE_WORKSPACE"
+      ],
+      "description": "配置本机未确认代码、TLOG 文档或外部参考目录，生成候选文件索引，并选择一个准确来源供后续 KNOWLEDGE 审查。"
+    },
+    {
+      "id": "MANAGE_PLANNING_SOURCE",
+      "label": "配置 / 同步策划表",
+      "function_ids": [
+        "PLANNING_SOURCE"
+      ],
+      "description": "选择本地自管或远程托管策划源，按产品和阶段检查、同步并封存精确版本，维护项目 source release 绑定。"
+    },
+    {
+      "id": "MANAGE_PROJECT",
+      "label": "开始配置 / 修改配置",
+      "function_ids": [
+        "PROJECT_ADMIN"
+      ],
+      "description": "检查尚未配置的项目项，让用户逐阶段确认、复制或停用内网/DA 数据服务绑定，并持久化策划源、本机凭据和本地身份；也支持显式修改已有配置。"
+    },
+    {
+      "id": "SYNC_MATERIALS",
+      "label": "同步资料",
+      "function_ids": [
+        "COLLABORATION_SUBMIT"
+      ],
+      "description": "生成本地安全提交计划；不自动推送，不读取生产项目或结果。"
+    }
+  ],
+  "functions": [
+    {
+      "id": "PROJECT_ADMIN",
+      "label": "项目管理",
+      "governance_mode": "PROJECT_ADMIN",
+      "audience": "common",
+      "use_when": "成员安装 SQL Engineering 后说‘开始配置’或‘修改配置’，需要初始化明确的产品阶段、逐用途确认或复制数据服务绑定、持久化策划源/本机凭据/本地身份，或检查、迁移项目空间、配置、manifest 和索引。",
+      "required_context": [
+        "项目 slug 或项目根目录"
+      ],
+      "entrypoints": [
+        "workspace_setup.py status|sync",
+        "data_service.py status|init|copy|bind|disable|resolve",
+        "local_setup.py status|configure",
+        "planning_source.py status|configure",
+        "sql_project.py init|show-config|set-config|rebuild-index",
+        "project_validate.py",
+        "migrate_*.py"
+      ],
+      "writes_assets": true,
+      "llm_policy": "none",
+      "quality_profile": "project_admin",
+      "references": [
+        "setup-onboarding.md",
+        "data-services.md",
+        "local-setup.md",
+        "planning-source.md",
+        "operating-contract.md",
+        "project-workflow.md"
+      ],
+      "outputs": [
+        "产品阶段与数据服务绑定状态",
+        "配置清单与缺失项",
+        "持久化本机配置",
+        "项目配置",
+        "manifest/index",
+        "迁移或健康报告"
+      ],
+      "aliases": [
+        "开始配置",
+        "修改配置",
+        "检查配置"
+      ]
+    },
+    {
+      "id": "SKILL_EVOLUTION",
+      "label": "SQL Skill进化",
+      "governance_mode": "SKILL_EVOLUTION",
+      "audience": "advanced",
+      "use_when": "用户明确要求进化、重构、修复或更新 SQL Engineering Skill 本身的脚本、测试、schema 或说明。不得由普通 QUERY 发现问题后自行升级进入。",
+      "required_context": [
+        "明确的 skill 改造请求",
+        "失败案例或目标行为"
+      ],
+      "entrypoints": [
+        "write_scope_guard.py",
+        "sql-engineering source/tests/references"
+      ],
+      "writes_assets": true,
+      "llm_policy": "engineering_change_with_regression_tests",
+      "quality_profile": "skill_source_change",
+      "references": [
+        "sql-workflow-optimization-record.md"
+      ],
+      "outputs": [
+        "skill source change",
+        "regression tests",
+        "runtime sync"
+      ],
+      "aliases": [
+        "Skill进化",
+        "skills进化",
+        "SQL skill改造"
+      ]
+    },
+    {
+      "id": "RULES",
+      "label": "口径管理",
+      "governance_mode": "RULES",
+      "audience": "common",
+      "use_when": "查看、审查或经用户明确授权写入项目 canonical rules。",
+      "required_context": [
+        "项目",
+        "口径内容或 concept_key"
+      ],
+      "entrypoints": [
+        "sql_project.py show-rules|rule-report|add-rule",
+        "rule_review.py",
+        "rule_dictionary.py",
+        "rule_authorization_governance.py"
+      ],
+      "writes_assets": true,
+      "llm_policy": "optional_semantic_structuring",
+      "quality_profile": "canonical_rule_write",
+      "references": [
+        "rule-manager.md",
+        "rule-context-event-signatures.md"
+      ],
+      "outputs": [
+        "canonical rule",
+        "口径审查或字典"
+      ],
+      "aliases": []
+    },
+    {
+      "id": "SOURCE_INTAKE",
+      "label": "来源/XML同步",
+      "governance_mode": "SOURCE_INTAKE",
+      "audience": "advanced",
+      "use_when": "同步 XML/TLOG 结构、日志名、字段、类型、描述，生成字段目录或登记外部来源契约；XML 不能推断可变的 QA、Owner、负责人或联系人。",
+      "required_context": [
+        "项目",
+        "XML/TLOG 或来源证据"
+      ],
+      "entrypoints": [
+        "xml_catalog.py"
+      ],
+      "writes_assets": true,
+      "llm_policy": "none",
+      "quality_profile": "source_intake",
+      "references": [
+        "source-index.md"
+      ],
+      "outputs": [
+        "xml_catalog.json",
+        "项目来源证据"
+      ],
+      "aliases": []
+    },
+    {
+      "id": "SOURCE_WORKSPACE",
+      "label": "候选资料目录",
+      "governance_mode": "SOURCE_INTAKE",
+      "audience": "common",
+      "use_when": "初始化或扫描成员本机的代码资料、TLOG 文档等未确认来源目录，或从目录中选择一个准确文件供后续资料库审查；完整策划表目录改用 PLANNING_SOURCE。",
+      "required_context": [
+        "仓库根目录",
+        "本机来源目录或已配置 root_id",
+        "可选项目范围"
+      ],
+      "entrypoints": [
+        "source_workspace.py configure|list|scan|select"
+      ],
+      "writes_assets": true,
+      "llm_policy": "none_for_discovery_optional_for_later_knowledge_review",
+      "quality_profile": "local_only_unconfirmed_no_implicit_promotion",
+      "references": [
+        "source-workspace.md",
+        "knowledge-management.md",
+        "operating-contract.md"
+      ],
+      "outputs": [
+        "本机 source root 配置",
+        "候选资料索引",
+        "selected_not_reviewed 选择凭据"
+      ],
+      "aliases": [
+        "扫描候选资料",
+        "未确认代码资料",
+        "未确认外部资料"
+      ]
+    },
+    {
+      "id": "PLANNING_SOURCE",
+      "label": "策划源空间",
+      "governance_mode": "SOURCE_INTAKE",
+      "audience": "common",
+      "use_when": "配置、修改、检查、同步或查看一个产品阶段的策划源版本；用户明确选择本地自管或远程托管，调用时按统一接口封存精确 SVN revision，非 SVN 来源才封存完整目录。",
+      "required_context": [
+        "SQL 项目",
+        "产品与阶段",
+        "本地自管路径或远程托管 SVN URL",
+        "明确的管理方式"
+      ],
+      "entrypoints": [
+        "planning_source.py configure|status|check|sync|validate|history"
+      ],
+      "writes_assets": true,
+      "llm_policy": "none_for_source_revision_semantic_review_only_for_new_projection",
+      "quality_profile": "exact_svn_revision_or_embedded_folder_relative_project_binding",
+      "references": [
+        "planning-source.md",
+        "knowledge-management.md",
+        "operating-contract.md"
+      ],
+      "outputs": [
+        "planning_source_release_v2",
+        "planning_source_binding_v2",
+        "SVN revision/目录 diff",
+        "本机同步配置"
+      ],
+      "aliases": [
+        "配置策划表",
+        "修改策划表配置",
+        "同步策划表",
+        "检查策划表更新",
+        "策划表版本"
+      ]
+    },
+    {
+      "id": "KNOWLEDGE",
+      "label": "资料库查询与管理",
+      "governance_mode": "KNOWLEDGE",
+      "audience": "common",
+      "use_when": "从项目 active bindings 发现并只读查询映射、枚举、名称、QA/Owner/负责人/联系人等可变参考信息，或经明确授权登记、刷新、审查和绑定资料版本。",
+      "required_context": [
+        "目标项目",
+        "查询用途或资料管理请求",
+        "资料来源或已审核导出规格（仅登记/刷新时）"
+      ],
+      "entrypoints": [
+        "config_knowledge.py register|refresh|bind|resolve|validate|list",
+        "rule_mapping_knowledge_migration.py"
+      ],
+      "writes_assets": true,
+      "llm_policy": "semantic_contract_during_intake_only",
+      "quality_profile": "immutable_source_versioned_projection_explicit_binding",
+      "references": [
+        "knowledge-management.md"
+      ],
+      "outputs": [
+        "来源快照",
+        "资料投影版本",
+        "使用契约",
+        "项目绑定",
+        "knowledge_reference_v1",
+        "knowledge_usage_v1"
+      ],
+      "aliases": [
+        "配置表管理",
+        "策划表管理",
+        "资料管理",
+        "资料查询",
+        "负责人查询",
+        "Owner查询",
+        "QA查询"
+      ]
+    },
+    {
+      "id": "REQUIREMENT_INTAKE",
+      "label": "需求判定",
+      "governance_mode": "REQUIREMENT_INTAKE",
+      "audience": "integration",
+      "use_when": "在生成 SQL 前只读判断取数需求是否完整，返回通用缺失槽位和 active canonical rule 要求的未决业务参数。",
+      "required_context": [
+        "用户原文",
+        "可选项目根目录",
+        "可选的当前澄清文本"
+      ],
+      "entrypoints": [
+        "requirement_intake.py"
+      ],
+      "writes_assets": false,
+      "llm_policy": "none",
+      "quality_profile": "read_only_rule_aware_intake",
+      "references": [
+        "operating-contract.md"
+      ],
+      "outputs": [
+        "requirement_intake_v2 JSON",
+        "blocking business decisions"
+      ],
+      "aliases": []
+    },
+    {
+      "id": "DEV_SQL_INSPECT",
+      "label": "开发库只读检查",
+      "governance_mode": "DEV_SQL_INSPECT",
+      "audience": "common",
+      "use_when": "只读查看或检索开发环境日志表、字段定义、字段枚举、日期覆盖或小范围样例，不生成正式分析资产。",
+      "required_context": [
+        "项目阶段及已确认 development_inspection 服务",
+        "表或日志",
+        "检查字段或只读 SQL",
+        "有界日期范围"
+      ],
+      "entrypoints": [
+        "dev_sql_inspect.py ping|tables|describe|enum|query|history|migrate-history"
+      ],
+      "writes_assets": true,
+      "llm_policy": "summarize_local_result_only",
+      "quality_profile": "readonly_bounded_development_inspection",
+      "references": [
+        "data-services.md",
+        "dev-sql-inspection.md",
+        "operating-contract.md"
+      ],
+      "outputs": [
+        "本地 query.sql",
+        "本地 result.csv",
+        "dev_sql_inspection_receipt_v2",
+        "dev_sql_inspection_index_v2"
+      ],
+      "aliases": [
+        "开发库查询",
+        "查开发环境",
+        "字段枚举"
+      ]
+    },
+    {
+      "id": "QUERY",
+      "label": "查询SQL",
+      "governance_mode": "QUERY",
+      "audience": "common",
+      "use_when": "生成、修改、调试、搜索或标记 query workspace SQL，并独立记录个人排查、通用排查、一次性分析、可复用分析或周期交付的资产价值。个人/通用诊断首轮必须在有界主体与时间范围内优先覆盖合理假设、相邻事件和可筛选上下文，而不是先用未经验证的状态或关联条件收窄。",
+      "required_context": [
+        "项目",
+        "业务问题",
+        "用户时间范围或可解析的项目默认窗口",
+        "输出粒度/指标，或诊断主体与有界证据范围"
+      ],
+      "entrypoints": [
+        "query_window.py",
+        "sql_execution_adapter.py route|render",
+        "sql_summary_planner.py plan|create-bundle",
+        "sql_query_workspace.py save|receipt",
+        "sql_project.py rule-context|resolve-table"
+      ],
+      "writes_assets": true,
+      "llm_policy": "single_generation_with_bounded_diagnostic_hypothesis_coverage",
+      "quality_profile": "runnable_query_broad_first_for_diagnostics",
+      "references": [
+        "project-workflow.md",
+        "sql-taxonomy.md",
+        "core-rules.md",
+        "query-workspace.md",
+        "execution-routing.md",
+        "time-integrity.md",
+        "dialects/<selected-execution-profile>.md"
+      ],
+      "outputs": [
+        "query_workspace/vNNN.sql",
+        "request_envelope_v1",
+        "rule_application_v1",
+        "summary_feasibility_v1",
+        "可选 query_analysis_bundle_v1",
+        "ready query_delivery_receipt_v1",
+        "meta/seed/index",
+        "精确版本派生产物"
+      ],
+      "aliases": []
+    },
+    {
+      "id": "SQL_FORMALIZE",
+      "label": "SQL固化",
+      "governance_mode": "SQL_FORMALIZE",
+      "audience": "common",
+      "use_when": "已有 SQL 和真实结果证据，需要固化为正式 QUERY 或 QUERY+Dashboard。",
+      "required_context": [
+        "项目根目录",
+        "源 SQL",
+        "结果文件",
+        "固化目标",
+        "用户确认"
+      ],
+      "entrypoints": [
+        "sql_formalize.py"
+      ],
+      "writes_assets": true,
+      "llm_policy": "at_most_one_semantic_repair",
+      "quality_profile": "formal_query",
+      "references": [
+        "project-workflow.md",
+        "performance-routing.md",
+        "sql-header-layering.md",
+        "spec-contracts.md",
+        "time-integrity.md"
+      ],
+      "outputs": [
+        "正式 QUERY",
+        "formal_sql_delivery_receipt_v1",
+        "run evidence",
+        "可选 validation/dashboard",
+        "FormalizeBundle",
+        "request-bound rule_application_v1"
+      ],
+      "aliases": [
+        "sql固化",
+        "固化快线",
+        "查询固化"
+      ]
+    },
+    {
+      "id": "RESULT_VISUALIZATION",
+      "label": "结果可视化",
+      "governance_mode": "VALIDATION",
+      "audience": "common",
+      "use_when": "临时 SQL、正式 QUERY 或 DASHBOARD SQL 成功返回结果后按 usage_class 默认展示：personal_diagnosis/reusable_diagnostic 生成自包含 Bug 排查 HTML，ad_hoc_analysis/reusable_analysis/recurring_delivery 生成分析 Excel；用户明确指定格式时优先。空结果、项目禁用或用户拒绝时跳过并记录原因。不是 Dashboard SQL 生成，也不是定期结果整理。",
+      "required_context": [
+        "项目根目录",
+        "准确 SQL 路径或 query_analysis_bundle_v1",
+        "对应返回结果文件",
+        "可选展示要求或明确跳过原因"
+      ],
+      "entrypoints": [
+        "self-contained diagnostic HTML + sql_query_workspace.py attach-output",
+        "Spreadsheets skill",
+        "validate_style.py",
+        "sql_result_visualization.py refresh-values|bind|attach-bundle-result|bind-bundle"
+      ],
+      "writes_assets": true,
+      "llm_policy": "usage_class_routed_html_or_spreadsheet_design_then_deterministic_binding",
+      "quality_profile": "exact_sql_result_presentation_lineage",
+      "references": [
+        "result-visualization.md",
+        "project-workflow.md",
+        "time-integrity.md"
+      ],
+      "outputs": [
+        "自包含 Bug 排查 HTML 或完整 visualized .xlsx",
+        "单结果或 exact_results 证据绑定",
+        "HTML attachment receipt 或 sql_result_visualization receipt"
+      ],
+      "aliases": [
+        "结果可视化",
+        "可视化Excel",
+        "把结果做成图表",
+        "SQL结果图表",
+        "Bug排查可视化",
+        "排查报告"
+      ]
+    },
+    {
+      "id": "RESULT_LINEAGE_ORGANIZATION",
+      "label": "结果资产关系整理",
+      "governance_mode": "PROJECT_ADMIN",
+      "audience": "common",
+      "use_when": "历史 SQL 结果、分析 Excel 或可视化的来源绑定含糊、重复、被后续产物覆盖，或需要把多个结果共同绑定到一个产物。",
+      "required_context": [
+        "项目根目录",
+        "确定性检查证据",
+        "逐项语义差异说明",
+        "用户逐项确认"
+      ],
+      "entrypoints": [
+        "result_lineage_organizer.py inspect|apply"
+      ],
+      "writes_assets": true,
+      "llm_policy": "deterministic_evidence_then_llm_difference_explanation_then_user_confirmation",
+      "quality_profile": "confirmed_result_lineage_and_lifecycle",
+      "references": [
+        "result-lineage-organization.md",
+        "result-visualization.md",
+        "query-workspace.md"
+      ],
+      "outputs": [
+        "result_lineage_inspection_v1",
+        "result_lineage_decision_v1",
+        "result_lineage_apply_receipt_v1"
+      ],
+      "aliases": [
+        "整理结果关系",
+        "历史结果整理",
+        "可视化来源整理",
+        "结果去重"
+      ]
+    },
+    {
+      "id": "QUERY_WORKSPACE_MAINTENANCE",
+      "label": "查询工作台整理",
+      "governance_mode": "PROJECT_ADMIN",
+      "audience": "advanced",
+      "use_when": "定期整理 query workspace 主题、重复查询候选、SQL 资产价值和索引诊断，或启动动态本地浏览服务；不得因已有结果自动判定可复用。",
+      "required_context": [
+        "项目根目录"
+      ],
+      "entrypoints": [
+        "query_workspace_maintenance.py scan|apply|serve"
+      ],
+      "writes_assets": true,
+      "llm_policy": "semantic_curation_on_demand",
+      "quality_profile": "overlay_only_no_lifecycle_mutation",
+      "references": [
+        "project-workflow.md",
+        "query-workspace.md"
+      ],
+      "outputs": [
+        "organization overlay",
+        "duplicate/health scan",
+        "dynamic workspace viewer"
+      ],
+      "aliases": [
+        "临时SQL整理",
+        "工作台整理"
+      ]
+    },
+    {
+      "id": "RESULT_EVIDENCE_MAINTENANCE",
+      "label": "结果证据整理",
+      "governance_mode": "PROJECT_ADMIN",
+      "audience": "advanced",
+      "use_when": "绑定或定期整理 SQL 跑数结果：原始结果超过 10 MB 时只保留可读切片；分析工作簿、对比产物和可视化完整保留，人工修改后经用户确认刷新指纹与修订记录。",
+      "required_context": [
+        "项目根目录"
+      ],
+      "entrypoints": [
+        "result_evidence_maintenance.py scan|compact|refresh"
+      ],
+      "writes_assets": true,
+      "llm_policy": "none",
+      "quality_profile": "result_preview_slice_reusable_visual_full",
+      "references": [
+        "project-workflow.md",
+        "query-workspace.md",
+        "asset-catalog.md"
+      ],
+      "outputs": [
+        "result_evidence_retention_v1",
+        "derived_output_content_revision_v1",
+        "结果切片",
+        "历史结果整理报告"
+      ],
+      "aliases": [
+        "结果切片",
+        "结果文件整理",
+        "大结果整理"
+      ]
+    },
+    {
+      "id": "VALIDATION",
+      "label": "查询验证",
+      "governance_mode": "VALIDATION",
+      "audience": "advanced",
+      "use_when": "用真实跑数证据锁定字段、粒度、指标和可信度。",
+      "required_context": [
+        "项目",
+        "正式 QUERY",
+        "结果证据"
+      ],
+      "entrypoints": [
+        "sql_formalize.py --target query-dashboard",
+        "sql_project.py save-run"
+      ],
+      "writes_assets": true,
+      "llm_policy": "none",
+      "quality_profile": "validation",
+      "references": [
+        "spec-contracts.md"
+      ],
+      "outputs": [
+        "run evidence",
+        "VALIDATION artifact"
+      ],
+      "aliases": []
+    },
+    {
+      "id": "DASHBOARD",
+      "label": "看板SQL",
+      "governance_mode": "DASHBOARD",
+      "audience": "advanced",
+      "use_when": "把证据充分的正式 QUERY 转成 DA Dashboard SQL。",
+      "required_context": [
+        "项目",
+        "正式 QUERY",
+        "验证状态",
+        "明确的 DA 控件需求"
+      ],
+      "entrypoints": [
+        "sql_formalize.py --target query-dashboard"
+      ],
+      "writes_assets": true,
+      "llm_policy": "none",
+      "quality_profile": "dashboard_delivery",
+      "references": [
+        "dashboard-review.md",
+        "spec-contracts.md"
+      ],
+      "outputs": [
+        "DASHBOARD SQL/spec/meta",
+        "DA 契约"
+      ],
+      "aliases": []
+    },
+    {
+      "id": "REVIEW",
+      "label": "SQL审查",
+      "governance_mode": "REVIEW",
+      "audience": "common",
+      "use_when": "对原始 SQL 做产品视角和代码视角前置审查。",
+      "required_context": [
+        "项目角色",
+        "SQL 或批次路径",
+        "可选结果文件"
+      ],
+      "entrypoints": [
+        "sql_review.py",
+        "sql_review_subagent_orchestrator.py"
+      ],
+      "writes_assets": true,
+      "llm_policy": "product_semantic_closure_cached",
+      "quality_profile": "sql_review",
+      "references": [
+        "sql-review.md",
+        "sql-review-design-record.md",
+        "sql-review-product-agent.md"
+      ],
+      "outputs": [
+        "product/code Markdown",
+        "sql_review.json/html"
+      ],
+      "aliases": []
+    },
+    {
+      "id": "SQL_REPOSITORY",
+      "label": "SQL仓库",
+      "governance_mode": "PROJECT_ADMIN",
+      "audience": "advanced",
+      "use_when": "查找和浏览 manifest-current 正式 QUERY 及其 Dashboard 附件。",
+      "required_context": [
+        "项目根目录"
+      ],
+      "entrypoints": [
+        "sql_repository.py build|serve"
+      ],
+      "writes_assets": true,
+      "llm_policy": "none",
+      "quality_profile": "persisted_facts_only",
+      "references": [
+        "project-workflow.md"
+      ],
+      "outputs": [
+        "sql_repository.json/html"
+      ],
+      "aliases": [
+        "sql资产审查",
+        "sql库存"
+      ]
+    },
+    {
+      "id": "ASSET_CATALOG",
+      "label": "全量资产目录",
+      "governance_mode": "PROJECT_ADMIN",
+      "audience": "integration",
+      "use_when": "显式执行定期整理或外部镜像准备时，其他工具需要只读复制、检索或展示共享的正式/历史 SQL、Review、run evidence、可复用输出、口径、知识版本、平台手册和消费契约，不按正式度或验证状态隐藏共享资产。项目本地 query workspace 不进入目录。不得由 QUERY、固化、Review、看板或普通保存流程隐式调用。",
+      "required_context": [
+        "sql-projects 根目录"
+      ],
+      "entrypoints": [
+        "asset_catalog.py build|validate"
+      ],
+      "writes_assets": true,
+      "llm_policy": "none",
+      "quality_profile": "all_shared_assets_status_descriptive_only",
+      "references": [
+        "asset-catalog.md"
+      ],
+      "outputs": [
+        "sql_asset_catalog_v2 JSON"
+      ],
+      "aliases": [
+        "资产目录",
+        "全量资产索引",
+        "只读资产目录"
+      ]
+    },
+    {
+      "id": "ASSET_LIFECYCLE",
+      "label": "资产生命周期整理",
+      "governance_mode": "PROJECT_ADMIN",
+      "audience": "integration",
+      "use_when": "显式扫描、规划或执行 Query Workspace 到 Formal Asset Package 的生命周期整理；角色、Workspace 状态、正式化评估和 Ledger 决策必须分开记录。",
+      "required_context": [
+        "项目根目录或 sql-projects 根目录",
+        "明确的扫描、dry-run 或用户确认"
+      ],
+      "entrypoints": [
+        "asset_lifecycle.py scan|inventory|closeout-plan|plan|apply"
+      ],
+      "writes_assets": true,
+      "llm_policy": "deterministic_scan_user_confirmed_apply",
+      "quality_profile": "workspace_closeout_v2",
+      "references": [
+        "query-workspace.md",
+        "project-workflow.md",
+        "formal-asset-package.md"
+      ],
+      "outputs": [
+        "asset_lifecycle_scan_v2",
+        "workspace_unregistered_inventory_v1",
+        "asset_lifecycle_closeout_plan_v1",
+        "Promotion Ledger v2",
+        "Formal Asset Package receipt"
+      ],
+      "aliases": [
+        "资产生命周期",
+        "Workspace收口",
+        "整理工作台",
+        "正式化计划"
+      ]
+    },
+    {
+      "id": "ASSET_PROVIDER_SNAPSHOT",
+      "label": "资产提供方快照",
+      "governance_mode": "PROJECT_ADMIN",
+      "audience": "integration",
+      "use_when": "显式生成或验证供其他资料库只读挂载的 Formal Asset Provider Snapshot；外部消费者不得读取 Workspace、Ledger 或未登记文件。",
+      "required_context": [
+        "sql-projects 根目录",
+        "稳定 repository_id"
+      ],
+      "entrypoints": [
+        "asset_provider.py build|validate"
+      ],
+      "writes_assets": true,
+      "llm_policy": "none",
+      "quality_profile": "formal_asset_provider_read_only_snapshot",
+      "references": [
+        "asset-catalog.md",
+        "../docs/READONLY_ASSET_CONSUMER_GUIDE.md"
+      ],
+      "outputs": [
+        "asset_provider_snapshot_v1",
+        "asset_provider_manifest_v1",
+        "asset_provider_snapshot.json",
+        "asset_provider_manifest.json",
+        "snapshot digest",
+        "read-only consumer contract"
+      ],
+      "aliases": [
+        "Provider快照",
+        "资产提供方",
+        "只读资产挂载"
+      ]
+    },
+    {
+      "id": "ASSET_ORGANIZATION",
+      "label": "全量资产语义整理",
+      "governance_mode": "PROJECT_ADMIN",
+      "audience": "integration",
+      "use_when": "显式定期任务把跨项目共享资产按稳定主题整理，为一个分析问题及其派生产物分配永久 AG 编号，或只复核新增和语义发生变化的资产。项目本地 query workspace 使用自己的 organization overlay，不进入共享 AG 目录。不得由 QUERY、固化、Review、看板或普通保存流程隐式调用。",
+      "required_context": [
+        "sql_asset_catalog_v2",
+        "可选的 LLM 或人工分类决策"
+      ],
+      "entrypoints": [
+        "asset_organization.py scan|refresh|apply|validate",
+        "asset_group_registry.py scan|refresh|validate"
+      ],
+      "writes_assets": true,
+      "llm_policy": "optional_new_or_changed_assets_only",
+      "quality_profile": "semantic_overlay_no_source_mutation",
+      "references": [
+        "asset-organization.md",
+        "asset-groups.md",
+        "asset-catalog.md"
+      ],
+      "outputs": [
+        "sql_asset_organization_v2 JSON",
+        "sql_asset_group_registry_v2 JSON",
+        "增量待整理清单",
+        "稳定 AG 主页目录"
+      ],
+      "aliases": [
+        "资产整理",
+        "语义分类",
+        "定期整理资产",
+        "新增活跃分类"
+      ]
+    },
+    {
+      "id": "DASHBOARD_REVIEW_HTML",
+      "label": "看板HTML审查",
+      "governance_mode": "REVIEW",
+      "audience": "advanced",
+      "use_when": "审查已保存 Dashboard 的 DA 契约并记录审批状态。",
+      "required_context": [
+        "项目根目录",
+        "已保存 Dashboard"
+      ],
+      "entrypoints": [
+        "dashboard_review.py build|serve|mark"
+      ],
+      "writes_assets": true,
+      "llm_policy": "none",
+      "quality_profile": "dashboard_review",
+      "references": [
+        "dashboard-review.md"
+      ],
+      "outputs": [
+        "dashboard_review.json/html/state"
+      ],
+      "aliases": []
+    },
+    {
+      "id": "INTERMEDIATE_TABLE",
+      "label": "中间表",
+      "governance_mode": "INTERMEDIATE_TABLE",
+      "audience": "advanced",
+      "use_when": "规划、登记或维护用户接受的中间表资产。",
+      "required_context": [
+        "项目",
+        "用途",
+        "粒度",
+        "来源",
+        "刷新策略"
+      ],
+      "entrypoints": [
+        "sql_project.py save-table|update-table|table-report"
+      ],
+      "writes_assets": true,
+      "llm_policy": "optional_planning",
+      "quality_profile": "intermediate_table",
+      "references": [
+        "intermediate-tables.md"
+      ],
+      "outputs": [
+        "中间表元数据和构建 SQL"
+      ],
+      "aliases": []
+    },
+    {
+      "id": "PROJECT_HEALTH",
+      "label": "项目健康检查",
+      "governance_mode": "PROJECT_ADMIN",
+      "audience": "advanced",
+      "use_when": "只读校验项目配置、资产、工作台、口径和证据链；日常用 current scope，发布/迁移用 full scope。",
+      "required_context": [
+        "项目根目录"
+      ],
+      "entrypoints": [
+        "project_validate.py"
+      ],
+      "writes_assets": false,
+      "llm_policy": "none",
+      "quality_profile": "read_only_health",
+      "references": [
+        "project-workflow.md"
+      ],
+      "outputs": [
+        "current/full health result",
+        "grouped summary JSON",
+        "full audit JSON"
+      ],
+      "aliases": []
+    },
+    {
+      "id": "RULE_REVIEW",
+      "label": "跨项目口径审查",
+      "governance_mode": "RULES",
+      "audience": "advanced",
+      "use_when": "按 concept_key 比较跨项目口径并记录人工审查状态。",
+      "required_context": [
+        "sql-projects 根目录"
+      ],
+      "entrypoints": [
+        "rule_review.py"
+      ],
+      "writes_assets": true,
+      "llm_policy": "none",
+      "quality_profile": "rule_review",
+      "references": [
+        "rule-manager.md"
+      ],
+      "outputs": [
+        "rule review JSON/HTML/state"
+      ],
+      "aliases": []
+    },
+    {
+      "id": "RULE_DICTIONARY",
+      "label": "口径字典",
+      "governance_mode": "RULES",
+      "audience": "advanced",
+      "use_when": "只读浏览当前口径、映射、变量和关键变化。",
+      "required_context": [
+        "sql-projects 根目录"
+      ],
+      "entrypoints": [
+        "rule_dictionary.py"
+      ],
+      "writes_assets": true,
+      "llm_policy": "none",
+      "quality_profile": "persisted_facts_only",
+      "references": [
+        "rule-manager.md"
+      ],
+      "outputs": [
+        "rule_dictionary.json/html"
+      ],
+      "aliases": []
+    },
+    {
+      "id": "QUERY_EXECUTE",
+      "label": "执行查询SQL",
+      "governance_mode": "QUERY",
+      "audience": "integration",
+      "use_when": "用户明确要求执行一个已通过 receipt 的 SQL；公开版只提供可选 Chrome 插件契约，不包含任何内部网页地址。",
+      "required_context": [
+        "ready query delivery receipt",
+        "用户自己的 Chrome 登录态（仅在明确选择浏览器适配器时）"
+      ],
+      "entrypoints": [
+        "Chrome plugin",
+        "sql_query_workspace.py receipt|attach-output|mark"
+      ],
+      "writes_assets": true,
+      "llm_policy": "exact_receipt_serial_single_active_fill_submit_download_close_then_bind",
+      "quality_profile": "serial_one_active_query_tab_download_bound_cleanup",
+      "references": [
+        "project-workflow.md"
+      ],
+      "outputs": [
+        "exact result evidence or manual handoff"
+      ],
+      "aliases": [
+        "运行SQL",
+        "自动查询"
+      ]
+    },
+    {
+      "id": "COLLABORATION_SUBMIT",
+      "label": "协作提交计划",
+      "governance_mode": "PROJECT_ADMIN",
+      "audience": "common",
+      "use_when": "用户明确要求查看或准备本地协作提交；公开版只生成安全计划，不自动推送。",
+      "required_context": [
+        "repository root",
+        "current worktree"
+      ],
+      "entrypoints": [
+        "collaboration_submit.py plan|submit"
+      ],
+      "writes_assets": false,
+      "llm_policy": "none",
+      "quality_profile": "local_review_only",
+      "references": [
+        "project-workflow.md"
+      ],
+      "outputs": [
+        "public_collaboration_plan_v1"
+      ],
+      "aliases": [
+        "同步资料",
+        "提交计划"
+      ]
+    }
+  ]
+}

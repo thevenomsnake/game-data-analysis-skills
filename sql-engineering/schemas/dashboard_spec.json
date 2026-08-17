@@ -1,0 +1,1149 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Dashboard SQL Spec",
+  "type": "object",
+  "required": [
+    "spec_meta",
+    "dialect_profile",
+    "project_context",
+    "machine_review_contract",
+    "validation_reference",
+    "performance_level",
+    "dashboard_intent",
+    "refresh_contract",
+    "da_delivery_contract",
+    "da_output_contract",
+    "da_filter_contract",
+    "parameters",
+    "data_sources",
+    "business_logic",
+    "dimensions",
+    "metrics",
+    "sql_output_contract",
+    "quality_gate"
+  ],
+  "properties": {
+    "spec_meta": {
+      "type": "object",
+      "required": [
+        "spec_version",
+        "lifecycle_stage",
+        "sql_type",
+        "target_engine"
+      ],
+      "properties": {
+        "spec_version": {
+          "enum": [
+            "4.8",
+            4.8
+          ]
+        },
+        "lifecycle_stage": {
+          "const": "DASHBOARD"
+        },
+        "sql_type": {
+          "const": "da_dashboard_sql"
+        },
+        "target_engine": {
+          "enum": [
+            "Hive",
+            "StarRocks"
+          ]
+        }
+      }
+    },
+    "dialect_profile": {
+      "type": "object",
+      "required": [
+        "current_dialect",
+        "status"
+      ],
+      "properties": {
+        "current_dialect": {
+          "enum": [
+            "Hive",
+            "StarRocks"
+          ]
+        },
+        "status": {
+          "const": "enabled"
+        }
+      }
+    },
+    "execution_route": { "$ref": "execution_route_result.json" },
+    "project_context": {
+      "type": "object",
+      "required": [
+        "project_id",
+        "display_name",
+        "query_engine",
+        "query_environment",
+        "dashboard_application",
+        "table_naming_profile"
+      ],
+      "properties": {
+        "project_id": {
+          "type": "string"
+        },
+        "display_name": {
+          "type": "string"
+        },
+        "query_engine": {
+          "type": "string"
+        },
+        "query_environment": {
+          "type": "string"
+        },
+        "dashboard_application": {
+          "type": "string"
+        },
+        "table_naming_profile": {
+          "type": "string"
+        },
+        "table_resolution_rule": {
+          "type": "string"
+        }
+      }
+    },
+    "canonical_rule_context": {
+      "type": "object",
+      "properties": {
+        "rule_context_command": {
+          "type": "string"
+        },
+        "request_envelope": { "$ref": "request_envelope.json" },
+        "rule_application": { "$ref": "rule_application.json" },
+        "intent_frame": {
+          "type": "object",
+          "properties": {
+            "domains": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "source_logs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "source_fields": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "metric_families": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "grain": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": true
+        },
+        "applied_rules": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "active_rules": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "inherited_rules": { "type": "array", "items": { "type": "object" } },
+        "excluded_rules": { "type": "array", "items": { "type": "object" } },
+        "hard_constraints": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "rejected_rules_summary": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "candidate_sql_check": {
+          "type": "object"
+        },
+        "project_contract_check": {
+          "type": "object"
+        },
+        "generation_gate": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    },
+    "knowledge_references": {
+      "type": "array",
+      "description": "Exact project-bound reference datasets inherited from the source QUERY.",
+      "items": { "$ref": "knowledge_reference.json" }
+    },
+    "knowledge_usage": { "$ref": "knowledge_usage.json" },
+    "machine_review_contract": {
+      "type": "object",
+      "required": [
+        "contract_version",
+        "parse_required",
+        "parser",
+        "contract_preview_required",
+        "review_state_file",
+        "skip_approved_on_next_review",
+        "result_sample_policy"
+      ],
+      "properties": {
+        "contract_version": {
+          "const": "dashboard_review_v1"
+        },
+        "parse_required": {
+          "const": true
+        },
+        "parser": {
+          "type": "string"
+        },
+        "contract_preview_required": {
+          "const": true
+        },
+        "review_state_file": {
+          "type": "string"
+        },
+        "skip_approved_on_next_review": {
+          "type": "boolean"
+        },
+        "result_sample_policy": {
+          "type": "string"
+        },
+        "required_top_modules": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "validation_reference": {
+      "type": "object",
+      "required": [
+        "validation_status",
+        "confidence_score",
+        "promotion_decision",
+        "verification_status",
+        "user_run_evidence"
+      ],
+      "properties": {
+        "verification_status": {
+          "enum": [
+            "verified",
+            "unverified_skipped_run",
+            "proxy_verified"
+          ]
+        },
+        "definition_project": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "execution_project": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "delivery_project": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "concept_keys": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "proxy_limitations": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "future_verification_plan": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "result_time_coverage": {
+          "$ref": "result_time_coverage.json"
+        }
+      }
+    },
+    "performance_level": {
+      "type": "object",
+      "required": [
+        "grade",
+        "judgement",
+        "optimization_tier",
+        "preflight_score",
+        "preflight_triggers",
+        "optimization_reference",
+        "full_guide_required",
+        "equivalence_preserved",
+        "scan_partition_days",
+        "log_table_count",
+        "risk_items"
+      ],
+      "properties": {
+        "optimization_tier": {
+          "enum": [
+            "L0_perf_lite",
+            "L1_perf_standard",
+            "L2_perf_deep",
+            "L3_perf_blocking"
+          ]
+        },
+        "preflight_score": {
+          "type": [
+            "integer",
+            "number"
+          ]
+        },
+        "preflight_triggers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "optimization_reference": {
+          "type": "string"
+        },
+        "full_guide_required": {
+          "type": "boolean"
+        },
+        "equivalence_preserved": {
+          "type": "boolean"
+        },
+        "performance_fingerprint": {
+          "type": "string"
+        }
+      }
+    },
+    "dashboard_intent": {
+      "type": "object",
+      "required": [
+        "title",
+        "description",
+        "result_shape",
+        "visualization_owner",
+        "result_mode",
+        "time_grain"
+      ],
+      "properties": {
+        "result_shape": {
+          "const": "table_dataset"
+        },
+        "visualization_owner": {
+          "const": "DA"
+        },
+        "result_mode": {
+          "enum": ["sql_declared_table", "daily_plus_total_table", "daily_table", "period_total_table", "hourly_table", "retention_table", "funnel_table", "detail_table"]
+        },
+        "time_grain": {
+          "type": "string"
+        }
+      }
+    },
+    "refresh_contract": {
+      "type": "object",
+      "required": [
+        "da_decides_realtime_refresh",
+        "required_da_decisions",
+        "sql_date_range_parameters"
+      ],
+      "properties": {
+        "da_decides_realtime_refresh": {
+          "const": true
+        },
+        "required_da_decisions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "contains": {
+            "const": "date_range"
+          }
+        },
+        "sql_date_range_parameters": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "contains": {
+            "const": "start_date"
+          }
+        },
+        "sql_outputs_daily_rows": {
+          "type": "boolean"
+        },
+        "sql_outputs_total_row": {
+          "type": "boolean"
+        },
+        "sql_outputs_period_total": {
+          "type": "boolean"
+        },
+        "sql_output_shape_note": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    },    "da_delivery_contract": {
+      "type": "object",
+      "required": [
+        "language",
+        "da_owner_note",
+        "grouping_total_policy"
+      ],
+      "properties": {
+        "language": {
+          "const": "zh-CN"
+        },
+        "da_owner_note": {
+          "type": "string"
+        },
+        "dashboard_boundary": {
+          "type": "object",
+          "properties": {
+            "sql_provides": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "da_decides": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "grouping_total_policy": {
+          "type": "object",
+          "required": [
+            "grouping_fields",
+            "sql_contains_total_rows",
+            "da_generate_total",
+            "total_metric_rules",
+            "total_source",
+            "avoid_duplicate_scan"
+          ],
+          "properties": {
+            "grouping_fields": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "sql_contains_total_rows": {
+              "type": "boolean"
+            },
+            "da_generate_total": {
+              "const": false
+            },
+            "total_label": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "total_scope": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "total_source": {
+              "enum": ["same_base_layer", "shared_pre_aggregation", "period_total_result", "sql_declared_output"]
+            },
+            "avoid_duplicate_scan": {
+              "const": true
+            },
+            "total_metric_rules": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "metric",
+                  "method",
+                  "total_safe",
+                  "total_meaning"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "da_output_contract": {
+      "type": "object",
+      "required": [
+        "result_shape",
+        "visualization_owner",
+        "table_fields",
+        "sql_responsibility",
+        "da_responsibility"
+      ],
+      "properties": {
+        "result_shape": {
+          "const": "table_dataset"
+        },
+        "visualization_owner": {
+          "const": "DA"
+        },
+        "result_mode": {
+          "enum": ["sql_declared_table", "daily_plus_total_table", "daily_table", "period_total_table", "hourly_table", "retention_table", "funnel_table", "detail_table"]
+        },
+        "time_grain": {
+          "type": "string"
+        },
+        "table_fields": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "[\\u4e00-\\u9fff]"
+          },
+          "minItems": 1
+        },
+        "sql_responsibility": {
+          "type": "string"
+        },
+        "da_responsibility": {
+          "type": "string"
+        },
+        "output_usage_note": {
+          "type": "string"
+        }
+      }
+    },
+    "visual_review_contract": {
+      "type": "object",
+      "required": [
+        "contract_version",
+        "scope",
+        "visualization_owner",
+        "field_display_rules"
+      ],
+      "properties": {
+        "contract_version": {
+          "const": "dashboard_visual_review_v1"
+        },
+        "scope": {
+          "type": "string"
+        },
+        "visualization_owner": {
+          "const": "DA"
+        },
+        "result_mode": {
+          "enum": ["sql_declared_table", "daily_plus_total_table", "daily_table", "period_total_table", "hourly_table", "retention_table", "funnel_table", "detail_table"]
+        },
+        "time_grain": {
+          "type": "string"
+        },
+        "field_display_rules": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "output_field",
+              "semantic_type",
+              "source_value_scale",
+              "display_format",
+              "decimal_places",
+              "display_suffix",
+              "preserve_raw_value",
+              "sample_check"
+            ],
+            "properties": {
+              "output_field": {
+                "type": "string",
+                "pattern": "[\\u4e00-\\u9fff]"
+              },
+              "label": {
+                "type": "string"
+              },
+              "semantic_type": {
+                "enum": [
+                  "dimension",
+                  "count",
+                  "sum",
+                  "amount",
+                  "duration",
+                  "ratio",
+                  "rate",
+                  "percentage",
+                  "average",
+                  "percentile",
+                  "sort_key",
+                  "raw_value"
+                ]
+              },
+              "source_value_scale": {
+                "enum": [
+                  "raw_number",
+                  "ratio_0_to_1",
+                  "percent_0_to_100",
+                  "seconds",
+                  "minutes",
+                  "milliseconds",
+                  "currency",
+                  "sort_order",
+                  "text",
+                  "date",
+                  "datetime"
+                ]
+              },
+              "display_format": {
+                "enum": [
+                  "number",
+                  "integer",
+                  "decimal",
+                  "percent",
+                  "duration_seconds",
+                  "duration_minutes",
+                  "currency",
+                  "text",
+                  "date",
+                  "datetime",
+                  "hidden_sort"
+                ]
+              },
+              "decimal_places": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "display_suffix": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "display_formula": {
+                "type": "string"
+              },
+              "preserve_raw_value": {
+                "const": true
+              },
+              "aggregation_display_rule": {
+                "type": "string"
+              },
+              "sample_check": {
+                "type": "object",
+                "required": [
+                  "raw_value",
+                  "display_value"
+                ],
+                "properties": {
+                  "raw_value": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "display_value": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "null"
+                    ]
+                  }
+                }
+              },
+              "review_note": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "review_checks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "da_filter_contract": {
+      "type": "object",
+      "required": [
+        "time_range",
+        "sql_parameter_filters",
+        "filterable_fields",
+        "fixed_sql_filters"
+      ],
+      "properties": {
+        "time_range": {
+          "type": "object",
+          "required": [
+            "parameter_names",
+            "label",
+            "default_range",
+            "business_time_field",
+            "business_time_mapping",
+            "partition_parameters"
+          ],
+          "properties": {
+            "parameter_names": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "contains": {
+                "const": "start_date"
+              }
+            },
+            "label": {
+              "type": "string"
+            },
+            "default_range": {
+              "type": "string"
+            },
+            "default_label": {
+              "type": "string"
+            },
+            "business_time_field": {
+              "type": "string"
+            },
+            "business_time_mapping": {
+              "type": "string"
+            },
+            "partition_parameters": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "partition_mapping": {
+              "type": "string"
+            }
+          }
+        },
+        "sql_parameter_filters": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "parameter",
+              "label",
+              "current_effect",
+              "visible_to_dashboard_user",
+              "visible_to_external_user",
+              "default",
+              "values",
+              "value_source",
+              "sql_mapping",
+              "filter_behavior"
+            ],
+            "properties": {
+              "current_effect": {
+                "const": "active"
+              },
+              "values": {
+                "type": "array",
+                "items": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean"
+                  ]
+                }
+              },
+              "sql_mapping": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "filterable_fields": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "parameter",
+              "label",
+              "output_field",
+              "current_effect",
+              "visible_to_dashboard_user",
+              "visible_to_external_user",
+              "default",
+              "value_source",
+              "filter_behavior"
+            ],
+            "properties": {
+              "output_field": {
+                "type": "string",
+                "pattern": "[\\u4e00-\\u9fff]"
+              },
+              "current_effect": {
+                "enum": [
+                  "active",
+                  "not_active"
+                ]
+              }
+            }
+          }
+        },
+        "fixed_sql_filters": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "field",
+              "condition",
+              "da_filterable",
+              "reason"
+            ],
+            "properties": {
+              "da_filterable": {
+                "type": "boolean"
+              },
+              "all_values_available": {
+                "type": "boolean"
+              },
+              "output_field": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "future_filters": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "parameter",
+              "label",
+              "output_field",
+              "current_effect",
+              "visible_to_dashboard_user",
+              "visible_to_external_user",
+              "default",
+              "value_source",
+              "activation_requirement"
+            ],
+            "properties": {
+              "output_field": {
+                "type": "string",
+                "pattern": "[\\u4e00-\\u9fff]"
+              },
+              "current_effect": {
+                "const": "not_active"
+              }
+            }
+          }
+        }
+      }
+    },
+    "parameters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "label",
+          "type",
+          "default",
+          "required",
+          "visible",
+          "visible_to_dashboard_user",
+          "visible_to_external_user",
+          "parameter_role",
+          "values",
+          "sql_usage",
+          "field_mapping"
+        ]
+      }
+    },
+    "data_sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "table",
+          "table_type",
+          "required_fields"
+        ]
+      }
+    },
+    "intermediate_tables": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "table",
+          "registry_status",
+          "purpose",
+          "grain"
+        ],
+        "properties": {
+          "table": {
+            "type": "string"
+          },
+          "registry_status": {
+            "type": "string"
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "grain": {
+            "type": "string"
+          },
+          "availability_status": {
+            "enum": [
+              "unknown",
+              "available",
+              "unavailable"
+            ]
+          },
+          "source_contract_mode": {
+            "enum": [
+              "dual_path",
+              "intermediate_preferred",
+              "intermediate_only",
+              "raw_logs_only"
+            ]
+          },
+          "fallback_policy": {
+            "type": "string"
+          },
+          "fallback_source_tables": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "fallback_sql_reference": {
+            "type": "string"
+          },
+          "canonical_rule_refs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "xml_source_refs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "field_contract": {
+            "type": "string"
+          },
+          "grain_contract": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "business_logic": {
+      "type": "object",
+      "required": [
+        "source_query_logic_reference",
+        "logic_consistency",
+        "dashboard_adaptation_scope",
+        "business_logic_changed",
+        "change_validation_requirement"
+      ]
+    },
+    "dimensions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "field",
+          "label",
+          "role",
+          "data_type",
+          "total_policy"
+        ]
+      }
+    },
+    "metrics": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "field",
+          "label",
+          "metric_type",
+          "dashboard_agg",
+          "total_safe",
+          "total_meaning"
+        ]
+      }
+    },
+    "sql_output_contract": {
+      "type": "object",
+      "required": [
+        "one_row_means",
+        "output_grain",
+        "expected_fields",
+        "forbidden_fields",
+        "contains_total_rows"
+      ],
+      "properties": {
+        "output_shape": {
+          "type": "object",
+          "properties": {
+            "result_mode": {
+              "enum": ["sql_declared_table", "daily_plus_total_table", "period_total_table", "daily_table", "hourly_table", "retention_table", "funnel_table", "detail_table"]
+            },
+            "time_grain": {
+              "type": "string"
+            },
+            "label": {
+              "type": "string"
+            },
+            "output_grain": {
+              "type": "string"
+            },
+            "contains_total_rows": {
+              "type": "boolean"
+            },
+            "contains_total_rows_source": {
+              "enum": ["explicit_spec", "generator_declared", "sql_text_heuristic", "manual_review"]
+            },
+            "sql_outputs_daily_rows": {
+              "type": "boolean"
+            },
+            "sql_outputs_period_total": {
+              "type": "boolean"
+            },
+            "default_semantics": {
+              "type": "string"
+            }
+          }
+        },
+        "expected_fields": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "[\\u4e00-\\u9fff]"
+          },
+          "minItems": 1
+        },
+        "forbidden_fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "contains_total_rows": {
+          "type": "boolean"
+        },
+        "total_row_indicator_field": {
+          "type": "string"
+        },
+        "total_row_label": {
+          "type": "string"
+        }
+      }
+    },
+    "quality_gate": {
+      "type": "object"
+    },
+    "generation_provenance": {
+      "$ref": "#/$defs/generation_provenance"
+    }
+  },
+  "$defs": {
+    "generation_provenance": {
+      "type": "object",
+      "description": "Skill/script provenance for formal SQL artifact generation and historical backfill audits.",
+      "required": [
+        "schema_version",
+        "skill_name",
+        "skill_version",
+        "sql_spec_version",
+        "workflow",
+        "generated_by_script",
+        "generated_at"
+      ],
+      "properties": {
+        "schema_version": {
+          "type": "string",
+          "const": "asset_generation_v1"
+        },
+        "skill_name": {
+          "type": "string"
+        },
+        "skill_version": {
+          "type": "string"
+        },
+        "sql_spec_version": {
+          "type": "string"
+        },
+        "artifact_kind": {
+          "type": "string"
+        },
+        "workflow": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "generated_by_script": {
+          "type": "string"
+        },
+        "generated_at": {
+          "type": "string"
+        },
+        "saved_at": {
+          "type": "string"
+        },
+        "saved_by_script": {
+          "type": "string"
+        },
+        "backfilled_by_script": {
+          "type": "string"
+        },
+        "backfilled_by_skill_version": {
+          "type": "string"
+        },
+        "backfilled_at": {
+          "type": "string"
+        },
+        "original_generated_by": {
+          "type": "string"
+        },
+        "original_skill_version": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

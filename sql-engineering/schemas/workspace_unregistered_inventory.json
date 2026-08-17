@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Unregistered Query Workspace Inventory",
+  "type": "object",
+  "required": ["schema_version", "project_id", "generated_at", "status", "files"],
+  "properties": {
+    "schema_version": { "const": "workspace_unregistered_inventory_v1" },
+    "project_id": { "type": "string", "minLength": 1 },
+    "generated_at": { "type": "string", "minLength": 1 },
+    "status": { "enum": ["pass", "warn"] },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "sha256", "size_bytes", "state"],
+        "properties": {
+          "path": { "type": "string", "pattern": "^query_workspace/" },
+          "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "size_bytes": { "type": "integer", "minimum": 0 },
+          "state": { "enum": ["unregistered", "missing"] },
+          "scan_action": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Promotion Plan",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "project_id",
+    "created_at",
+    "candidate",
+    "decision",
+    "verification_state",
+    "allow_unverified",
+    "repository_target",
+    "plan_fingerprint"
+  ],
+  "properties": {
+    "schema_version": { "const": "promotion_plan_v1" },
+    "project_id": { "type": "string", "minLength": 1 },
+    "created_at": { "type": "string", "minLength": 1 },
+    "candidate": { "$ref": "asset_lifecycle_scan.json#/$defs/candidate" },
+    "decision": { "$ref": "promotion_ledger.json#/$defs/decision" },
+    "verification_state": { "enum": ["verified", "unverified", "not_applicable"] },
+    "allow_unverified": { "type": "boolean" },
+    "repository_target": {
+      "type": "object",
+      "required": ["package_id", "title"],
+      "properties": {
+        "package_id": { "type": "string" },
+        "title": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "plan_fingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  },
+  "additionalProperties": false
+}

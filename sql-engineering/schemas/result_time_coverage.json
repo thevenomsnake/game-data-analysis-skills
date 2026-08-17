@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Observed SQL Result Time Coverage",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "status",
+    "basis",
+    "required",
+    "requirement_status",
+    "requested_window",
+    "primary_field",
+    "range_fields",
+    "precision",
+    "actual_start",
+    "actual_end",
+    "excluded_anomaly_count",
+    "fields",
+    "field_count"
+  ],
+  "properties": {
+    "schema_version": { "const": "result_time_coverage_v1" },
+    "status": {
+      "enum": ["empty", "not_observable", "observed", "observed_with_anomalies"]
+    },
+    "basis": {
+      "enum": [
+        "explicit_range_fields",
+        "result_output_field",
+        "not_observable_from_result",
+        "unsupported_result_format",
+        "not_required_for_fixed_historical_window"
+      ]
+    },
+    "required": { "type": "boolean" },
+    "requirement_status": {
+      "enum": ["not_required", "met", "met_empty", "not_observable", "anomalous"]
+    },
+    "requested_window": {
+      "type": "object",
+      "required": [
+        "start_date",
+        "end_date",
+        "comparison_precision",
+        "comparison_start",
+        "comparison_end",
+        "comparison_start_operator",
+        "comparison_end_operator",
+        "comparison_field",
+        "basis",
+        "dynamic",
+        "today_included",
+        "as_of_date",
+        "timezone_offset"
+      ],
+      "properties": {
+        "start_date": { "type": "string" },
+        "end_date": { "type": "string" },
+        "comparison_precision": { "enum": ["date", "datetime", "unknown"] },
+        "comparison_start": { "type": "string" },
+        "comparison_end": { "type": "string" },
+        "comparison_start_operator": { "enum": ["", ">", ">="] },
+        "comparison_end_operator": { "enum": ["", "<", "<="] },
+        "comparison_field": { "type": "string" },
+        "basis": { "type": "string", "minLength": 1 },
+        "dynamic": { "type": "boolean" },
+        "today_included": { "type": ["boolean", "null"] },
+        "as_of_date": { "type": "string" },
+        "timezone_offset": { "type": "string", "pattern": "^[+-][0-9]{2}:[0-9]{2}$" }
+      },
+      "additionalProperties": true
+    },
+    "primary_field": { "type": "string" },
+    "range_fields": {
+      "type": "object",
+      "required": ["start", "end"],
+      "properties": {
+        "start": { "type": "string" },
+        "end": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "precision": { "enum": ["none", "date", "datetime"] },
+    "actual_start": { "type": "string" },
+    "actual_end": { "type": "string" },
+    "excluded_anomaly_count": { "type": "integer", "minimum": 0 },
+    "fields": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "field",
+          "precision",
+          "valid_count",
+          "parsed_count",
+          "datetime_value_count",
+          "invalid_count",
+          "missing_count",
+          "summary_label_count",
+          "outside_requested_count",
+          "actual_start",
+          "actual_end",
+          "invalid_examples"
+        ],
+        "properties": {
+          "field": { "type": "string", "minLength": 1 },
+          "precision": { "enum": ["date", "datetime"] },
+          "valid_count": { "type": "integer", "minimum": 0 },
+          "parsed_count": { "type": "integer", "minimum": 0 },
+          "datetime_value_count": { "type": "integer", "minimum": 0 },
+          "invalid_count": { "type": "integer", "minimum": 0 },
+          "missing_count": { "type": "integer", "minimum": 0 },
+          "summary_label_count": { "type": "integer", "minimum": 0 },
+          "outside_requested_count": { "type": "integer", "minimum": 0 },
+          "actual_start": { "type": "string" },
+          "actual_end": { "type": "string" },
+          "invalid_examples": {
+            "type": "array",
+            "maxItems": 3,
+            "items": {
+              "type": "object",
+              "required": ["value", "reason"],
+              "properties": {
+                "value": { "type": "string" },
+                "reason": { "type": "string", "minLength": 1 }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "field_count": { "type": "integer", "minimum": 0 }
+  },
+  "additionalProperties": false
+}

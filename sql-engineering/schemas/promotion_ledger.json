@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Promotion Ledger",
+  "type": "object",
+  "required": ["schema_version", "contract_version", "project_id", "updated_at", "entries"],
+  "properties": {
+    "schema_version": { "const": "promotion_ledger_v2" },
+    "contract_version": { "const": "promotion_ledger_v2" },
+    "project_id": { "type": "string", "minLength": 1 },
+    "updated_at": { "type": "string" },
+    "entries": {
+      "type": "object",
+      "patternProperties": {
+        "^qw-[a-z0-9-]{8,120}@v[0-9]{3,}$": { "$ref": "#/$defs/decision" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "member": {
+      "type": "object",
+      "required": ["role", "path", "sha256"],
+      "properties": {
+        "role": { "enum": ["indexed_sql", "query_meta", "query_spec", "registered_output"] },
+        "path": { "type": "string", "pattern": "^query_workspace/" },
+        "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "kind": { "type": "string" },
+        "attachment_id": { "type": "string" },
+        "position": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "decision": {
+      "type": "object",
+      "required": [
+        "candidate_key",
+        "query_id",
+        "version",
+        "content_fingerprint",
+        "workspace_role",
+        "role_lineage",
+        "members",
+        "decision",
+        "reason",
+        "user_request",
+        "confirmed_by_user",
+        "confirmed_by",
+        "confirmed_at",
+        "review_rule"
+      ],
+      "properties": {
+        "candidate_key": { "type": "string" },
+        "query_id": { "type": "string", "pattern": "^qw-[a-z0-9-]{8,120}$" },
+        "version": { "type": "integer", "minimum": 1 },
+        "content_fingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "workspace_role": { "enum": ["query", "dashboard_delivery", "unknown"] },
+        "role_lineage": { "type": "object" },
+        "members": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/member" } },
+        "decision": { "enum": ["promote", "deferred", "excluded"] },
+        "reason": { "type": "string", "minLength": 4 },
+        "user_request": { "type": "string", "minLength": 4 },
+        "confirmed_by_user": { "const": true },
+        "confirmed_by": { "type": "string", "minLength": 1 },
+        "confirmed_at": { "type": "string", "minLength": 1 },
+        "review_rule": { "const": "resurface_when_content_fingerprint_changes" },
+        "missing_conditions": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "revisit_when": { "type": "string", "minLength": 4 },
+        "legacy_schema_version": { "const": "promotion_ledger_v1" },
+        "legacy_decision": { "enum": ["keep_local", "excluded_from_sync"] },
+        "requires_review": { "const": true },
+        "repository_receipt": {
+          "type": "object",
+          "required": ["schema_version", "receipt_id", "package_id", "status", "files"],
+          "properties": {
+            "schema_version": { "const": "formal_asset_repository_receipt_v1" },
+            "receipt_id": { "type": "string" },
+            "package_id": { "type": "string" },
+            "status": { "const": "ready" },
+            "files": { "type": "array" }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

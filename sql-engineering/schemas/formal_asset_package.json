@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Formal Asset Package",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "project_id",
+    "package_id",
+    "slug",
+    "title",
+    "lifecycle_state",
+    "revision",
+    "directory",
+    "created_at",
+    "updated_at",
+    "members",
+    "current",
+    "lineage",
+    "latest_receipt"
+  ],
+  "properties": {
+    "schema_version": { "const": "formal_asset_package_v1" },
+    "project_id": { "type": "string", "minLength": 1 },
+    "package_id": { "type": "string", "pattern": "^FA-[0-9]{4,}$" },
+    "slug": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$", "maxLength": 72 },
+    "title": { "type": "string", "minLength": 1 },
+    "lifecycle_state": { "enum": ["current", "history", "archived"] },
+    "revision": { "type": "integer", "minimum": 1 },
+    "directory": {
+      "type": "string",
+      "pattern": "^formal_assets/FA-[0-9]{4,}-[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "members": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "member_id",
+          "role",
+          "lifecycle_state",
+          "path",
+          "sha256",
+          "size_bytes",
+          "created_at"
+        ],
+        "properties": {
+          "member_id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$" },
+          "role": { "type": "string", "minLength": 1, "maxLength": 80 },
+          "lifecycle_state": { "enum": ["current", "history", "archived"] },
+          "path": {
+            "type": "string",
+            "pattern": "^formal_assets/FA-[0-9]{4,}-[^/]+/members/.+"
+          },
+          "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "size_bytes": { "type": "integer", "minimum": 0 },
+          "created_at": { "type": "string", "format": "date-time" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "current": {
+      "type": "object",
+      "required": ["member_ids", "by_role"],
+      "properties": {
+        "member_ids": {
+          "type": "array",
+          "items": { "type": "string" },
+          "uniqueItems": true
+        },
+        "by_role": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": { "type": "string" },
+            "uniqueItems": true
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "lineage": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["relation", "from_member_id", "to_member_id"],
+        "properties": {
+          "relation": { "type": "string", "minLength": 1, "maxLength": 80 },
+          "from_member_id": { "type": "string" },
+          "to_member_id": { "type": "string" },
+          "note": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "latest_receipt": {
+      "type": "string",
+      "pattern": "^formal_assets/FA-[0-9]{4,}-[^/]+/receipts/R[0-9]{4,}\\.json$"
+    },
+    "metadata": { "type": "object" }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Canonical Rule Activation Index v2",
+  "type": "object",
+  "required": ["schema_version", "project_id", "store_sha256", "updated_at", "entries"],
+  "properties": {
+    "schema_version": { "const": "canonical_rule_activation_index_v2" },
+    "project_id": { "type": "string", "minLength": 1 },
+    "store_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "updated_at": { "type": "string" },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "store_version",
+          "rule_id",
+          "rule_version",
+          "effective_status",
+          "path",
+          "record_sha256",
+          "file_sha256",
+          "concept_key",
+          "status",
+          "selector"
+        ],
+        "properties": {
+          "store_version": { "type": "integer", "minimum": 1 },
+          "rule_id": { "type": "string", "minLength": 1 },
+          "rule_version": { "type": "integer", "minimum": 1 },
+          "effective_status": { "enum": ["confirmed", "proposed"] },
+          "path": { "type": "string", "pattern": "^rules/definitions/" },
+          "record_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "file_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "concept_key": { "type": "string", "pattern": "^[a-z0-9][a-z0-9_-]*$" },
+          "status": { "enum": ["confirmed", "proposed"] },
+          "selector": {
+            "type": "object",
+            "required": [
+              "activation_contract_source",
+              "activation_policy",
+              "request_signatures",
+              "reverse_selector"
+            ],
+            "properties": {
+              "activation_contract_source": {
+                "enum": ["stored_v2", "legacy", "missing"]
+              },
+              "activation_policy": {
+                "type": "object",
+                "required": ["forward", "reverse"]
+              },
+              "request_signatures": { "type": "array" },
+              "reverse_selector": {
+                "type": "object",
+                "required": ["required_logs", "required_fields"]
+              }
+            },
+            "allOf": [
+              { "not": { "required": ["search_terms"] } },
+              { "not": { "required": ["must_have_any"] } },
+              { "not": { "required": ["weak_terms"] } },
+              { "not": { "required": ["title"] } },
+              { "not": { "required": ["content"] } },
+              { "not": { "required": ["description"] } },
+              { "not": { "required": ["rule_body"] } },
+              { "not": { "required": ["rule_text"] } }
+            ],
+            "additionalProperties": true
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

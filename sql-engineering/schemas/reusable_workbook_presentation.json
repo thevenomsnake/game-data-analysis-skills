@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Reusable Workbook Consumer Presentation",
+  "type": "object",
+  "required": [
+    "schema_version", "eligible", "workbook_type", "media_type", "download_path",
+    "preview_status", "workbook_manifest"
+  ],
+  "properties": {
+    "schema_version": { "const": "reusable_workbook_presentation_v1" },
+    "eligible": { "type": "boolean" },
+    "workbook_type": { "enum": ["", "analysis_workbook", "comparison_workbook", "visualization"] },
+    "media_type": { "type": "string" },
+    "download_path": { "type": "string" },
+    "preview_status": { "enum": ["available", "not_available"] },
+    "workbook_manifest": {
+      "oneOf": [
+        { "type": "object", "maxProperties": 0 },
+        { "$ref": "workbook_manifest.json" }
+      ]
+    }
+  },
+  "additionalProperties": false
+}

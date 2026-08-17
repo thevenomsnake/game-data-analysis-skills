@@ -1,0 +1,354 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Validation Spec",
+  "type": "object",
+  "required": [
+    "spec_meta",
+    "dialect_profile",
+    "project_context",
+    "validation_intent",
+    "candidate_artifact",
+    "locked_data_sources",
+    "locked_grain",
+    "locked_dimensions",
+    "locked_metrics",
+    "parameter_contract",
+    "business_rule_checks",
+    "data_quality_checks",
+    "user_run_evidence",
+    "privacy_checks",
+    "performance_precheck",
+    "confidence_assessment",
+    "promotion",
+    "quality_gate"
+  ],
+  "properties": {
+    "spec_meta": {
+      "type": "object",
+      "required": [
+        "spec_version",
+        "lifecycle_stage",
+        "target_engine"
+      ]
+    },
+    "dialect_profile": {
+      "type": "object",
+      "required": [
+        "current_dialect",
+        "status"
+      ],
+      "properties": {
+        "current_dialect": {
+          "enum": [
+            "Hive",
+            "StarRocks"
+          ]
+        },
+        "status": {
+          "const": "enabled"
+        }
+      }
+    },
+    "execution_route": { "$ref": "execution_route_result.json" },
+    "project_context": {
+      "type": "object",
+      "required": [
+        "project_id",
+        "display_name",
+        "query_engine",
+        "query_environment",
+        "table_naming_profile"
+      ],
+      "properties": {
+        "project_id": {
+          "type": "string"
+        },
+        "display_name": {
+          "type": "string"
+        },
+        "query_engine": {
+          "type": "string"
+        },
+        "query_environment": {
+          "type": "string"
+        },
+        "dashboard_application": {
+          "type": "string"
+        },
+        "table_naming_profile": {
+          "type": "string"
+        }
+      }
+    },
+    "validation_intent": {
+      "type": "object",
+      "required": [
+        "title",
+        "description",
+        "target_lifecycle_stage"
+      ]
+    },
+    "candidate_artifact": {
+      "type": "object",
+      "required": [
+        "source",
+        "summary"
+      ]
+    },
+    "locked_data_sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "table",
+          "status",
+          "required_fields"
+        ]
+      }
+    },
+    "locked_grain": {
+      "type": "object",
+      "required": [
+        "status",
+        "grain",
+        "one_row_means"
+      ]
+    },
+    "locked_dimensions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "field",
+          "status",
+          "role"
+        ]
+      }
+    },
+    "locked_metrics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "field",
+          "status",
+          "metric_type",
+          "formula_sql"
+        ]
+      }
+    },
+    "parameter_contract": {
+      "type": "object"
+    },
+    "business_rule_checks": {
+      "type": "object"
+    },
+    "data_quality_checks": {
+      "type": "object"
+    },
+    "user_run_evidence": {
+      "type": "object",
+      "required": [
+        "required",
+        "status",
+        "user_confirmed",
+        "evidence_reference",
+        "result_summary",
+        "promotion_blocker"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "missing",
+            "passed",
+            "warning",
+            "failed",
+            "blocked",
+            "skipped",
+            "proxy_verified"
+          ]
+        },
+        "result_file_reference": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "result_file_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "csv",
+            "xlsx",
+            null
+          ]
+        },
+        "definition_project": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "execution_project": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "delivery_project": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "concept_keys": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "proxy_limitations": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "skip_reason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "unverified_dashboard_allowed": {
+          "type": "boolean"
+        },
+        "unverified_risk_note": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "future_verification_plan": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "result_time_coverage": {
+          "$ref": "result_time_coverage.json"
+        }
+      }
+    },
+    "privacy_checks": {
+      "type": "object"
+    },
+    "performance_precheck": {
+      "type": "object"
+    },
+    "confidence_assessment": {
+      "type": "object",
+      "required": [
+        "confidence_score",
+        "confidence_level",
+        "confidence_basis"
+      ]
+    },
+    "promotion": {
+      "type": "object",
+      "required": [
+        "eligible",
+        "decision",
+        "blockers"
+      ],
+      "properties": {
+        "decision": {
+          "enum": [
+            "promote_to_dashboard",
+            "promote_unverified_dashboard",
+            "promote_proxy_verified_dashboard",
+            "blocked",
+            "query_more"
+          ]
+        },
+        "unverified_output_required": {
+          "type": "boolean"
+        }
+      }
+    },
+    "quality_gate": {
+      "type": "object"
+    },
+    "generation_provenance": {
+      "$ref": "#/$defs/generation_provenance"
+    }
+  },
+  "$defs": {
+    "generation_provenance": {
+      "type": "object",
+      "description": "Skill/script provenance for formal SQL artifact generation and historical backfill audits.",
+      "required": [
+        "schema_version",
+        "skill_name",
+        "skill_version",
+        "sql_spec_version",
+        "workflow",
+        "generated_by_script",
+        "generated_at"
+      ],
+      "properties": {
+        "schema_version": {
+          "type": "string",
+          "const": "asset_generation_v1"
+        },
+        "skill_name": {
+          "type": "string"
+        },
+        "skill_version": {
+          "type": "string"
+        },
+        "sql_spec_version": {
+          "type": "string"
+        },
+        "artifact_kind": {
+          "type": "string"
+        },
+        "workflow": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "generated_by_script": {
+          "type": "string"
+        },
+        "generated_at": {
+          "type": "string"
+        },
+        "saved_at": {
+          "type": "string"
+        },
+        "saved_by_script": {
+          "type": "string"
+        },
+        "backfilled_by_script": {
+          "type": "string"
+        },
+        "backfilled_by_skill_version": {
+          "type": "string"
+        },
+        "backfilled_at": {
+          "type": "string"
+        },
+        "original_generated_by": {
+          "type": "string"
+        },
+        "original_skill_version": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

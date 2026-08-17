@@ -1,0 +1,492 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SQL Query Workspace Version Metadata",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "query_id",
+    "version",
+    "lifecycle",
+    "formal_artifact",
+    "status",
+    "delivery_ready",
+    "title",
+    "purpose",
+    "path",
+    "meta_path",
+    "sql_fingerprint",
+    "generation_gate",
+    "status_history",
+    "change_type",
+    "coverage_relation",
+    "change_summary",
+    "branch_of",
+    "derived_outputs",
+    "generation_provenance",
+    "created_at",
+    "updated_at"
+  ],
+  "$defs": {
+    "related_query_reference": {
+      "type": "object",
+      "required": ["query_id", "version", "path", "sql_fingerprint"],
+      "properties": {
+        "query_id": { "type": "string", "pattern": "^qw-[a-z0-9-]+$" },
+        "version": { "type": "integer", "minimum": 1 },
+        "path": { "type": "string", "pattern": "^query_workspace/.+\\.sql$" },
+        "sql_fingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      },
+      "additionalProperties": false
+    },
+    "source_result_reference": {
+      "type": "object",
+      "required": ["query_id", "version", "sql_path", "sql_fingerprint", "result_id", "result_path", "result_sha256"],
+      "properties": {
+        "query_id": { "type": "string", "pattern": "^qw-[a-z0-9-]+$" },
+        "version": { "type": "integer", "minimum": 1 },
+        "sql_path": { "type": "string", "pattern": "^query_workspace/.+\\.sql$" },
+        "sql_fingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "result_id": { "type": "string", "pattern": "^qwo-[a-f0-9]{12}$" },
+        "result_path": { "type": "string", "pattern": "^query_workspace/.+/outputs/v[0-9]{3}/.+" },
+        "result_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      },
+      "additionalProperties": false
+    },
+    "derived_output_reference": {
+      "type": "object",
+      "required": ["query_id", "version", "attachment_id", "path"],
+      "properties": {
+        "query_id": { "type": "string", "pattern": "^qw-[a-z0-9-]+$" },
+        "version": { "type": "integer", "minimum": 1 },
+        "attachment_id": { "type": "string", "pattern": "^qwo-[a-f0-9]{12}$" },
+        "path": { "type": "string", "pattern": "^query_workspace/.+/outputs/v[0-9]{3}/.+" }
+      },
+      "additionalProperties": false
+    },
+    "result_transformation": {
+      "type": "object",
+      "required": ["contract_version", "kind", "description", "equivalence_preserved", "user_confirmed", "user_confirmation"],
+      "properties": {
+        "contract_version": { "const": "result_transformation_v1" },
+        "kind": { "enum": ["filter", "mapping", "projection", "regrouping", "merge", "visualization", "other"] },
+        "description": { "type": "string", "minLength": 6 },
+        "equivalence_preserved": { "type": "boolean" },
+        "user_confirmed": { "const": true },
+        "user_confirmation": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "content_revision": {
+      "type": "object",
+      "required": [
+        "contract_version", "revision", "reason", "user_confirmation", "confirmed_at",
+        "previous_attachment_id", "previous_sha256", "previous_size_bytes",
+        "attachment_id", "sha256", "size_bytes"
+      ],
+      "properties": {
+        "contract_version": { "const": "derived_output_content_revision_v1" },
+        "revision": { "type": "integer", "minimum": 1 },
+        "reason": { "type": "string", "minLength": 4 },
+        "user_confirmation": { "type": "string", "minLength": 1 },
+        "confirmed_at": { "type": "string", "minLength": 1 },
+        "previous_attachment_id": { "type": "string", "pattern": "^qwo-[a-f0-9]{12}$" },
+        "previous_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "previous_size_bytes": { "type": ["integer", "null"], "minimum": 0 },
+        "attachment_id": { "type": "string", "pattern": "^qwo-[a-f0-9]{12}$" },
+        "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "size_bytes": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "derived_output": {
+      "type": "object",
+      "required": [
+        "attachment_id",
+        "kind",
+        "source_kind",
+        "title",
+        "purpose",
+        "path",
+        "original_file_name",
+        "media_type",
+        "sha256",
+        "source_sha256",
+        "retention",
+        "source_sql_fingerprint",
+        "related_queries",
+        "generation_provenance",
+        "created_at"
+      ],
+      "properties": {
+        "attachment_id": { "type": "string", "pattern": "^qwo-[a-f0-9]{12}$" },
+        "kind": {
+          "enum": ["result_evidence", "analysis_workbook", "comparison_workbook", "visualization", "export", "other"]
+        },
+        "source_kind": { "enum": ["user_result", "skill_generated"] },
+        "title": { "type": "string", "minLength": 2 },
+        "purpose": { "type": "string", "minLength": 6 },
+        "path": { "type": "string", "pattern": "^query_workspace/.+/outputs/v[0-9]{3}/.+" },
+        "original_file_name": { "type": "string", "minLength": 1 },
+        "media_type": { "type": "string", "minLength": 1 },
+        "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "source_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "retention": { "$ref": "#/$defs/output_retention" },
+        "source_sql_fingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "asset_state": { "enum": ["active", "superseded", "discarded", "needs_review"] },
+        "state_reason": { "type": "string" },
+        "superseded_by": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/derived_output_reference" }
+        },
+        "source_result_id": { "type": "string" },
+        "source_results": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/source_result_reference" }
+        },
+        "lineage_status": {
+          "enum": ["result_evidence", "exact_result", "exact_results", "deterministic_transform", "sql_version_only", "unresolved_legacy"]
+        },
+        "result_time_coverage": { "$ref": "result_time_coverage.json" },
+        "workbook_manifest": { "$ref": "workbook_manifest.json" },
+        "preview_status": { "enum": ["available", "not_available"] },
+        "analysis_bundle": { "$ref": "query_analysis_bundle_output_ref.json" },
+        "transformation": { "$ref": "#/$defs/result_transformation" },
+        "content_revisions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/content_revision" }
+        },
+        "related_queries": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/related_query_reference" }
+        },
+        "generation_provenance": { "type": "object" },
+        "created_at": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "output_retention": {
+      "type": "object",
+      "required": [
+        "contract_version",
+        "payload_role",
+        "policy",
+        "threshold_bytes",
+        "source_size_bytes",
+        "source_sha256",
+        "source_file_name",
+        "source_format",
+        "source_row_count",
+        "columns",
+        "is_sliced",
+        "sampling_method",
+        "stored_row_count",
+        "stored_size_bytes",
+        "stored_sha256",
+        "stored_file_type",
+        "full_source_stored_in_managed_assets"
+      ],
+      "properties": {
+        "contract_version": { "const": "result_evidence_retention_v1" },
+        "payload_role": { "enum": ["sql_output_preview", "reusable_visual_or_analysis_asset"] },
+        "policy": { "enum": ["slice_over_10mb", "full_at_or_below_10mb", "full_reusable_output"] },
+        "threshold_bytes": { "const": 10485760 },
+        "source_size_bytes": { "type": "integer", "minimum": 0 },
+        "source_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "source_file_name": { "type": "string", "minLength": 1 },
+        "source_format": { "type": "string", "minLength": 1 },
+        "source_row_count": { "type": ["integer", "null"], "minimum": 0 },
+        "columns": { "type": "array", "items": { "type": "string" } },
+        "is_sliced": { "type": "boolean" },
+        "sampling_method": { "type": "string", "minLength": 1 },
+        "stored_row_count": { "type": ["integer", "null"], "minimum": 0 },
+        "stored_size_bytes": { "type": "integer", "minimum": 0 },
+        "stored_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "stored_file_type": { "type": "string", "minLength": 1 },
+        "full_source_stored_in_managed_assets": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "properties": {
+    "schema_version": {
+      "const": "query_workspace_meta_v1"
+    },
+    "query_id": {
+      "type": "string",
+      "pattern": "^qw-[a-z0-9-]+$"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "lifecycle": {
+      "const": "temporary_query"
+    },
+    "formal_artifact": {
+      "const": false
+    },
+    "status": {
+      "enum": [
+        "draft",
+        "runnable",
+        "run_failed",
+        "result_confirmed",
+        "discarded",
+        "archived",
+        "superseded",
+        "promoted"
+      ]
+    },
+    "delivery_ready": {
+      "type": "boolean"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 2
+    },
+    "purpose": {
+      "type": "string",
+      "minLength": 6
+    },
+    "business_question": {
+      "type": "string"
+    },
+    "path": {
+      "type": "string",
+      "pattern": "^query_workspace/"
+    },
+    "meta_path": {
+      "type": "string",
+      "pattern": "^query_workspace/"
+    },
+    "formalize_seed_path": {
+      "type": "string",
+      "pattern": "^$|^query_workspace/.+\\.formalize_seed\\.json$"
+    },
+    "sql_fingerprint": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "logic_fingerprint": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "previous_version_path": {
+      "type": "string",
+      "pattern": "^$|^query_workspace/.+\\.sql$"
+    },
+    "next_version_path": {
+      "type": "string",
+      "pattern": "^$|^query_workspace/.+\\.sql$"
+    },
+    "source_kind": {
+      "type": "string"
+    },
+    "business_category": {
+      "type": "string"
+    },
+    "analysis_type": {
+      "type": "string"
+    },
+    "usage_class": {
+      "enum": [
+        "personal_diagnosis",
+        "reusable_diagnostic",
+        "ad_hoc_analysis",
+        "reusable_analysis",
+        "recurring_delivery",
+        "unclassified"
+      ]
+    },
+    "workspace_role": {
+      "enum": ["query", "dashboard_delivery", "unknown"]
+    },
+    "role_lineage": {
+      "type": "object"
+    },
+    "source_logs": {
+      "type": "array"
+    },
+    "tables": {
+      "type": "array"
+    },
+    "metrics": {
+      "type": "array"
+    },
+    "dimensions": {
+      "type": "array"
+    },
+    "filters": {
+      "type": "array"
+    },
+    "params": {
+      "type": "object"
+    },
+    "grain": {
+      "type": "string"
+    },
+    "time_grain": {
+      "type": "string"
+    },
+    "tags": {
+      "type": "array"
+    },
+    "generation_gate": {
+      "type": "object"
+    },
+    "request_envelope": { "$ref": "request_envelope.json" },
+    "rule_application": { "$ref": "rule_application.json" },
+    "temporary_rule_override": {
+      "$ref": "temporary_rule_override.json"
+    },
+    "knowledge_references": {
+      "type": "array",
+      "items": { "$ref": "knowledge_reference.json" }
+    },
+    "knowledge_usage": { "$ref": "knowledge_usage.json" },
+    "execution_route": { "$ref": "execution_route_result.json" },
+    "summary_plan": {
+      "oneOf": [
+        { "type": "object", "maxProperties": 0 },
+        { "$ref": "summary_feasibility.json" }
+      ]
+    },
+    "analysis_role": { "enum": ["", "grouped", "overall", "standalone"] },
+    "analysis_bundle": {
+      "oneOf": [
+        { "type": "object", "maxProperties": 0 },
+        { "$ref": "query_analysis_bundle_ref.json" }
+      ]
+    },
+    "status_history": {
+      "type": "array"
+    },
+    "result_status": {
+      "type": "string"
+    },
+    "discard_reason": {
+      "type": "string"
+    },
+    "formal_artifact_path": {
+      "type": "string",
+      "pattern": "^$|^(?:formal_assets/FA-[0-9]{4,}-[^/]+/members/.+|query_sql/.+)\\.sql$"
+    },
+    "change_type": {
+      "enum": [
+        "new",
+        "correction",
+        "replacement",
+        "superset",
+        "parameter_refresh",
+        "branch",
+        "migration"
+      ]
+    },
+    "coverage_relation": {
+      "enum": [
+        "same_contract",
+        "strict_superset",
+        "partial_overlap",
+        "different_contract",
+        "independent",
+        "unknown"
+      ]
+    },
+    "change_summary": {
+      "type": "string",
+      "minLength": 6
+    },
+    "branch_of": {
+      "oneOf": [
+        {
+          "type": "object",
+          "maxProperties": 0
+        },
+        {
+          "type": "object",
+          "required": ["query_id", "version", "path"],
+          "properties": {
+            "query_id": { "type": "string", "pattern": "^qw-[a-z0-9-]+$" },
+            "version": { "type": "integer", "minimum": 1 },
+            "path": { "type": "string", "pattern": "^query_workspace/.+\\.sql$" }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "derived_outputs": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/derived_output" }
+    },
+    "generation_provenance": {
+      "type": "object"
+    },
+    "source_intake": {
+      "type": "object",
+      "required": [
+        "contract_version",
+        "source_kind",
+        "source_sql_fingerprint",
+        "external_input_immutable",
+        "absolute_source_path_persisted"
+      ],
+      "properties": {
+        "contract_version": {
+          "enum": ["external_sql_intake_v1", "historical_formal_query_backfill_v1", "legacy_work_import_v1"]
+        },
+        "source_kind": {
+          "enum": ["external_import", "historical_formal_artifact", "legacy_work_file"]
+        },
+        "original_file_name": { "type": "string" },
+        "source_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "source_sql_fingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "source_snapshot_path": { "type": "string", "pattern": "^query_workspace/" },
+        "working_copy_path": { "type": "string", "pattern": "^$|^query_workspace/_working/" },
+        "source_project_path": {
+          "type": "string",
+          "pattern": "^(?:formal_assets/FA-[0-9]{4,}-[^/]+/members/.+|query_sql/.+)\\.sql$"
+        },
+        "legacy_source_path": { "type": "string", "pattern": "^(?![A-Za-z]:)(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+\\.sql$" },
+        "migrated_at": { "type": "string" },
+        "source_removed_after_verified_copy": { "type": "boolean" },
+        "historical_backfill": { "type": "boolean" },
+        "fresh_generation_gate_not_replayed": { "type": "boolean" },
+        "external_input_immutable": { "const": true },
+        "absolute_source_path_persisted": { "const": false }
+      },
+      "additionalProperties": false
+    },
+    "legacy_source_refs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "contract_version",
+          "legacy_source_path",
+          "original_file_name",
+          "source_sha256",
+          "source_sql_fingerprint",
+          "migrated_at",
+          "source_removed_after_verified_copy"
+        ],
+        "properties": {
+          "contract_version": { "const": "legacy_work_source_v1" },
+          "legacy_source_path": { "type": "string", "pattern": "^(?![A-Za-z]:)(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+\\.sql$" },
+          "original_file_name": { "type": "string" },
+          "source_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "source_sql_fingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "migrated_at": { "type": "string" },
+          "source_removed_after_verified_copy": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "created_at": {
+      "type": "string"
+    },
+    "updated_at": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

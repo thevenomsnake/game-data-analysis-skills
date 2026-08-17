@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Current User Request Envelope",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "source",
+    "text",
+    "text_sha256",
+    "present",
+    "function_id",
+    "lifecycle_stage"
+  ],
+  "properties": {
+    "schema_version": { "const": "request_envelope_v1" },
+    "source": { "const": "current_user_message" },
+    "text": { "type": "string" },
+    "text_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "present": { "type": "boolean" },
+    "function_id": { "type": "string" },
+    "lifecycle_stage": { "type": "string" }
+  },
+  "additionalProperties": false
+}

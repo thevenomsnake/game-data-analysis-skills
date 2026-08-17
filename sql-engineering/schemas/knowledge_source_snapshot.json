@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Immutable Knowledge Source Snapshot",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "source_id",
+    "snapshot_id",
+    "source_type",
+    "original_file_name",
+    "stored_file",
+    "source_sha256",
+    "captured_at",
+    "generation_provenance",
+    "provenance"
+  ],
+  "properties": {
+    "schema_version": { "const": "knowledge_source_snapshot_v1" },
+    "source_id": { "type": "string", "pattern": "^[a-z][a-z0-9_-]{1,79}$" },
+    "snapshot_id": { "type": "string", "pattern": "^kss-[a-f0-9]{12}$" },
+    "source_type": { "enum": ["config_excel", "manual_mapping", "external_reference"] },
+    "original_file_name": { "type": "string", "minLength": 1 },
+    "stored_file": { "type": "string", "pattern": "^knowledge-base/" },
+    "source_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "captured_at": { "type": "string" },
+    "generation_provenance": {
+      "type": "object",
+      "required": ["schema_version", "skill_name", "skill_version", "artifact_kind", "workflow", "generated_by_script", "generated_at"]
+    },
+    "provenance": { "type": "object" }
+  },
+  "additionalProperties": false
+}

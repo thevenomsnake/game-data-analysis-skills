@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SQL Result Visualization Bundle Receipt",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "status",
+    "bundle_id",
+    "bundle_path",
+    "sql_assets",
+    "result_assets",
+    "visualization_asset",
+    "checks"
+  ],
+  "properties": {
+    "schema_version": { "const": "sql_result_visualization_bundle_receipt_v1" },
+    "status": { "enum": ["ready", "blocked"] },
+    "bundle_id": { "type": "string", "pattern": "^qab-[a-f0-9]{12}$" },
+    "bundle_path": { "type": "string", "pattern": "^query_workspace/bundles/qab-[a-f0-9]{12}\\.json$" },
+    "sql_assets": { "type": "array", "minItems": 2, "items": { "type": "object" } },
+    "result_assets": { "type": "array", "minItems": 2, "items": { "type": "object" } },
+    "visualization_asset": { "type": "object" },
+    "checks": {
+      "type": "object",
+      "required": [
+        "all_bundle_results_bound",
+        "lineage_status",
+        "source_result_count",
+        "required_source_sheets",
+        "workbook",
+        "sql_version_changed"
+      ],
+      "properties": {
+        "all_bundle_results_bound": { "const": true },
+        "lineage_status": { "const": "exact_results" },
+        "source_result_count": { "type": "integer", "minimum": 2 },
+        "required_source_sheets": { "type": "array", "items": { "enum": ["分组结果", "整体结果"] }, "minItems": 2, "uniqueItems": true },
+        "workbook": { "type": "object" },
+        "sql_version_changed": { "const": false }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

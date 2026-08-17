@@ -1,0 +1,233 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SQL Skill Requirement Intake Result v2",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "script_version",
+    "is_data_query_request",
+    "clarity",
+    "route_hint",
+    "decision",
+    "confidence",
+    "extracted",
+    "missing_slots",
+    "blocking_questions",
+    "non_blocking_notes",
+    "evidence",
+    "business_decisions",
+    "project_context",
+    "contract"
+  ],
+  "properties": {
+    "schema_version": { "const": "requirement_intake_v2" },
+    "script_version": { "type": "string" },
+    "is_data_query_request": { "type": "boolean" },
+    "clarity": {
+      "enum": ["not_query", "query_related", "partially_clear", "clear_query"]
+    },
+    "route_hint": {
+      "enum": [
+        "QUERY",
+        "REVIEW",
+        "RULES",
+        "SOURCE_INTAKE",
+        "SQL_FORMALIZE",
+        "VALIDATION",
+        "DASHBOARD",
+        "INTERMEDIATE_TABLE",
+        "PROJECT_ADMIN",
+        "outside_scope"
+      ]
+    },
+    "decision": {
+      "enum": [
+        "handoff_to_query",
+        "ask_clarifying_question",
+        "ask_for_data_question",
+        "route_non_query",
+        "ignore_or_ask_for_sql_request"
+      ]
+    },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "extracted": {
+      "type": "object",
+      "required": [
+        "project",
+        "metrics",
+        "time_range",
+        "grain",
+        "dimensions",
+        "filters",
+        "population",
+        "output_shape",
+        "source_logs"
+      ],
+      "properties": {
+        "project": {},
+        "metrics": { "type": "array", "items": { "type": "string" } },
+        "time_range": {},
+        "grain": {},
+        "dimensions": { "type": "array", "items": { "type": "string" } },
+        "filters": { "type": "array", "items": { "type": "string" } },
+        "population": {},
+        "output_shape": {},
+        "source_logs": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "missing_slots": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          { "enum": ["project", "metrics", "time_range", "grain", "population", "filter_value"] },
+          { "type": "string", "pattern": "^business_decision:[a-z][a-z0-9_]*$" }
+        ]
+      }
+    },
+    "blocking_questions": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "non_blocking_notes": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "evidence": {
+      "type": "object",
+      "required": ["route_scores", "route_signals", "slots"],
+      "properties": {
+        "route_scores": {
+          "type": "object",
+          "additionalProperties": { "type": "integer" }
+        },
+        "route_signals": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/signal" }
+        },
+        "slots": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/slot" }
+        }
+      }
+    },
+    "business_decisions": {
+      "type": "object",
+      "required": [
+        "status",
+        "rule_application_sha256",
+        "required",
+        "unresolved_keys",
+        "request_context"
+      ],
+      "properties": {
+        "status": {
+          "enum": ["not_available", "not_applicable", "resolved", "needs_input", "error"]
+        },
+        "rule_application_sha256": { "type": "string" },
+        "required": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "key",
+              "status",
+              "value",
+              "question",
+              "reason",
+              "allowed_semantics",
+              "owners",
+              "evidence"
+            ],
+            "properties": {
+              "key": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+              "status": { "enum": ["resolved", "unresolved"] },
+              "value": {},
+              "question": { "type": "string" },
+              "reason": { "type": "string" },
+              "allowed_semantics": { "type": "array", "items": { "type": "string" } },
+              "owners": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["rule_id", "concept_key", "title"],
+                  "properties": {
+                    "rule_id": { "type": "string" },
+                    "concept_key": { "type": "string" },
+                    "title": { "type": "string" }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "evidence": { "type": "array", "items": { "type": "object" } }
+            },
+            "additionalProperties": false
+          }
+        },
+        "unresolved_keys": { "type": "array", "items": { "type": "string" } },
+        "request_context": {
+          "type": "object",
+          "required": ["initial_text_sha256", "clarification_text_sha256", "clarification_present"],
+          "properties": {
+            "initial_text_sha256": { "type": "string" },
+            "clarification_text_sha256": { "type": "string" },
+            "clarification_present": { "type": "boolean" }
+          },
+          "additionalProperties": false
+        },
+        "error": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "project_context": {
+      "type": "object",
+      "required": ["project_root", "project_known", "project_id", "display_name", "config_loaded", "config_warnings"],
+      "properties": {
+        "project_root": { "type": "string" },
+        "project_known": { "type": "boolean" },
+        "project_id": { "type": "string" },
+        "display_name": { "type": "string" },
+        "config_loaded": { "type": "boolean" },
+        "config_warnings": { "type": "array", "items": { "type": "string" } },
+        "sql_dialect": { "type": "string" },
+        "query_engine": { "type": "string" },
+        "default_query_window": { "type": "object" }
+      }
+    },
+    "contract": {
+      "type": "object",
+      "required": ["read_only", "writes_assets", "generates_sql", "next_step_when_clear"],
+      "properties": {
+        "read_only": { "const": true },
+        "writes_assets": { "const": false },
+        "generates_sql": { "const": false },
+        "next_step_when_clear": { "type": "string" }
+      }
+    }
+  },
+  "$defs": {
+    "signal": {
+      "type": "object",
+      "required": ["kind", "value", "evidence"],
+      "properties": {
+        "kind": { "type": "string" },
+        "value": { "type": "string" },
+        "evidence": { "type": "string" }
+      }
+    },
+    "slot": {
+      "type": "object",
+      "required": ["name", "status", "value", "evidence"],
+      "properties": {
+        "name": { "type": "string" },
+        "status": {
+          "enum": ["present", "missing", "provided_by_context", "not_provided", "not_required"]
+        },
+        "value": {},
+        "evidence": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  }
+}

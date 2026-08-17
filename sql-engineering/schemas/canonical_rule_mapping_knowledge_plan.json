@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Canonical Rule Mapping Knowledge Migration Plan",
+  "type": "object",
+  "required": ["schema_version", "project_id", "migrations"],
+  "properties": {
+    "schema_version": { "const": "canonical_rule_mapping_knowledge_plan_v1" },
+    "project_id": { "type": "string", "minLength": 1 },
+    "migrations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["concept_key", "dataset", "projection", "extraction", "rule"],
+        "properties": {
+          "concept_key": { "type": "string", "minLength": 1 },
+          "dataset": {
+            "type": "object",
+            "required": ["dataset_id", "display_name", "business_domain", "purpose"],
+            "additionalProperties": true
+          },
+          "projection": {
+            "type": "object",
+            "required": ["projection_id", "description", "fields", "primary_key", "field_roles"],
+            "additionalProperties": true
+          },
+          "extraction": {
+            "type": "object",
+            "required": ["type"],
+            "properties": {
+              "type": { "enum": ["markdown_table", "structured_mapping_table", "explicit_rows"] }
+            },
+            "additionalProperties": true
+          },
+          "rule": {
+            "type": "object",
+            "required": ["content", "semantic_role", "structured_definition"],
+            "additionalProperties": true
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

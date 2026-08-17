@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Canonical Rule Authorization Amendments",
+  "type": "object",
+  "required": ["schema_version", "project_id", "updated_at", "amendments"],
+  "properties": {
+    "schema_version": { "const": "canonical_rule_authorization_amendments_v1" },
+    "project_id": { "type": "string", "minLength": 1 },
+    "updated_at": { "type": "string" },
+    "amendments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["rule_id", "concept_key", "rule_version", "path", "record_sha256", "reason", "authorization", "amended_at"],
+        "properties": {
+          "rule_id": { "type": "string", "minLength": 1 },
+          "concept_key": { "type": "string", "minLength": 1 },
+          "rule_version": { "type": "integer", "minimum": 1 },
+          "path": { "type": "string", "pattern": "^rules/definitions/.+/v[0-9]{3}\\.json$" },
+          "record_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "reason": { "type": "string", "minLength": 1 },
+          "authorization": {
+            "type": "object",
+            "required": ["contract_version", "function_id", "selection", "requested_status", "user_request_sha256", "explicit_user_selection", "authorized_at"]
+          },
+          "amended_at": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

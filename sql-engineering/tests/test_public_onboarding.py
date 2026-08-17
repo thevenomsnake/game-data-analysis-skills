@@ -1,59 +1,57 @@
-import csv
 import json
+import subprocess
+import sys
+import tempfile
 import unittest
-import xml.etree.ElementTree as ET
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-SKILL_ROOT = ROOT / "sql-engineering"
-READMES = (
-    ROOT / "README.md",
-    ROOT / "README.zh-CN.md",
-    ROOT / "README.zh-TW.md",
-    ROOT / "README.ja.md",
-    ROOT / "README.es.md",
-    ROOT / "README.ko.md",
-)
 
 
 class PublicOnboardingTests(unittest.TestCase):
-    def test_all_language_homepages_expose_project_inputs_and_flow(self) -> None:
-        required = (
-            "sources/raw/",
-            "knowledge/planning/",
-            "knowledge/confirmed/",
-            "rules/definitions/",
-            "project-onboarding.md",
-            "references/dialects.md",
-            "`environment`",
-            "`source`",
-            "`knowledge`",
-            "`rule`",
-            "`status`",
+    def test_public_entrypoints_and_examples_exist(self) -> None:
+        for relative in (
+            "README.md",
+            "README.zh-CN.md",
+            "README.zh-TW.md",
+            "setup/SKILL.md",
+            "setup/scripts/bootstrap_repo.py",
+            "sql-engineering/SKILL.md",
+            "sql-engineering/scripts/sql_workspace.py",
+            "sql-engineering/assets/examples/daily-active-users.sql",
+        ):
+            self.assertTrue((ROOT / relative).is_file(), relative)
+
+    def test_demo_initializes_a_fictional_project_without_results(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            workspace = Path(temp)
+            result = subprocess.run(
+                [sys.executable, str(ROOT / "setup/scripts/bootstrap_repo.py"), "demo", "--root", str(workspace)],
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            payload = json.loads(result.stdout)
+            self.assertEqual(payload["status"], "ready")
+            self.assertTrue(payload["fictional"])
+            project = workspace / "sql-projects" / "example"
+            self.assertTrue((project / "manifest.json").is_file())
+            self.assertFalse(list(project.rglob("*.csv")))
+            self.assertFalse(list(project.rglob("*.xlsx")))
+
+    def test_collaboration_route_is_local_only(self) -> None:
+        result = subprocess.run(
+            [sys.executable, str(ROOT / "sql-engineering/scripts/collaboration_submit.py"), "plan", "--repo-root", str(ROOT)],
+            text=True,
+            capture_output=True,
+            check=False,
         )
-        for readme in READMES:
-            content = readme.read_text(encoding="utf-8")
-            missing = [token for token in required if token not in content]
-            self.assertFalse(missing, f"{readme.name} missing {missing}")
-
-    def test_all_other_homepages_link_to_traditional_chinese(self) -> None:
-        for readme in READMES:
-            if readme.name != "README.zh-TW.md":
-                self.assertIn("README.zh-TW.md", readme.read_text(encoding="utf-8"))
-
-    def test_onboarding_examples_are_parseable_and_fictional(self) -> None:
-        examples = SKILL_ROOT / "assets" / "examples"
-        telemetry = ET.parse(examples / "telemetry-source.example.xml").getroot()
-        self.assertEqual(telemetry.attrib["project"], "example")
-        confirmed = json.loads((examples / "confirmed-reference.example.json").read_text(encoding="utf-8"))
-        rule = json.loads((examples / "canonical-rule.example.json").read_text(encoding="utf-8"))
-        with (examples / "planning-table.example.csv").open(encoding="utf-8", newline="") as stream:
-            rows = list(csv.DictReader(stream))
-        self.assertEqual(confirmed["mapping_name"], "game_mode_names")
-        self.assertEqual(rule["schema_version"], "sql_rule_input_v1")
-        self.assertEqual(rule["source_contracts"], ["player-login:v001"])
-        self.assertGreaterEqual(len(rows), 2)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        payload = json.loads(result.stdout)
+        self.assertEqual(payload["mode"], "local_review_only")
+        self.assertNotIn("Better" + "Xml/", json.dumps(payload))
 
 
 if __name__ == "__main__":

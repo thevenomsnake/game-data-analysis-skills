@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Query Analysis Bundle Reference",
+  "type": "object",
+  "required": ["contract_version", "bundle_id", "role", "path", "metric_contract_fingerprint"],
+  "properties": {
+    "contract_version": { "const": "query_analysis_bundle_ref_v1" },
+    "bundle_id": { "type": "string", "pattern": "^qab-[a-f0-9]{12}$" },
+    "role": { "enum": ["grouped", "overall"] },
+    "path": { "type": "string", "pattern": "^query_workspace/bundles/qab-[a-f0-9]{12}\\.json$" },
+    "metric_contract_fingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  },
+  "additionalProperties": false
+}

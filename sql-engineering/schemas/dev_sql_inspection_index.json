@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Development SQL Inspection Index",
+  "type": "object",
+  "required": ["contract_version", "generated_at", "item_count", "items"],
+  "properties": {
+    "contract_version": { "const": "dev_sql_inspection_index_v2" },
+    "generated_at": { "type": "string", "minLength": 1 },
+    "item_count": { "type": "integer", "minimum": 0, "maximum": 500 },
+    "items": {
+      "type": "array",
+      "maxItems": 500,
+      "items": {
+        "type": "object",
+        "required": [
+          "inspection_id",
+          "executed_at",
+          "command",
+          "database",
+          "subject",
+          "result_summary",
+          "files",
+          "search_text"
+        ],
+        "properties": {
+          "inspection_id": { "type": "string" },
+          "command": { "enum": ["tables", "describe", "enum", "query"] },
+          "subject_observation_count": { "type": "integer", "minimum": 1 },
+          "is_latest_for_subject": { "type": "boolean" },
+          "exact_duplicate_of": { "type": "string" },
+          "search_text": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": false
+}

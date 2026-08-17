@@ -1,0 +1,102 @@
+{
+  "schema_version": "sql_asset_taxonomy_v1",
+  "taxonomy_version": "1.1.0",
+  "domains": [
+    {
+      "id": "user_lifecycle",
+      "label": "用户生命周期",
+      "topics": [
+        { "id": "new_user", "label": "新增用户" },
+        { "id": "active_user", "label": "活跃用户" },
+        { "id": "retention", "label": "留存" },
+        { "id": "return_user", "label": "回流" },
+        { "id": "churn", "label": "流失" }
+      ]
+    },
+    {
+      "id": "battle_gameplay",
+      "label": "战斗与玩法",
+      "topics": [
+        { "id": "battle_behavior", "label": "战斗行为" },
+        { "id": "game_mode", "label": "玩法模式" },
+        { "id": "battle_server", "label": "战斗服" }
+      ]
+    },
+    {
+      "id": "economy_resources",
+      "label": "经济与资源",
+      "topics": [
+        { "id": "economy", "label": "经济系统" },
+        { "id": "items", "label": "道具与资源" },
+        { "id": "commercialization", "label": "商业化" }
+      ]
+    },
+    {
+      "id": "progression",
+      "label": "成长与内容",
+      "topics": [
+        { "id": "content_progression", "label": "内容进度" },
+        { "id": "growth", "label": "成长养成" },
+        { "id": "battle_pass", "label": "通行证与赛季" }
+      ]
+    },
+    {
+      "id": "social_team",
+      "label": "社交与组队",
+      "topics": [
+        { "id": "social", "label": "社交关系" },
+        { "id": "team", "label": "组队" }
+      ]
+    },
+    {
+      "id": "funnel_conversion",
+      "label": "漏斗与转化",
+      "topics": [
+        { "id": "funnel", "label": "行为漏斗" },
+        { "id": "conversion", "label": "转化与有效率" }
+      ]
+    },
+    {
+      "id": "operations_quality",
+      "label": "运营与质量",
+      "topics": [
+        { "id": "experiment_compare", "label": "实验与对比" },
+        { "id": "technical_quality", "label": "技术质量" },
+        { "id": "operations", "label": "运营分析" }
+      ]
+    },
+    {
+      "id": "asset_governance",
+      "label": "数据资产与治理",
+      "topics": [
+        { "id": "canonical_rule", "label": "业务口径" },
+        { "id": "knowledge_dataset", "label": "资料与映射" },
+        { "id": "source_metadata", "label": "日志与来源" },
+        { "id": "review_read_model", "label": "审查与读取模型" },
+        { "id": "project_metadata", "label": "项目元数据" },
+        { "id": "documentation", "label": "手册与平台文档" },
+        { "id": "integration_contract", "label": "消费与集成契约" }
+      ]
+    },
+    {
+      "id": "other",
+      "label": "其他",
+      "topics": [
+        { "id": "unclassified", "label": "待整理" }
+      ]
+    }
+  ],
+  "analysis_types": [
+    { "id": "aggregate", "label": "汇总" },
+    { "id": "detail", "label": "明细" },
+    { "id": "distribution", "label": "分布" },
+    { "id": "funnel", "label": "漏斗" },
+    { "id": "retention", "label": "留存" },
+    { "id": "comparison", "label": "对比" },
+    { "id": "dashboard", "label": "看板交付" },
+    { "id": "validation", "label": "验证" },
+    { "id": "evidence", "label": "结果与证据" },
+    { "id": "governance", "label": "治理资料" },
+    { "id": "unknown", "label": "待判断" }
+  ]
+}

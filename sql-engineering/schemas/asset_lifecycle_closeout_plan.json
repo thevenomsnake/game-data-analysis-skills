@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Asset Lifecycle Closeout Plan",
+  "type": "object",
+  "required": ["schema_version", "status", "projects", "input_receipt", "family_count", "version_count", "candidates", "versions", "package_proposals", "shared_projection_inputs", "unregistered", "categories", "human_summary", "baseline_delta", "plan_digest"],
+  "properties": {
+    "schema_version": { "const": "asset_lifecycle_closeout_plan_v1" },
+    "status": { "enum": ["ready", "inventory_changed"] },
+    "generated_at": { "type": "string" },
+    "expected_family_count": { "type": "integer", "minimum": 0 },
+    "expected_project_counts": { "type": "object", "additionalProperties": { "type": "integer", "minimum": 0 } },
+    "family_count": { "type": "integer", "minimum": 0 },
+    "version_count": { "type": "integer", "minimum": 0 },
+    "projects": { "type": "array", "items": { "type": "object" } },
+    "input_receipt": { "type": "object" },
+    "candidates": { "type": "array", "items": { "type": "object" } },
+    "versions": { "type": "array", "items": { "type": "object" } },
+    "package_proposals": { "type": "array", "items": { "type": "object" } },
+    "shared_projection_inputs": { "type": "array", "items": { "type": "object" } },
+    "unregistered": { "type": "array", "items": { "type": "object" } },
+    "categories": { "type": "object" },
+    "human_summary": { "type": "object" },
+    "baseline_delta": { "type": "object" },
+    "plan_digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  },
+  "additionalProperties": false
+}

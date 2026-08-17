@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SQL Performance Preflight Result",
+  "type": "object",
+  "required": [
+    "status",
+    "tier",
+    "score",
+    "triggers",
+    "required_references",
+    "required_checks",
+    "blockers",
+    "optimization_hint",
+    "full_guide_required",
+    "performance_fingerprint",
+    "facts"
+  ],
+  "properties": {
+    "status": { "enum": ["pass", "warn", "block", "error"] },
+    "tier": {
+      "enum": ["L0_perf_lite", "L1_perf_standard", "L2_perf_deep", "L3_perf_blocking"]
+    },
+    "score": { "type": "integer" },
+    "triggers": { "type": "array", "items": { "type": "string" } },
+    "trigger_details": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["code", "message", "score", "severity"],
+        "properties": {
+          "code": { "type": "string" },
+          "message": { "type": "string" },
+          "score": { "type": "integer" },
+          "severity": { "enum": ["info", "warn", "blocker"] }
+        }
+      }
+    },
+    "required_references": { "type": "array", "items": { "type": "string" } },
+    "required_checks": { "type": "array", "items": { "type": "string" } },
+    "blockers": { "type": "array", "items": { "type": "string" } },
+    "optimization_hint": { "type": "string" },
+    "full_guide_required": { "type": "boolean" },
+    "performance_fingerprint": { "type": "string" },
+    "facts": { "type": "object" }
+  }
+}

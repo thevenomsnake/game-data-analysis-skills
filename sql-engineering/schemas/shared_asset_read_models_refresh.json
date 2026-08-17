@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Shared Asset Read Models Refresh Receipt",
+  "type": "object",
+  "required": ["schema_version", "status", "source_model", "refreshed_at", "files", "warning_count", "warnings"],
+  "properties": {
+    "schema_version": { "const": "shared_asset_read_models_refresh_v1" },
+    "status": { "const": "ready" },
+    "source_model": { "const": "formal_asset_packages_v1" },
+    "refreshed_at": { "type": "string", "minLength": 1 },
+    "files": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "required": ["name", "path", "sha256", "size_bytes"],
+        "properties": {
+          "name": { "enum": ["catalog", "organization", "asset_group_registry"] },
+          "path": { "type": "string", "pattern": "^sql-projects/_asset_catalog/" },
+          "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "size_bytes": { "type": "integer", "minimum": 0 }
+        },
+        "additionalProperties": false
+      }
+    },
+    "warning_count": { "type": "integer", "minimum": 0 },
+    "warnings": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}

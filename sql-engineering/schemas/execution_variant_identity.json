@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Explicit SQL Execution Variant Identity",
+  "type": "object",
+  "required": ["schema_version", "logical_revision_id", "variant_group_id", "variant_key", "recommended"],
+  "properties": {
+    "schema_version": { "const": "execution_variant_identity_v1" },
+    "logical_revision_id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$" },
+    "variant_group_id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$" },
+    "variant_key": { "enum": ["starrocks", "hive", "other"] },
+    "recommended": { "type": "boolean" }
+  },
+  "additionalProperties": false
+}

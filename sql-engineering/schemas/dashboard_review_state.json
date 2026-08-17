@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Dashboard SQL Review State",
+  "type": "object",
+  "required": ["version", "updated_at", "items"],
+  "properties": {
+    "version": { "type": "integer" },
+    "updated_at": { "type": "string" },
+    "items": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["status", "sql_hash", "reviewed_at", "path"],
+        "properties": {
+          "status": { "enum": ["approved", "rejected"] },
+          "note": { "type": "string" },
+          "sql_hash": { "type": "string" },
+          "reviewed_at": { "type": "string" },
+          "path": { "type": "string" },
+          "title": { "type": "string" }
+        }
+      }
+    }
+  }
+}

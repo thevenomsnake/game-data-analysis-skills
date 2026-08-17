@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "temporary_rule_override.json",
+  "title": "Temporary Query Canonical Rule Override",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "enabled",
+    "source",
+    "user_instruction",
+    "user_request_hash",
+    "conflict_signature",
+    "conflicted_rule_ids",
+    "conflicted_concept_keys",
+    "conflicts",
+    "acknowledged_at",
+    "first_acknowledged_at",
+    "notification_status",
+    "should_notify",
+    "repeat_count",
+    "formalization_blocked",
+    "resolution_required"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "temporary_rule_override_v1"
+    },
+    "enabled": {
+      "const": true
+    },
+    "source": {
+      "const": "explicit_user_request"
+    },
+    "user_instruction": {
+      "type": "string",
+      "minLength": 1
+    },
+    "user_request_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "conflict_signature": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "conflicted_rule_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "conflicted_concept_keys": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "conflicts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object"
+      }
+    },
+    "conflict_reasons": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "acknowledged_at": {
+      "type": "string",
+      "minLength": 1
+    },
+    "first_acknowledged_at": {
+      "type": "string",
+      "minLength": 1
+    },
+    "notification_status": {
+      "enum": [
+        "new",
+        "acknowledged"
+      ]
+    },
+    "should_notify": {
+      "type": "boolean"
+    },
+    "repeat_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "formalization_blocked": {
+      "const": true
+    },
+    "follow_up": {
+      "type": "object",
+      "required": ["status", "routes", "guidance"],
+      "properties": {
+        "status": {
+          "const": "open"
+        },
+        "routes": {
+          "type": "array",
+          "items": {
+            "enum": ["RULES", "SKILL_EVOLUTION"]
+          },
+          "uniqueItems": true
+        },
+        "guidance": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "resolution_required": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "additionalProperties": false
+}

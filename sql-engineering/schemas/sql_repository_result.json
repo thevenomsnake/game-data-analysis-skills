@@ -1,0 +1,265 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Package-backed SQL Repository Result",
+  "type": "object",
+  "required": [
+    "schema",
+    "project",
+    "project_id",
+    "project_root",
+    "discovery_source",
+    "generated_at",
+    "package_count",
+    "formal_asset_package_count",
+    "package_member_count",
+    "query_count",
+    "dashboard_attachment_count",
+    "validation_member_count",
+    "evidence_member_count",
+    "derived_output_count",
+    "issue_count",
+    "issues",
+    "items"
+  ],
+  "properties": {
+    "schema": { "const": "sql_repository_v2" },
+    "project": { "type": "string" },
+    "project_id": { "type": "string", "minLength": 1 },
+    "project_root": { "const": "." },
+    "discovery_source": { "const": "formal_assets/*/manifest.json" },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "package_count": { "type": "integer", "minimum": 0 },
+    "formal_asset_package_count": { "type": "integer", "minimum": 0 },
+    "package_member_count": { "type": "integer", "minimum": 0 },
+    "query_count": { "type": "integer", "minimum": 0 },
+    "dashboard_attachment_count": { "type": "integer", "minimum": 0 },
+    "validation_member_count": { "type": "integer", "minimum": 0 },
+    "evidence_member_count": { "type": "integer", "minimum": 0 },
+    "derived_output_count": { "type": "integer", "minimum": 0 },
+    "issue_count": { "type": "integer", "minimum": 0 },
+    "issues": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/issue" }
+    },
+    "items": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/package" }
+    },
+    "orphan_dashboard_count": { "const": 0 },
+    "orphan_dashboard_attachments": {
+      "type": "array",
+      "maxItems": 0
+    }
+  },
+  "additionalProperties": true,
+  "$defs": {
+    "issue": {
+      "type": "object",
+      "properties": {
+        "code": { "type": "string" },
+        "path": { "type": "string" },
+        "message": { "type": "string" },
+        "package_id": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "package": {
+      "type": "object",
+      "required": [
+        "schema",
+        "state_key",
+        "asset_type",
+        "formal_asset_id",
+        "package_id",
+        "package_revision",
+        "package_manifest_path",
+        "path",
+        "title",
+        "status",
+        "artifact_state",
+        "source_sql",
+        "queries",
+        "dashboard_attachments",
+        "validations",
+        "evidence_members",
+        "derived_outputs",
+        "members",
+        "current_member_ids",
+        "lineage",
+        "latest_receipt",
+        "issues",
+        "package_completeness"
+      ],
+      "properties": {
+        "schema": { "const": "sql_repository_v2" },
+        "state_key": { "type": "string", "pattern": "^package::" },
+        "asset_type": { "const": "formal_asset_package" },
+        "formal_asset_id": { "type": "string", "pattern": "^FA-[0-9]{4,}$" },
+        "package_id": { "type": "string", "pattern": "^FA-[0-9]{4,}$" },
+        "package_revision": { "type": "integer", "minimum": 1 },
+        "package_manifest_path": {
+          "type": "string",
+          "pattern": "^formal_assets/FA-[0-9]{4,}-[^/]+/manifest\\.json$"
+        },
+        "path": {
+          "type": "string",
+          "pattern": "^formal_assets/FA-[0-9]{4,}-[^/]+/manifest\\.json$"
+        },
+        "title": { "type": "string", "minLength": 1 },
+        "slug": { "type": "string" },
+        "version": { "type": "integer", "minimum": 1 },
+        "status": { "enum": ["current", "history", "archived"] },
+        "artifact_state": { "enum": ["current", "history", "archived"] },
+        "source_sql": { "$ref": "#/$defs/source_sql" },
+        "generation_provenance": { "$ref": "#/$defs/generation_provenance" },
+        "repository_summary": { "type": "object" },
+        "repository_snapshot": { "type": "object" },
+        "queries": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/member_projection" }
+        },
+        "dashboard_attachments": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/member_projection" }
+        },
+        "validations": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/member_projection" }
+        },
+        "evidence_members": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/member_projection" }
+        },
+        "derived_outputs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/member_projection" }
+        },
+        "members": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/package_member" }
+        },
+        "current_member_ids": {
+          "type": "array",
+          "items": { "type": "string" },
+          "uniqueItems": true
+        },
+        "lineage": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/lineage" }
+        },
+        "latest_receipt": { "$ref": "#/$defs/latest_receipt" },
+        "issues": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/issue" }
+        },
+        "package_completeness": { "$ref": "#/$defs/package_completeness" }
+      },
+      "additionalProperties": true
+    },
+    "source_sql": {
+      "type": "object",
+      "required": ["available", "text", "path"],
+      "properties": {
+        "available": { "type": "boolean" },
+        "text": { "type": "string" },
+        "path": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "member_projection": {
+      "type": "object",
+      "required": ["member_id", "role", "lifecycle_state", "path"],
+      "properties": {
+        "member_id": { "type": "string", "minLength": 1 },
+        "role": { "type": "string", "minLength": 1 },
+        "lifecycle_state": { "enum": ["current", "history", "archived"] },
+        "path": { "type": "string", "pattern": "^formal_assets/.+/members/.+" },
+        "source_sql": { "$ref": "#/$defs/source_sql" },
+        "generation_provenance": { "$ref": "#/$defs/generation_provenance" }
+      },
+      "additionalProperties": true
+    },
+    "package_member": {
+      "type": "object",
+      "required": [
+        "member_id",
+        "role",
+        "lifecycle_state",
+        "is_current",
+        "path",
+        "available",
+        "sha256",
+        "size_bytes",
+        "created_at"
+      ],
+      "properties": {
+        "member_id": { "type": "string", "minLength": 1 },
+        "role": { "type": "string", "minLength": 1 },
+        "lifecycle_state": { "enum": ["current", "history", "archived"] },
+        "is_current": { "type": "boolean" },
+        "path": { "type": "string", "pattern": "^formal_assets/.+/members/.+" },
+        "available": { "type": "boolean" },
+        "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "size_bytes": { "type": "integer", "minimum": 0 },
+        "created_at": { "type": "string", "format": "date-time" }
+      },
+      "additionalProperties": true
+    },
+    "lineage": {
+      "type": "object",
+      "required": ["relation", "from_member_id", "to_member_id"],
+      "properties": {
+        "relation": { "type": "string", "minLength": 1 },
+        "from_member_id": { "type": "string", "minLength": 1 },
+        "to_member_id": { "type": "string", "minLength": 1 },
+        "note": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "latest_receipt": {
+      "type": "object",
+      "required": ["path", "available", "receipt"],
+      "properties": {
+        "path": { "type": "string" },
+        "available": { "type": "boolean" },
+        "receipt": { "type": "object" }
+      },
+      "additionalProperties": false
+    },
+    "package_completeness": {
+      "type": "object",
+      "required": [
+        "query_count",
+        "evidence_count",
+        "derived_output_count",
+        "validation_member_count",
+        "dashboard_count",
+        "member_count"
+      ],
+      "properties": {
+        "query_count": { "type": "integer", "minimum": 0 },
+        "evidence_count": { "type": "integer", "minimum": 0 },
+        "derived_output_count": { "type": "integer", "minimum": 0 },
+        "validation_member_count": { "type": "integer", "minimum": 0 },
+        "dashboard_count": { "type": "integer", "minimum": 0 },
+        "member_count": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "generation_provenance": {
+      "type": "object",
+      "properties": {
+        "schema_version": { "type": "string" },
+        "skill_name": { "type": "string" },
+        "skill_version": { "type": "string" },
+        "sql_spec_version": { "type": "string" },
+        "artifact_kind": { "type": "string" },
+        "workflow": { "type": "string" },
+        "source": { "type": "string" },
+        "generated_by_script": { "type": "string" },
+        "generated_at": { "type": "string" }
+      },
+      "additionalProperties": true
+    }
+  }
+}

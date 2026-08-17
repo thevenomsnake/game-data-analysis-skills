@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Canonical Rule Activation Governance Plan v2",
+  "type": "object",
+  "required": ["schema_version", "project_id", "config_updates", "concepts"],
+  "properties": {
+    "schema_version": { "const": "canonical_rule_activation_plan_v2" },
+    "project_id": { "type": "string", "minLength": 1 },
+    "generated_at": { "type": "string" },
+    "config_updates": {
+      "type": "object",
+      "required": ["business_scope"],
+      "properties": {
+        "business_scope": {
+          "$ref": "project_config.json#/$defs/business_scope"
+        }
+      },
+      "additionalProperties": false
+    },
+    "concepts": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["action", "rationale"],
+        "properties": {
+          "action": { "enum": ["upgrade", "retire_to_config"] },
+          "rationale": { "type": "string", "minLength": 1 },
+          "activation_policy": {
+            "type": "object",
+            "required": ["forward", "reverse"],
+            "properties": {
+              "forward": { "enum": ["automatic", "explicit_only", "disabled"] },
+              "reverse": { "enum": ["exact_only", "diagnostic_only", "disabled"] }
+            },
+            "additionalProperties": false
+          },
+          "request_signatures": {
+            "type": "array",
+            "items": {
+              "$ref": "canonical_rule_activation_contract.json#/properties/request_signatures/items"
+            }
+          },
+          "source_signature": { "type": "object" },
+          "event_signature": { "type": "object" },
+          "excludes_when": { "type": "array", "items": { "type": "string" } }
+        },
+        "allOf": [
+          {
+            "if": { "properties": { "action": { "const": "upgrade" } } },
+            "then": { "required": ["activation_policy", "request_signatures"] }
+          }
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

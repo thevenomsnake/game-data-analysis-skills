@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SQL Skill Health Result",
+  "type": "object",
+  "required": ["project", "status", "summary", "checks", "warnings", "errors"],
+  "properties": {
+    "project": { "type": "string" },
+    "status": { "enum": ["pass", "warn", "fail", "error"] },
+    "root": { "type": "string" },
+    "projects_root": { "type": "string" },
+    "strict": { "type": "boolean" },
+    "summary": {
+      "type": "object",
+      "required": ["checks", "passed", "warnings", "failures"],
+      "properties": {
+        "checks": { "type": "integer", "minimum": 0 },
+        "passed": { "type": "integer", "minimum": 0 },
+        "warnings": { "type": "integer", "minimum": 0 },
+        "failures": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "checks": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/check" }
+    },
+    "warnings": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/check" }
+    },
+    "errors": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/check" }
+    },
+    "details": { "type": "object" }
+  },
+  "$defs": {
+    "check": {
+      "type": "object",
+      "required": ["id", "status", "message", "path"],
+      "properties": {
+        "id": { "type": "string" },
+        "status": { "enum": ["pass", "warn", "fail"] },
+        "message": { "type": "string" },
+        "path": { "type": "string" }
+      }
+    }
+  }
+}

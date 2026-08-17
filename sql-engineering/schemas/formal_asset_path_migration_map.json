@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Formal Asset Path Migration Map",
+  "type": "object",
+  "required": ["schema_version", "project_id", "source_manifest_sha256", "paths", "legacy_quarantine"],
+  "properties": {
+    "schema_version": { "const": "formal_asset_path_migration_map_v1" },
+    "project_id": { "type": "string", "minLength": 1 },
+    "source_manifest_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "paths": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["old_path", "old_sha256", "action", "package_id", "new_member_path", "reason"],
+        "properties": {
+          "old_path": { "type": "string" },
+          "old_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "action": { "const": "migrated" },
+          "package_id": { "type": "string", "pattern": "^FA-[0-9]{4,}$" },
+          "new_member_path": { "type": "string", "pattern": "^formal_assets/" },
+          "reason": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "legacy_quarantine": { "type": "array", "items": { "type": "object" } }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Canonical Rule Activation Contract v2",
+  "type": "object",
+  "required": [
+    "contract_version",
+    "status",
+    "activation_policy",
+    "request_signatures"
+  ],
+  "properties": {
+    "contract_version": { "const": "canonical_rule_activation_v2" },
+    "status": { "const": "confirmed" },
+    "application_class": {
+      "enum": ["intent_required", "explicit_only", "audit_only"]
+    },
+    "unrequested_sql_policy": { "enum": ["diagnostic", "block"] },
+    "activation_policy": {
+      "type": "object",
+      "required": ["forward", "reverse"],
+      "properties": {
+        "forward": { "enum": ["automatic", "explicit_only", "disabled"] },
+        "reverse": { "enum": ["exact_only", "diagnostic_only", "disabled"] }
+      },
+      "additionalProperties": false
+    },
+    "request_signatures": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["label"],
+        "properties": {
+          "label": { "type": "string", "minLength": 1 },
+          "any_of": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 },
+            "uniqueItems": true
+          },
+          "all_of": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 },
+            "uniqueItems": true
+          },
+          "none_of": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 },
+            "uniqueItems": true
+          }
+        },
+        "anyOf": [
+          { "required": ["any_of"] },
+          { "required": ["all_of"] }
+        ],
+        "additionalProperties": false
+      }
+    },
+    "request_exclusions": {
+      "type": "array",
+      "items": { "$ref": "#/properties/request_signatures/items" }
+    },
+    "semantic_tags": { "type": "object" },
+    "source_signature": { "type": "object" },
+    "event_signature": { "type": "object" },
+    "excludes_when": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true
+    },
+    "hard_constraints": {
+      "type": "array",
+      "items": { "type": "object" }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "activation_policy": {
+            "properties": { "forward": { "const": "automatic" } },
+            "required": ["forward"]
+          }
+        }
+      },
+      "then": {
+        "properties": { "request_signatures": { "minItems": 1 } }
+      }
+    }
+  ],
+  "additionalProperties": true
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Query Analysis Bundle Result Receipt",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "status",
+    "bundle_id",
+    "bundle_path",
+    "role",
+    "attach_status",
+    "result_asset",
+    "missing_roles",
+    "result_columns"
+  ],
+  "properties": {
+    "schema_version": { "const": "query_analysis_bundle_result_receipt_v1" },
+    "status": { "enum": ["awaiting_other_result", "ready_for_visualization"] },
+    "bundle_id": { "type": "string", "pattern": "^qab-[a-f0-9]{12}$" },
+    "bundle_path": { "type": "string", "pattern": "^query_workspace/bundles/qab-[a-f0-9]{12}\\.json$" },
+    "role": { "enum": ["grouped", "overall"] },
+    "attach_status": { "type": "string", "minLength": 1 },
+    "result_asset": { "type": "object" },
+    "missing_roles": { "type": "array", "items": { "enum": ["grouped", "overall"] }, "uniqueItems": true },
+    "result_columns": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}
