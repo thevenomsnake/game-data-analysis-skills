@@ -2,11 +2,11 @@
 
 **Una colección de Skills enchufables para analizar datos de juegos en Codex.**
 
-[Sitio oficial](https://fairy.sumimi.jp/) · [English](README.md) · [简体中文](README.zh-CN.md)
+[English](README.md) · [简体中文](README.zh-CN.md)
 
 Game Data Analysis Skills reúne Skills que pueden usarse por separado o combinarse según la tarea.
-También puedes usar la colección sin Fairy. Fairy es una capa de producto independiente que organiza
-las Skills elegidas en un flujo de trabajo para el equipo; no es una dependencia obligatoria.
+Las capacidades elegidas también pueden integrarse en el flujo de trabajo de otra IA o herramienta;
+la colección no exige una capa de producto concreta.
 
 ## Qué incluye
 

@@ -4,13 +4,12 @@
 
 **A file-backed collection of pluggable Skills for game-data analysis in Codex.**
 
-[Official site](https://fairy.sumimi.jp/) · [简体中文](README.zh-CN.md) · [繁體中文](README.zh-TW.md)
+[简体中文](README.zh-CN.md) · [繁體中文](README.zh-TW.md)
 
 A useful query should still be useful after the chat ends. Game Data Analysis Skills keeps the
 question, the SQL version, the rule sources, the result evidence, and the delivery decision close
 enough to follow without turning every small analysis into a heavy release process. Use one Skill,
-combine several, or use the collection without Fairy. Fairy is a separate product layer that can
-organize selected Skills into a team workflow; it is not required by the individual Skills.
+combine several, or let another tool compose the selected capabilities into its own workflow.
 
 ## What it helps you do
 
@@ -154,11 +153,5 @@ silently promote a query, and a lifecycle label does not claim correctness by it
 - Generate recurring reports on a schedule.
 - Compare results across data assets to assess whether they are reasonable.
 - Trace anomalies back to their source and investigate likely causes.
-
-## Official site
-
-The website brings the modules together with examples and product-facing guidance:
-
-**[Visit fairy.sumimi.jp](https://fairy.sumimi.jp/)**
 
 Licensed under the Apache License 2.0.

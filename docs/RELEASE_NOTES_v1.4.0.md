@@ -4,7 +4,7 @@ This release makes the public edition a complete, pluggable Game Data Analysis S
 
 ## Highlights
 
-- Each Skill can be used independently, combined with other Skills, or used without Fairy.
+- Each Skill can be used independently, combined with other Skills, or composed by another AI/tool.
 - Formal projects can choose `direct`, `web`, or `manual` query execution at initialization.
 - Direct execution supports read-only DB-API and CLI profiles.
 - Web execution uses a validated, project-local `web_query_adapter_v1` and the user's Chrome session;

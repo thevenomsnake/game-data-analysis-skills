@@ -2,11 +2,11 @@
 
 **Codex에서 게임 데이터 분석을 수행하기 위한, 교체 가능한 Skills 모음입니다.**
 
-[공식 사이트](https://fairy.sumimi.jp/) · [English](README.md) · [简体中文](README.zh-CN.md)
+[English](README.md) · [简体中文](README.zh-CN.md)
 
 Game Data Analysis Skills는 각각 독립적으로 사용하거나 필요한 것만 조합할 수 있는 Skills의
-컬렉션입니다. Fairy를 사용하지 않고도 이용할 수 있습니다. Fairy는 선택한 Skills를 팀 워크플로로
-묶는 별도의 제품 계층이며 이 저장소의 필수 의존성이 아닙니다.
+컬렉션입니다. 선택한 기능을 다른 AI나 도구의 워크플로에 연결해 사용할 수 있으며 특정 제품 계층을
+필수로 요구하지 않습니다.
 
 ## 제공하는 기능
 

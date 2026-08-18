@@ -2,11 +2,11 @@
 
 **Codex でゲームデータ分析を行うための、差し替え可能な Skills のコレクションです。**
 
-[公式サイト](https://fairy.sumimi.jp/) · [English](README.md) · [简体中文](README.zh-CN.md)
+[English](README.md) · [简体中文](README.zh-CN.md)
 
 Game Data Analysis Skills は、個別に使うことも、必要なものだけ組み合わせることもできる
-Skills の集合です。Fairy を使わずに利用してもかまいません。Fairy は選んだ Skills をチームの
-ワークフローとして組み立てる別のプロダクト層であり、このリポジトリの前提ではありません。
+Skills の集合です。選んだ能力を別の AI やツールのワークフローへ組み込んで利用できます。
+特定のプロダクト層を前提にしていません。
 
 ## できること
 

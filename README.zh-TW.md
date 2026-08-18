@@ -2,11 +2,10 @@
 
 **面向 Codex 的可插拔遊戲資料分析 Skills 合集，把 SQL、口徑、證據和交付檔案保存下來。**
 
-[官方網站](https://fairy.sumimi.jp/) · [English](README.md) · [简体中文](README.zh-CN.md)
+[English](README.md) · [简体中文](README.zh-CN.md)
 
 Game Data Analysis Skills 是一組可以獨立使用、也可以組合使用的 Skills。只使用一個、選幾個
-一起用，或完全不使用 Fairy 都可以。Fairy 是另一個把選定 Skills 組織成團隊工作流程的產品層，
-不是這個合集的必要依賴。
+一起用，或由其他工具把選定能力接成自己的工作流程都可以；這個合集不依賴特定產品層。
 
 一次查詢不該在聊天結束後就失去上下文。這個合集把問題、SQL 版本、資料來源、口徑、結果證據
 和交付決定放在可追溯的檔案與索引裡，同時保留臨時查詢需要的輕量流程。
