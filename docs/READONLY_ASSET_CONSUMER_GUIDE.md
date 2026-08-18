@@ -31,6 +31,16 @@ sql-projects/_asset_catalog/asset_group_registry.json
 
 共享资产状态只用于展示和筛选。正式草稿、失败证据、正式/历史 SQL、提案规则和已验证资产都允许复制和展示。项目本地 `query_workspace/` 不属于外部消费面，不进入 Git 或这三份 JSON。
 
+### Provider Attach Contract v1
+
+Consumer attach uses the additive `provider_consumer_attach_v1` contract exposed by the Provider manifest and Snapshot entrypoints. The Consumer lock contains `provider_id`, `source_commit`, `snapshot_digest`, and `contract_version`; `source_commit` is the exact commit checked out by the Consumer transport and is not inferred from Provider worktree state.
+
+Attach validates Provider identity, contract version, snapshot digest, declared entrypoints, repository-relative paths, and read-only policy. It does not read Formal Asset receipts, run Git/pull/refresh, write back to the Provider, or open `query_workspace`, Promotion Ledger, caches, credentials, or other local lifecycle surfaces. A file SHA-256 is an on-demand reference check, not a Fairy startup gate.
+
+Source references use the Catalog's fine-grained `asset_id`; `package_id` identifies the owning Formal Asset Package; `member_path` is the declared repository-relative file path; and `fingerprint` is that file's declared SHA-256. Dashboard, Widget, Layout, Preference, and Derived Artifact definitions remain owned by the Consumer and are never added to this Provider closure.
+
+Provider maintainers own the separate full-health path: Formal Package receipt/index and closure validation, shared Catalog/Organization/Asset Group Registry refresh, and the configured publication gate. A member drift can be reported by Provider health without becoming a Consumer attach failure unless the Provider identity, digest, contract, entrypoint, or path policy no longer matches.
+
 本仓库不负责：
 
 - 提供 Web 服务或 API；
@@ -44,6 +54,7 @@ sql-projects/_asset_catalog/asset_group_registry.json
 | 内容 | 权威入口 | 说明 |
 |---|---|---|
 | Provider 快照与版本身份 | `sql-projects/_asset_catalog/provider_manifest.json` + `provider_snapshot.json` | 外部资料库的唯一只读入口；固定 Git commit 与 snapshot digest |
+| Consumer Attach Contract | `sql-engineering/schemas/provider_consumer_attach_contract.json` | 定义 lock、entrypoint、只读/路径策略和 source reference；不要求读取 receipt |
 | 跨项目资产身份、文件和关系 | `sql-projects/_asset_catalog/asset_catalog.json` | Provider Snapshot 的共享投影之一 |
 | 目录结构 schema | `sql-engineering/schemas/asset_catalog.json` | 校验 `sql_asset_catalog_v2` |
 | 跨项目业务主题导航 | `sql-projects/_asset_catalog/asset_organization.json` | 按新增、活跃、留存等主题浏览；用 `asset_id` 连接 catalog |
@@ -161,9 +172,39 @@ route 时保持 `legacy_unlabeled`，仍可查看、下载和加入索引。
 
 外部系统应展示诊断，但不能因为有 issue 就静默隐藏资产。
 
-## 4. 源仓库准备
+## 4. 四条独立流程
 
-源仓库维护者在外部同步前生成最新快照：
+这四条流程有不同的 owner 和门禁。Fairy 只执行 **Consumer Attach**；其余三条全部属于 Provider maintainer，不是 Fairy 启动流程，也不是外部资料库的回写接口。
+
+### 4.1 Consumer Attach（Fairy）
+
+Fairy 只读取 Provider manifest、Snapshot、Catalog 和 Attach Contract，校验 `provider_id`、`contract_version`、`snapshot_digest`、entrypoints、仓库相对路径和只读策略，然后建立本地只读绑定。Fairy 不读取 Formal Package receipt，不执行 Git/pull/refresh，不运行 Provider closure audit，不回写 Provider。
+
+成员文件的 SHA-256 只在按需读取或 source reference 检查时使用。单个成员漂移由 Provider health 报警；Fairy attach 只有在 identity、contract、digest、entrypoint 或 path policy 失配时才不可用。
+
+### 4.2 Provider maintainer-only closure audit
+
+Provider maintainer 使用严格 Provider build/validate 流程验证 Formal Package receipt/index、所有成员 size/hash、Package closure、共享投影和 Snapshot。该流程可以因单个成员漂移失败，但不应被 Fairy 调用或作为 Fairy 启动依赖：
+
+```powershell
+python .\sql-engineering\scripts\asset_provider.py build `
+  --projects-root .\sql-projects `
+  --repository-id example/game-data-analysis-skills `
+  --output .\sql-projects\_asset_catalog\provider_snapshot.json `
+  --manifest .\sql-projects\_asset_catalog\provider_manifest.json
+
+python .\sql-engineering\scripts\asset_provider.py validate `
+  --snapshot .\sql-projects\_asset_catalog\provider_snapshot.json `
+  --repo-root .
+```
+
+`build` 是发布前的完整 closure 门禁；带 `--repo-root` 的 `validate` 还会检查 Snapshot 声明文件的实际 hash。无 `--repo-root` 的校验只适合 Consumer Attach 的 identity/digest/path-policy 检查。
+
+### 4.3 Shared Catalog/Organization/Asset Group Registry refresh
+
+Provider maintainer 在 closure audit 通过后，独立刷新 Catalog、Organization 和 Asset Group Registry，再校验三份投影及 refresh receipt。Fairy 和其他 Consumer 不运行这些 refresh 命令，也不把它们当作 attach 接口。
+
+源仓库维护者在外部同步前生成最新 Catalog：
 
 ```powershell
 python .\sql-engineering\scripts\asset_catalog.py build `
@@ -188,7 +229,7 @@ python .\sql-engineering\scripts\asset_catalog.py validate `
 
 目录按需或在外部同步前重建，不挂到 QUERY、固化、Review、Validation、Dashboard、仓库页或普通保存流程，避免拖慢日常 SQL 工作。文档扫描和链接校验也只在这次独立维护任务中发生。
 
-随后刷新语义 overlay：
+随后刷新 Organization overlay：
 
 ```powershell
 python .\sql-engineering\scripts\asset_organization.py refresh `
@@ -205,7 +246,7 @@ python .\sql-engineering\scripts\asset_organization.py validate `
 
 外部页面用 `asset_id` 连接两个 JSON，左侧导航读取 `navigation_path`；`needs_semantic_review` 和 `stale_semantics` 只显示整理提醒，不能隐藏资产。
 
-最后刷新稳定资产组目录：
+最后刷新稳定 Asset Group Registry：
 
 ```powershell
 python .\sql-engineering\scripts\asset_group_registry.py refresh `
@@ -223,7 +264,26 @@ python .\sql-engineering\scripts\asset_group_registry.py validate `
 
 主页按 `groups[].display_order` 建目录，显示 `group_id + display_title`，再用 `member_asset_ids` 展开 catalog 资产。标题相似、共享日志或同属“留存”等宽泛主题都不能自动并组。
 
-## 5. 外部工具复制范围
+### 4.4 Configured publication gate
+
+Provider maintainer 在 Package receipt、共享投影和 Provider Snapshot 全部通过后，才运行协作提交门禁。公开版门禁只生成本地计划并列出允许/阻断路径；最终 commit 和 push 由用户配置的 Git 客户端完成。Fairy 不执行 Git、pull 或 publish，也不接收 Provider 回写。具体边界见 [`docs/COLLABORATION.md`](COLLABORATION.md)。
+
+```powershell
+python .\sql-engineering\scripts\collaboration_submit.py plan `
+  --repo-root . `
+  --format json
+
+python .\sql-engineering\scripts\collaboration_submit.py submit `
+  --repo-root . `
+  --dry-run `
+  --format json
+```
+
+只有在 maintainer 明确确认发布计划后，才执行不带 `--dry-run` 的本地计划确认。Provider publication gate 不会纳入 `query_workspace`、Promotion Ledger、cache、credentials、未登记文件或 Fairy 自有 Dashboard/Widget/Layout/Derived Artifacts。
+
+## 5. 外部工具复制范围（物化/健康流程，不是 Fairy Attach）
+
+以下步骤描述外部资料库的可选只读物化和文件完整性检查。它们不属于 Fairy 的启动 Attach；Fairy 不执行 Git/pull、Provider refresh 或完整 closure hash audit。
 
 ### 5.1 全量镜像
 
@@ -270,7 +330,9 @@ python .\sql-engineering\scripts\asset_group_registry.py validate `
 
 外部环境可以自行设置缓存保留期限，但不得把删除结果回写源仓库。
 
-## 7. 原子同步
+## 7. 原子同步（外部物化器可选）
+
+外部资料库物化器可以使用 Git transport 固定来源提交并原子切换快照；Fairy Attach 不执行这条同步流程，而是消费已经固定的 Provider lock。
 
 推荐使用快照目录：
 
