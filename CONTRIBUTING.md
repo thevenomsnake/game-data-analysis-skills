@@ -2,6 +2,12 @@
 
 Keep the public edition generic, reproducible, and safe to publish.
 
+Install the public test dependency before running the complete suite:
+
+```powershell
+python -m pip install -r requirements-dev.txt
+```
+
 - Do not add production results, private schemas, credentials, internal endpoints, or local absolute paths.
 - Keep examples fictional and place local run output under ignored directories.
 - Update the relevant Skill reference and README when a public command or contract changes.
