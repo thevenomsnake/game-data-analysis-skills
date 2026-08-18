@@ -11,6 +11,7 @@ python -m pip install -r requirements-dev.txt
 - Do not add production results, private schemas, credentials, internal endpoints, or local absolute paths.
 - Keep examples fictional and place local run output under ignored directories.
 - Update the relevant Skill reference and README when a public command or contract changes.
+- Follow `docs/README_MAINTENANCE.md` and update the append-only README log in the same commit.
 - Run the focused tests and `python tools/public_release.py validate --root .` before committing.
 - When working from the maintained source, run `python tools/public_sync.py audit --source-root <maintained-source-root> --public-root .` and review every `changed_review` entry.
 - Use the standard library unless a dependency is required by an optional local adapter.

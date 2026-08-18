@@ -74,6 +74,13 @@ python .\sql-engineering\scripts\local_setup.py init `
 URL、UI の locator、完了条件、ダウンロード経路だけをローカル設定に追加します。自動ログインや
 Cookie の保存は行いません。
 
+## 2 つの統合インターフェース
+
+- **Codex Skill インターフェース**：`setup` と `sql-engineering` をインストールし、Codex で `$sql-engineering` を使います。
+- **外部 Agent／サードパーティソフトウェア**：JSON CLI または文書化されたファイル/schema インターフェースを直接呼び出します。Codex ランタイムは不要です。
+
+詳細は [Codex と外部 Agent の統合インターフェース](docs/INTEGRATION_INTERFACES.md) を参照してください。
+
 ## SQL とアセットの場所
 
 - `sql-projects/<project>/query_workspace/` は一時・履歴 SQL です。`sql_query_workspace.py search`
@@ -118,6 +125,7 @@ python .\setup\scripts\bootstrap_repo.py configure --root . `
 - [Setup onboarding](setup/references/onboarding.md)
 - [SQL Engineering contract](sql-engineering/SKILL.md)
 - [User manual](docs/USER_MANUAL.md)
+- [Codex と外部 Agent の統合インターフェース](docs/INTEGRATION_INTERFACES.md)
 - [Read-only asset consumer guide](docs/READONLY_ASSET_CONSUMER_GUIDE.md)
 - [Public maintenance](docs/PUBLIC_MAINTENANCE.md)
 - [Excel report visualizer](excel-report-visualizer/README.md)

@@ -38,8 +38,14 @@ jobs:
       - name: Validate capability registry
         run: python sql-engineering/scripts/capability_registry.py --validate
 
+      - name: Validate README set
+        run: python tools/validate_readmes.py validate --root . --format json
+
       - name: Run Setup tests
         run: python -m unittest discover -q -s setup/scripts -p 'test_*.py'
 
       - name: Run public SQL tests
         run: python -m unittest discover -q -s sql-engineering/tests -p 'test_*.py'
+
+      - name: Run repository tool tests
+        run: python -m unittest discover -q -s tools -p 'test_*.py'

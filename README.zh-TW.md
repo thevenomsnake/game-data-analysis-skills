@@ -73,6 +73,13 @@ python .\sql-engineering\scripts\local_setup.py init `
 目前附有 Deltaverse 網頁適配範例；其他網站按照[執行面與網頁適配指南](sql-engineering/references/execution-surfaces.md)
 建立自己的本機設定。三種執行面不會靜默互相切換。
 
+## 兩種接入介面
+
+- **Codex Skill 介面**：安裝 `setup` 和 `sql-engineering`，重新整理 Codex 後使用 `$sql-engineering`。
+- **外部 Agent／第三方軟體介面**：直接呼叫 JSON CLI，或讀取文件與 schema 介面，不需要 Codex 執行環境。
+
+完整命令與檔案契約見[Codex 與外部 Agent 接入介面](docs/INTEGRATION_INTERFACES.md)。
+
 ## SQL 與資產放在哪裡
 
 - `sql-projects/<project>/query_workspace/`：臨時、歷史和可繼續修改的 SQL；用
@@ -121,6 +128,7 @@ python .\setup\scripts\bootstrap_repo.py configure --root . `
 - [Setup 接入手冊](setup/references/onboarding.md)
 - [SQL Engineering 合約](sql-engineering/SKILL.md)
 - [使用手冊](docs/USER_MANUAL.md)
+- [Codex 與外部 Agent 接入介面](docs/INTEGRATION_INTERFACES.md)
 - [執行面與網頁適配指南](sql-engineering/references/execution-surfaces.md)
 - [只讀資產消費手冊](docs/READONLY_ASSET_CONSUMER_GUIDE.md)
 - [公開維護邊界](docs/PUBLIC_MAINTENANCE.md)

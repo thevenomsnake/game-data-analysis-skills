@@ -72,6 +72,15 @@ python .\sql-engineering\scripts\local_setup.py init `
 提供稳定身份和哈希。详见[执行面与网页适配指南](sql-engineering/references/execution-surfaces.md)
 和[只读资产消费手册](docs/READONLY_ASSET_CONSUMER_GUIDE.md)。
 
+## 两种接入接口
+
+- **Codex Skill 接口**：安装 `setup` 和 `sql-engineering`，刷新 Codex 后使用 `$sql-engineering`，
+  由 Skill 负责路由和引导项目工作。
+- **外部 AI Agent / 第三方软件接口**：直接调用 JSON CLI，或读取约定的文件和 schema；不需要
+  安装 Codex 运行时。
+
+完整的命令与文件契约见[接入接口说明](docs/INTEGRATION_INTERFACES.md)。
+
 ## 策划源怎么选
 
 仓库 Git remote 和策划源是两件事，分别配置：

@@ -84,6 +84,15 @@ and Provider Snapshot/Catalog schemas give read-only consumers stable identities
 the [execution surface and adapter guide](sql-engineering/references/execution-surfaces.md) and
 [read-only asset consumer guide](docs/READONLY_ASSET_CONSUMER_GUIDE.md).
 
+## Two integration interfaces
+
+- **Codex Skill interface:** install `setup` and `sql-engineering`, refresh Codex, and use
+  `$sql-engineering` for route selection and guided project work.
+- **External Agent / third-party interface:** call the JSON CLI commands or read the documented
+  file/schema interfaces directly. No Codex runtime is required.
+
+The complete command/file contract is in [Integration interfaces](docs/INTEGRATION_INTERFACES.md).
+
 ## Choose your planning source
 
 The repository remote and the planning source are separate choices:

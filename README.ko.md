@@ -73,6 +73,13 @@ python .\sql-engineering\scripts\local_setup.py init `
 따라 URL, UI locator, 완료 신호, 다운로드 경로만 로컬 설정에 추가하세요. 로그인 자동화나 Cookie
 저장은 하지 않습니다.
 
+## 두 가지 통합 인터페이스
+
+- **Codex Skill 인터페이스**: `setup`과 `sql-engineering`을 설치하고 Codex에서 `$sql-engineering`을 사용합니다.
+- **외부 Agent／타사 소프트웨어 인터페이스**: JSON CLI 또는 문서화된 파일/schema 인터페이스를 직접 호출합니다. Codex 런타임은 필요하지 않습니다.
+
+자세한 계약은 [Codex 및 외부 Agent 통합 인터페이스](docs/INTEGRATION_INTERFACES.md)를 확인하세요.
+
 ## SQL과 자산의 위치
 
 - `sql-projects/<project>/query_workspace/`: 임시 및 이력 SQL. `sql_query_workspace.py search`로 찾으며 Git에 넣지 않습니다.
@@ -115,6 +122,7 @@ python .\setup\scripts\bootstrap_repo.py configure --root . `
 - [Setup onboarding](setup/references/onboarding.md)
 - [SQL Engineering contract](sql-engineering/SKILL.md)
 - [User manual](docs/USER_MANUAL.md)
+- [Codex 및 외부 Agent 통합 인터페이스](docs/INTEGRATION_INTERFACES.md)
 - [Read-only asset consumer guide](docs/READONLY_ASSET_CONSUMER_GUIDE.md)
 - [Public maintenance](docs/PUBLIC_MAINTENANCE.md)
 - [Excel report visualizer](excel-report-visualizer/README.md)

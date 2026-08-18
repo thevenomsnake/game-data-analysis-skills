@@ -70,6 +70,13 @@ python .\sql-engineering\scripts\local_setup.py init `
 
 El repositorio incluye un ejemplo para Deltaverse. Para otro sitio, sigue la [guía de superficies y adaptadores web](sql-engineering/references/execution-surfaces.md): cambia en la configuración local las URL, los localizadores de la interfaz, las señales de finalización y la ruta de exportación. No automatiza el inicio de sesión ni guarda cookies.
 
+## Dos interfaces de integración
+
+- **Interfaz Skill de Codex:** instala `setup` y `sql-engineering`, actualiza Codex y usa `$sql-engineering`.
+- **Interfaz para agentes externos y software de terceros:** llama directamente al CLI JSON o lee las interfaces de archivos y schemas. No requiere el runtime de Codex.
+
+Consulta el contrato completo en [Interfaces de integración para Codex y agentes externos](docs/INTEGRATION_INTERFACES.md).
+
 ## Dónde se encuentran SQL y activos
 
 - `sql-projects/<project>/query_workspace/`: SQL temporal e histórico; se busca con `sql_query_workspace.py search` y no se versiona en Git.
@@ -112,6 +119,7 @@ bibliotecas incluidas en el visualizador Excel están en [THIRD_PARTY_NOTICES.md
 - [Setup onboarding](setup/references/onboarding.md)
 - [SQL Engineering contract](sql-engineering/SKILL.md)
 - [Manual de usuario](docs/USER_MANUAL.md)
+- [Interfaces de integración para Codex y agentes externos](docs/INTEGRATION_INTERFACES.md)
 - [Guía de consumo de activos de solo lectura](docs/READONLY_ASSET_CONSUMER_GUIDE.md)
 - [Mantenimiento público](docs/PUBLIC_MAINTENANCE.md)
 - [Visualizador de informes Excel](excel-report-visualizer/README.md)
