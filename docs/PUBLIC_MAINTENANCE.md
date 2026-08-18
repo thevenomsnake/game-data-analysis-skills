@@ -19,3 +19,24 @@ Git. A public release should have a clean commit containing only the validated t
 Installation is transport-neutral: Git is the baseline dependency, while the remote host is a
 configuration value. Planning sources are independent and may use Git, SVN, a local folder, or
 `none`; provider metadata belongs in ignored `.local/setup-config.json`, never in the public source.
+
+## Source Sync Allowlist
+
+The maintained source and this repository are separate trees. Do not copy the source tree wholesale.
+`tools/public-sync-allowlist.json` records the reviewed capability roots, explicit exclusions, public-
+only adaptations, and exact files whose normalized content must match the source.
+
+Run the audit from the public checkout and point it at the maintained source:
+
+```powershell
+python .\tools\public_sync.py audit `
+  --source-root <maintained-source-root> `
+  --public-root . `
+  --format json
+```
+
+`source_only`, `exact_missing`, `exact_drift`, or `forbidden` blocks a release. `changed_review` is
+reported for intentionally deidentified public adaptations and must be reviewed against the source
+commit before publishing. Update the allowlist only after deciding whether a new source path is a
+generic capability, a public-only adaptation, or an excluded project/production surface. The audit
+never copies files and never writes the source tree.

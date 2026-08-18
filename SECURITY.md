@@ -12,5 +12,7 @@ Git and SVN remotes are configuration, not credential stores. Never embed a user
 token in an HTTP URL; use the user's native Git/SVN credential mechanism. Local setup metadata and
 provider checkouts remain under ignored `.local/`.
 
-Report suspected disclosure privately to the repository maintainer. If a private value was
-published, rotate it first and preserve the affected commit hash for cleanup.
+Report suspected disclosure privately through
+[GitHub private vulnerability reporting](https://github.com/thevenomsnake/game-data-analysis-skills/security/advisories/new).
+Do not open a public issue with credentials or private data. If a private value was published,
+rotate it first and preserve the affected commit hash for cleanup.

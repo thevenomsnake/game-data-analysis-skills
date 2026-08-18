@@ -1,0 +1,47 @@
+{
+  "schema_version": "public_sync_allowlist_v1",
+  "watch_roots": [
+    "sql-engineering/assets",
+    "sql-engineering/checklists",
+    "sql-engineering/references",
+    "sql-engineering/schemas",
+    "sql-engineering/scripts",
+    "sql-engineering/templates",
+    "excel-report-visualizer"
+  ],
+  "excluded_source_globs": [
+    "**/__pycache__/**",
+    "**/*.pyc",
+    "sql-engineering/references/collaboration-submit.md",
+    "sql-engineering/references/deltaverse-browser-execution.md",
+    "sql-engineering/references/sources/**",
+    "sql-engineering/tests/**",
+    "excel-report-visualizer/old/**",
+    "excel-report-visualizer/.local/**"
+  ],
+  "allowed_public_only_globs": [
+    "setup/**",
+    "sql-engineering/assets/examples/**",
+    "sql-engineering/references/database-execution.md",
+    "sql-engineering/references/dialects.md",
+    "sql-engineering/references/example.md",
+    "sql-engineering/references/project-contract.md",
+    "sql-engineering/references/project-onboarding.md",
+    "sql-engineering/references/sql-quality.md",
+    "sql-engineering/references/workflow.md",
+    "sql-engineering/scripts/sql_execute.py",
+    "sql-engineering/scripts/sql_workspace.py",
+    "sql-engineering/tests/**",
+    "sql-engineering/references/execution-surfaces.md",
+    "sql-engineering/schemas/web_query_adapter.json",
+    "sql-engineering/scripts/web_query_adapter.py",
+    "excel-report-visualizer/THIRD_PARTY_NOTICES.md"
+  ],
+  "exact_paths": [
+    "sql-engineering/schemas/provider_consumer_attach_contract.json",
+    "sql-engineering/scripts/asset_provider.py",
+    "excel-report-visualizer/index.html",
+    "excel-report-visualizer/server.py",
+    "excel-report-visualizer/workbook-inspector.js"
+  ]
+}

@@ -1,12 +1,13 @@
 # Game Data Analysis Skills
 
-**面向 Codex 的游戏数据分析工具集，把 SQL、口径、证据和交付文件真正保存下来。**
+**面向 Codex 的可插拔游戏数据分析 Skills 合集，把 SQL、口径、证据和交付文件真正保存下来。**
 
 [官方网站](https://fairy.sumimi.jp/) · [English](README.md) · [繁體中文](README.zh-TW.md)
 
 聊天里的查询很容易散掉：SQL 版本变了，口径来源找不到，结果也无法确认对应哪一版。这个
 项目把这些关系放进文件和索引里，让一次排查可以继续演进成可复用的分析资产，同时保留
-临时查询应有的轻量感。
+临时查询应有的轻量感。每个 Skill 都可以单独使用，也可以组合多个；不使用 Fairy 也不影响
+这些 Skill。Fairy 是另一个负责组合团队工作流的产品层，不是本合集的运行前提。
 
 ## 各模块负责什么
 
@@ -18,6 +19,7 @@
 | **查询生命周期** | 从需求判定进入 QUERY，再到验证、正式资产包和看板派生；每一步都保留证据边界。 |
 | **Review 与健康检查** | 同时检查业务含义和 SQL 结构，用确定性事实、质量门禁和健康检查尽早发现漂移。 |
 | **结果与 lineage** | 把结果、可视化和工作簿绑定到实际产生它们的准确 SQL 版本。 |
+| **执行面** | 对已生成 receipt 的 SQL 选择直接 DB-API/CLI、配置好的网页适配器，或明确的手动交付。 |
 | **Excel 报告可视化** | 在本地检查约定格式的工作簿，生成可离线复用的报告页面；仓库只提供工具源码，不带任何工作簿。 |
 
 ## 安装并跑通第一条查询
@@ -49,6 +51,26 @@ python .\sql-engineering\scripts\sql_workspace.py save `
 
 命令会返回不可变的 `v001.sql` 路径。交付前对准确路径运行 `receipt`。没有数据库适配器时，
 执行结果会明确返回 `manual_required`，不会把“已生成”说成“已跑通”。
+
+## 选择查询执行面
+
+正式项目初始化时明确执行意图：
+
+```powershell
+python .\sql-engineering\scripts\local_setup.py init `
+  --repo-root . `
+  --project example `
+  --execution-surface direct
+```
+
+`direct` 使用只读 DB-API 或 CLI；`web` 使用项目本地网页适配器和用户自己的 Chrome 登录态；
+`manual` 表示暂不配置自动执行。当前提供 Deltaverse 网页适配示例，其他网站按同一版本化契约
+和适配指南接入。三种执行面不会静默互相切换。
+
+合集也提供稳定的文件资产接口：Query Workspace 索引临时 SQL，Formal Asset Package manifest
+保存共享 SQL 和派生资产，receipt 绑定准确版本，Provider Snapshot/Catalog schema 为只读消费方
+提供稳定身份和哈希。详见[执行面与网页适配指南](sql-engineering/references/execution-surfaces.md)
+和[只读资产消费手册](docs/READONLY_ASSET_CONSUMER_GUIDE.md)。
 
 ## 策划源怎么选
 
@@ -111,6 +133,7 @@ checkout 信息保存在被忽略的 `.local/`；密码和 token 由 Git/SVN 自
 - [直接连接、网页查询与手动交付](sql-engineering/references/execution-surfaces.md)
 - [公开维护边界](docs/PUBLIC_MAINTENANCE.md)
 - [Excel 报告可视化](excel-report-visualizer/README.md)
+- [Excel 第三方许可说明](excel-report-visualizer/THIRD_PARTY_NOTICES.md)
 
 ## 下一步
 

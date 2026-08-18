@@ -1,12 +1,16 @@
 # Game Data Analysis Skills
 
-**A file-backed toolkit for game-data analysis in Codex.**
+[![Public validation](https://github.com/thevenomsnake/game-data-analysis-skills/actions/workflows/public-validation.yml/badge.svg)](https://github.com/thevenomsnake/game-data-analysis-skills/actions/workflows/public-validation.yml)
+
+**A file-backed collection of pluggable Skills for game-data analysis in Codex.**
 
 [Official site](https://fairy.sumimi.jp/) · [简体中文](README.zh-CN.md) · [繁體中文](README.zh-TW.md)
 
 A useful query should still be useful after the chat ends. Game Data Analysis Skills keeps the
 question, the SQL version, the rule sources, the result evidence, and the delivery decision close
-enough to follow without turning every small analysis into a heavy release process.
+enough to follow without turning every small analysis into a heavy release process. Use one Skill,
+combine several, or use the collection without Fairy. Fairy is a separate product layer that can
+organize selected Skills into a team workflow; it is not required by the individual Skills.
 
 ## What it helps you do
 
@@ -18,6 +22,7 @@ enough to follow without turning every small analysis into a heavy release proce
 | **Query lifecycle** | Move from requirement intake to query, validation, formal asset packages, and dashboard-ready derivatives without silently skipping evidence. |
 | **Review and health** | Inspect SQL from product and code perspectives, run deterministic facts and quality checks, and catch drift before delivery. |
 | **Results and lineage** | Bind results, visualizations, and workbooks to the exact SQL version that produced them. |
+| **Execution surfaces** | Run a receipted SQL through a direct DB-API/CLI connection, a configured web query adapter, or an explicit manual handoff. |
 | **Excel report visualizer** | Inspect a local workbook and turn a supported report shape into an offline, reusable presentation. The repository ships the tool, not anyone's workbook. |
 
 ## Install and try it
@@ -57,6 +62,28 @@ python .\sql-engineering\scripts\sql_workspace.py save `
 The command returns an immutable `v001.sql` path. Run `receipt` on that exact path before sharing
 it. With no database adapter configured, execution correctly ends as `manual_required` instead of
 pretending that the query ran.
+
+## Choose an execution surface
+
+Initialize a formal project with an explicit execution intent:
+
+```powershell
+python .\sql-engineering\scripts\local_setup.py init `
+  --repo-root . `
+  --project example `
+  --execution-surface direct
+```
+
+Use `direct` for a read-only DB-API or CLI profile, `web` for a project-local web adapter and the
+user's Chrome session, or `manual` when the project is not ready to execute. The web adapter is
+currently demonstrated for Deltaverse; other sites use the same versioned contract and validation
+guide. The three routes never silently fall back to one another.
+
+The collection exposes asset interfaces as files: Query Workspace indexes temporary SQL, Formal
+Asset Package manifests hold shared SQL and derived assets, delivery receipts bind exact versions,
+and Provider Snapshot/Catalog schemas give read-only consumers stable identities and hashes. See
+the [execution surface and adapter guide](sql-engineering/references/execution-surfaces.md) and
+[read-only asset consumer guide](docs/READONLY_ASSET_CONSUMER_GUIDE.md).
 
 ## Choose your planning source
 
@@ -120,6 +147,7 @@ silently promote a query, and a lifecycle label does not claim correctness by it
 - [Direct, web, and manual query execution](sql-engineering/references/execution-surfaces.md)
 - [Public maintenance boundary](docs/PUBLIC_MAINTENANCE.md)
 - [Offline Excel report visualizer](excel-report-visualizer/README.md)
+- [Excel third-party notices](excel-report-visualizer/THIRD_PARTY_NOTICES.md)
 
 ## Roadmap
 

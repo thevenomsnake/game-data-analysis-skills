@@ -6,6 +6,7 @@ Keep the public edition generic, reproducible, and safe to publish.
 - Keep examples fictional and place local run output under ignored directories.
 - Update the relevant Skill reference and README when a public command or contract changes.
 - Run the focused tests and `python tools/public_release.py validate --root .` before committing.
+- When working from the maintained source, run `python tools/public_sync.py audit --source-root <maintained-source-root> --public-root .` and review every `changed_review` entry.
 - Use the standard library unless a dependency is required by an optional local adapter.
 
 Pull requests should explain the changed public behavior, the files intentionally excluded, and

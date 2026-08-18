@@ -1,0 +1,42 @@
+name: Public validation
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.13"]
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Validate public boundary
+        run: python tools/public_release.py validate --root .
+
+      - name: Compile bundled Python
+        run: python -m compileall -q setup/scripts sql-engineering/scripts
+
+      - name: Validate capability registry
+        run: python sql-engineering/scripts/capability_registry.py --validate
+
+      - name: Run Setup tests
+        run: python -m unittest discover -q -s setup/scripts -p 'test_*.py'
+
+      - name: Run public SQL tests
+        run: python -m unittest discover -q -s sql-engineering/tests -p 'test_*.py'

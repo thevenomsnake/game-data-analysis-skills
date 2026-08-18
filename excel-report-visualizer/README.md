@@ -49,3 +49,5 @@ Excel 内容在浏览器中解析。草稿只发送给 `127.0.0.1` 上的本地�
 `index.html` 和 `workbook-inspector.js` 共同组成前端，基于一个虚构的周报模板；`server.py` 使用 Python 标准库提供静态页面和草稿读写，不引入额外依赖。页面使用 SheetJS 读取 Excel、ECharts 渲染图表，并在导出时克隆当前页面，把固定版所需的数据以 JSON 嵌入 HTML。
 
 当前只落地周报模板。日报模板尚未建立；后续增加日报时，应复用现有导入、草稿和固定导出机制，不改动这份周报的数据契约。
+
+第三方浏览器库和许可边界见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
