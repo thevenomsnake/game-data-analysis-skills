@@ -2,7 +2,7 @@
 
 **面向 Codex 的可插拔游戏数据分析 Skills 合集，把 SQL、口径、证据和交付文件真正保存下来。**
 
-[English](README.md) · [繁體中文](README.zh-TW.md)
+[English](README.md) · 简体中文 · [繁體中文](README.zh-TW.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Español](README.es.md)
 
 聊天里的查询很容易散掉：SQL 版本变了，口径来源找不到，结果也无法确认对应哪一版。这个
 项目把这些关系放进文件和索引里，让一次排查可以继续演进成可复用的分析资产，同时保留

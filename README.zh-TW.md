@@ -2,7 +2,7 @@
 
 **面向 Codex 的可插拔遊戲資料分析 Skills 合集，把 SQL、口徑、證據和交付檔案保存下來。**
 
-[English](README.md) · [简体中文](README.zh-CN.md)
+[English](README.md) · [简体中文](README.zh-CN.md) · 繁體中文 · [日本語](README.ja.md) · [한국어](README.ko.md) · [Español](README.es.md)
 
 Game Data Analysis Skills 是一組可以獨立使用、也可以組合使用的 Skills。只使用一個、選幾個
 一起用，或由其他工具把選定能力接成自己的工作流程都可以；這個合集不依賴特定產品層。

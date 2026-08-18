@@ -2,7 +2,7 @@
 
 **Una colección de Skills enchufables para analizar datos de juegos en Codex.**
 
-[English](README.md) · [简体中文](README.zh-CN.md)
+[English](README.md) · [简体中文](README.zh-CN.md) · [繁體中文](README.zh-TW.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · Español
 
 Game Data Analysis Skills reúne Skills que pueden usarse por separado o combinarse según la tarea.
 Las capacidades elegidas también pueden integrarse en el flujo de trabajo de otra IA o herramienta;

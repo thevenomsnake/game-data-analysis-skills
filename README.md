@@ -4,7 +4,7 @@
 
 **A file-backed collection of pluggable Skills for game-data analysis in Codex.**
 
-[简体中文](README.zh-CN.md) · [繁體中文](README.zh-TW.md)
+English · [简体中文](README.zh-CN.md) · [繁體中文](README.zh-TW.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Español](README.es.md)
 
 A useful query should still be useful after the chat ends. Game Data Analysis Skills keeps the
 question, the SQL version, the rule sources, the result evidence, and the delivery decision close

@@ -2,7 +2,7 @@
 
 **Codex에서 게임 데이터 분석을 수행하기 위한, 교체 가능한 Skills 모음입니다.**
 
-[English](README.md) · [简体中文](README.zh-CN.md)
+[English](README.md) · [简体中文](README.zh-CN.md) · [繁體中文](README.zh-TW.md) · [日本語](README.ja.md) · 한국어 · [Español](README.es.md)
 
 Game Data Analysis Skills는 각각 독립적으로 사용하거나 필요한 것만 조합할 수 있는 Skills의
 컬렉션입니다. 선택한 기능을 다른 AI나 도구의 워크플로에 연결해 사용할 수 있으며 특정 제품 계층을
