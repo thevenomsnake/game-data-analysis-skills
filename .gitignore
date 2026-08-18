@@ -16,6 +16,7 @@ Thumbs.db
 /sql-projects/*/
 !/sql-projects/README.md
 **/.sql-engineering/connections.local.json
+**/.sql-engineering/web-query-adapter.local.json
 **/.sql-engineering/runs/
 **/query_workspace/
 **/formal_assets/

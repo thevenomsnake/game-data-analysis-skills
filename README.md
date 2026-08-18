@@ -117,6 +117,7 @@ silently promote a query, and a lifecycle label does not claim correctness by it
 - [Project overview](docs/PROJECT_OVERVIEW.md)
 - [User manual](docs/USER_MANUAL.md)
 - [Planning-source providers](sql-engineering/references/planning-source.md)
+- [Direct, web, and manual query execution](sql-engineering/references/execution-surfaces.md)
 - [Public maintenance boundary](docs/PUBLIC_MAINTENANCE.md)
 - [Offline Excel report visualizer](excel-report-visualizer/README.md)
 

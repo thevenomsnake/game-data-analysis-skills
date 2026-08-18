@@ -9,7 +9,8 @@ The public edition uses a local-only, status-first setup flow.
 4. Install `setup/` and `sql-engineering/` into the local Codex skills directory.
 5. Run `planning-sync` when Git or SVN owns the planning source.
 6. Create the fictional `example` project with `bootstrap_repo.py demo`.
-7. Configure a local read-only adapter only when the user has one; otherwise use manual handoff.
+7. Select an execution surface: configure a direct DB-API/CLI profile, copy and validate a local
+   web adapter, or keep the project on manual handoff.
 
 Git is required, but the hosting service is not fixed. Credentials remain in the user's Git/SVN
 credential mechanism. Project-specific source files and rules stay local and ignored.

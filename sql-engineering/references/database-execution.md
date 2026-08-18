@@ -14,9 +14,11 @@ Read `dialects.md` before assuming that a connection protocol determines SQL syn
 - `vNNN.sql` remains the immutable executable asset.
 - `sql_execute.py` verifies the saved receipt, runs one read-only statement, and writes local evidence.
 
-Browser automation is not an execution adapter. Do not open Chrome, click a DA page, paste SQL into
-a web console, or scrape results. Use a DB-API driver or a database command-line client. If neither is
-available, hand the saved SQL to the user and request the returned result file.
+This document covers the `direct` execution surface only. Browser execution is a separate,
+agent-controlled `QUERY_EXECUTE` surface and is never loaded as a DB-API/CLI profile by
+`sql_execute.py`. Read `execution-surfaces.md` for web adapter initialization, Chrome execution,
+download binding, and the contract for adapting another website. If neither surface is ready, hand
+the exact saved SQL path to the user and request the returned result file.
 
 ## Configure Project Environments
 

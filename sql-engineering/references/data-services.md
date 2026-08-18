@@ -16,4 +16,7 @@ Secrets never belong in Git, SQL, receipts, URLs, or chat. Missing configuration
 that a development observation is production evidence.
 
 For browser execution, use only the Chrome plugin with the user's own session. The public package
-contains no endpoint, cookie, token, or credential automation.
+contains no cookie, token, or credential automation. Resolve the project's ignored
+`web_query_adapter_v1` before opening a query page; see `execution-surfaces.md`. Direct DB-API/CLI,
+web, and manual handoff are separate execution surfaces and must not silently fall back to one
+another.

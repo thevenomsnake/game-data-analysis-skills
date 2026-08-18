@@ -26,7 +26,7 @@ This file is generated from `references/capabilities.json`. Edit the registry, t
 
 | Function | Mode | Visibility | Entry points | LLM policy | Quality profile | Output |
 |---|---|---|---|---|---|---|
-| 【项目管理】 `[PROJECT_ADMIN]` | `PROJECT_ADMIN` | `common` | `workspace_setup.py status|sync`<br>`data_service.py status|init|copy|bind|disable|resolve`<br>`local_setup.py status|configure`<br>`planning_source.py status|configure`<br>`sql_project.py init|show-config|set-config|rebuild-index`<br>`project_validate.py`<br>`migrate_*.py` | `none` | `project_admin` | 产品阶段与数据服务绑定状态；配置清单与缺失项；持久化本机配置；项目配置；manifest/index；迁移或健康报告 |
+| 【项目管理】 `[PROJECT_ADMIN]` | `PROJECT_ADMIN` | `common` | `workspace_setup.py status|sync`<br>`data_service.py status|init|copy|bind|disable|resolve`<br>`local_setup.py status|init --execution-surface manual|direct|web`<br>`planning_source.py status|configure`<br>`sql_project.py init|show-config|set-config|rebuild-index`<br>`project_validate.py`<br>`migrate_*.py` | `none` | `project_admin` | 产品阶段与数据服务绑定状态；配置清单与缺失项；持久化本机配置；项目配置；manifest/index；迁移或健康报告 |
 | 【SQL Skill进化】 `[SKILL_EVOLUTION]` | `SKILL_EVOLUTION` | `advanced` | `write_scope_guard.py`<br>`sql-engineering source/tests/references` | `engineering_change_with_regression_tests` | `skill_source_change` | skill source change；regression tests；runtime sync |
 | 【口径管理】 `[RULES]` | `RULES` | `common` | `sql_project.py show-rules|rule-report|add-rule`<br>`rule_review.py`<br>`rule_dictionary.py`<br>`rule_authorization_governance.py` | `optional_semantic_structuring` | `canonical_rule_write` | canonical rule；口径审查或字典 |
 | 【来源/XML同步】 `[SOURCE_INTAKE]` | `SOURCE_INTAKE` | `advanced` | `xml_catalog.py` | `none` | `source_intake` | xml_catalog.json；项目来源证据 |
@@ -54,7 +54,7 @@ This file is generated from `references/capabilities.json`. Edit the registry, t
 | 【项目健康检查】 `[PROJECT_HEALTH]` | `PROJECT_ADMIN` | `advanced` | `project_validate.py` | `none` | `read_only_health` | current/full health result；grouped summary JSON；full audit JSON |
 | 【跨项目口径审查】 `[RULE_REVIEW]` | `RULES` | `advanced` | `rule_review.py` | `none` | `rule_review` | rule review JSON/HTML/state |
 | 【口径字典】 `[RULE_DICTIONARY]` | `RULES` | `advanced` | `rule_dictionary.py` | `none` | `persisted_facts_only` | rule_dictionary.json/html |
-| 【执行查询SQL】 `[QUERY_EXECUTE]` | `QUERY` | `integration` | `Chrome plugin`<br>`sql_query_workspace.py receipt|attach-output|mark` | `exact_receipt_serial_single_active_fill_submit_download_close_then_bind` | `serial_one_active_query_tab_download_bound_cleanup` | exact result evidence or manual handoff |
+| 【执行查询SQL】 `[QUERY_EXECUTE]` | `QUERY` | `integration` | `sql_execute.py run`<br>`web_query_adapter.py resolve`<br>`Chrome plugin`<br>`sql_query_workspace.py receipt|attach-output|mark` | `exact_receipt_serial_single_active_fill_submit_download_close_then_bind` | `serial_one_active_query_tab_download_bound_cleanup` | exact result evidence or manual handoff |
 | 【协作提交计划】 `[COLLABORATION_SUBMIT]` | `PROJECT_ADMIN` | `common` | `collaboration_submit.py plan|submit` | `none` | `local_review_only` | public_collaboration_plan_v1 |
 
 ## Reference Routing
@@ -73,7 +73,7 @@ This file is generated from `references/capabilities.json`. Edit the registry, t
 - `PROJECT_ADMIN`: context=项目 slug 或项目根目录; references=`setup-onboarding.md`、`data-services.md`、`local-setup.md`、`planning-source.md`、`operating-contract.md`、`project-workflow.md`.
 - `PROJECT_HEALTH`: context=项目根目录; references=`project-workflow.md`.
 - `QUERY`: context=项目；业务问题；用户时间范围或可解析的项目默认窗口；输出粒度/指标，或诊断主体与有界证据范围; references=`project-workflow.md`、`sql-taxonomy.md`、`core-rules.md`、`query-workspace.md`、`execution-routing.md`、`time-integrity.md`、`dialects/<selected-execution-profile>.md`.
-- `QUERY_EXECUTE`: context=ready query delivery receipt；用户自己的 Chrome 登录态（仅在明确选择浏览器适配器时）; references=`project-workflow.md`.
+- `QUERY_EXECUTE`: context=ready query delivery receipt；selected execution surface；direct profile or project-local web adapter when automatic execution is selected; references=`execution-surfaces.md`、`database-execution.md`、`project-workflow.md`.
 - `QUERY_WORKSPACE_MAINTENANCE`: context=项目根目录; references=`project-workflow.md`、`query-workspace.md`.
 - `REQUIREMENT_INTAKE`: context=用户原文；可选项目根目录；可选的当前澄清文本; references=`operating-contract.md`.
 - `RESULT_EVIDENCE_MAINTENANCE`: context=项目根目录; references=`project-workflow.md`、`query-workspace.md`、`asset-catalog.md`.
@@ -136,6 +136,11 @@ This file is generated from `references/capabilities.json`. Edit the registry, t
 | `sql_execution_adapter.py route` | `QUERY`、`SQL_FORMALIZE` |
 | `sql_execution_adapter.py render` | `QUERY`、`SQL_FORMALIZE` |
 | `sql_execution_adapter.py inspect` | `QUERY`、`SQL_FORMALIZE`、`REVIEW`、`PROJECT_ADMIN` |
+| `sql_execute.py *` | `QUERY_EXECUTE` |
+| `sql_execute.py run` | `QUERY_EXECUTE` |
+| `web_query_adapter.py *` | `QUERY_EXECUTE` |
+| `web_query_adapter.py validate` | `QUERY_EXECUTE`、`PROJECT_ADMIN` |
+| `web_query_adapter.py resolve` | `QUERY_EXECUTE`、`PROJECT_ADMIN` |
 | `requirement_intake.py *` | `REQUIREMENT_INTAKE` |
 | `dev_sql_inspect.py *` | `DEV_SQL_INSPECT` |
 | `rule_review.py *` | `RULE_REVIEW`、`RULES` |

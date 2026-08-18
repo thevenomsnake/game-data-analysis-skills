@@ -9,6 +9,7 @@ Start with:
 - [Documentation standard](DOCUMENTATION_STANDARD.md)
 - [Local collaboration](COLLABORATION.md)
 - [Public maintenance](PUBLIC_MAINTENANCE.md)
+- [Query execution surfaces and web adapters](../sql-engineering/references/execution-surfaces.md)
 
 The executable contract lives in `sql-engineering/SKILL.md` and its `references/` directory.
 JSON schemas, manifests, and sidecar metadata are machine authority; Markdown explains how to use

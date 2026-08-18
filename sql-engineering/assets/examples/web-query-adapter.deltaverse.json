@@ -1,0 +1,63 @@
+{
+  "schema_version": "web_query_adapter_v1",
+  "adapter_id": "deltaverse-da",
+  "display_name": "Deltaverse DA",
+  "allowed_hosts": [
+    "da.deltaverse.cn"
+  ],
+  "entry": {
+    "root_url": "https://da.deltaverse.cn/",
+    "query_url": "https://da.deltaverse.cn/"
+  },
+  "editor": {
+    "strategy": "css",
+    "value": "div.tiptap.ProseMirror[contenteditable=\"true\"]"
+  },
+  "submit": {
+    "strategy": "css",
+    "value": "svg.delta-icon__CopilotSend"
+  },
+  "completion": {
+    "success": [
+      {
+        "strategy": "text",
+        "value": "本次回答已完成",
+        "exact": true
+      }
+    ],
+    "failure": [],
+    "timeout_seconds": 900
+  },
+  "result": {
+    "inline_max_rows": 2000,
+    "inline_download": {
+      "strategy": "text",
+      "value": "下载",
+      "exact": true
+    },
+    "large_result_link": {
+      "strategy": "css",
+      "value": "a[href*=\"task_id=\"]"
+    },
+    "export_button": {
+      "strategy": "text",
+      "value": "导出",
+      "exact": true
+    },
+    "format_option": {
+      "strategy": "text",
+      "value": "csv",
+      "exact": true
+    }
+  },
+  "policy": {
+    "authentication": "user_session",
+    "read_only": true,
+    "submit_once": true,
+    "allow_http": false
+  },
+  "tab_policy": {
+    "max_active_query_tabs": 1,
+    "close_after_download": true
+  }
+}

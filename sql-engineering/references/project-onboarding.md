@@ -95,8 +95,9 @@ python <skill-root>/scripts/sql_workspace.py environment `
   --default
 ```
 
-Then configure the local DB-API or database CLI profile as described in `database-execution.md`. If no
-automatic connection is configured, SQL generation and storage still work; the Skill returns the exact
+Then choose one execution surface in `execution-surfaces.md`. Configure a local DB-API/database CLI
+profile for direct execution, or an ignored `web_query_adapter_v1` for a user-selected browser query
+product. If neither is configured, SQL generation and storage still work; the Skill returns the exact
 SQL file for manual execution and asks the user to return the result.
 
 Connection protocol and SQL syntax are separate. For example, StarRocks may use a MySQL-compatible driver
@@ -138,7 +139,7 @@ The agent now has explicit evidence ownership:
 3. Apply current canonical rules that cite those versions.
 4. Generate SQL in the selected environment's dialect.
 5. Save and receipt the immutable SQL version.
-6. Execute through the configured database, or hand the exact SQL file to the user.
+6. Execute through the selected direct/web surface, or hand the exact SQL file to the user.
 7. Bind any returned result to that exact SQL version and content hash.
 
 This ordering prevents a planning table from becoming a rule by accident, a chat correction from silently

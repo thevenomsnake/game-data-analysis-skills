@@ -108,6 +108,7 @@ checkout 信息保存在被忽略的 `.local/`；密码和 token 由 Git/SVN 自
 - [项目总览](docs/PROJECT_OVERVIEW.md)
 - [用户手册](docs/USER_MANUAL.md)
 - [策划源 provider](sql-engineering/references/planning-source.md)
+- [直接连接、网页查询与手动交付](sql-engineering/references/execution-surfaces.md)
 - [公开维护边界](docs/PUBLIC_MAINTENANCE.md)
 - [Excel 报告可视化](excel-report-visualizer/README.md)
 

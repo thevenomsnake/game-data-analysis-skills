@@ -228,6 +228,27 @@
         "PROJECT_ADMIN"
       ]
     },
+    "sql_execute.py": {
+      "*": [
+        "QUERY_EXECUTE"
+      ],
+      "run": [
+        "QUERY_EXECUTE"
+      ]
+    },
+    "web_query_adapter.py": {
+      "*": [
+        "QUERY_EXECUTE"
+      ],
+      "validate": [
+        "QUERY_EXECUTE",
+        "PROJECT_ADMIN"
+      ],
+      "resolve": [
+        "QUERY_EXECUTE",
+        "PROJECT_ADMIN"
+      ]
+    },
     "requirement_intake.py": {
       "*": [
         "REQUIREMENT_INTAKE"
@@ -600,7 +621,7 @@
       "entrypoints": [
         "workspace_setup.py status|sync",
         "data_service.py status|init|copy|bind|disable|resolve",
-        "local_setup.py status|configure",
+        "local_setup.py status|init --execution-surface manual|direct|web",
         "planning_source.py status|configure",
         "sql_project.py init|show-config|set-config|rebuild-index",
         "project_validate.py",
@@ -1473,12 +1494,15 @@
       "label": "执行查询SQL",
       "governance_mode": "QUERY",
       "audience": "integration",
-      "use_when": "用户明确要求执行一个已通过 receipt 的 SQL；公开版只提供可选 Chrome 插件契约，不包含任何内部网页地址。",
+      "use_when": "用户明确要求执行一个已通过 receipt 的 SQL，并明确选择 direct、web 或 manual execution surface。",
       "required_context": [
         "ready query delivery receipt",
-        "用户自己的 Chrome 登录态（仅在明确选择浏览器适配器时）"
+        "selected execution surface",
+        "direct profile or project-local web adapter when automatic execution is selected"
       ],
       "entrypoints": [
+        "sql_execute.py run",
+        "web_query_adapter.py resolve",
         "Chrome plugin",
         "sql_query_workspace.py receipt|attach-output|mark"
       ],
@@ -1486,6 +1510,8 @@
       "llm_policy": "exact_receipt_serial_single_active_fill_submit_download_close_then_bind",
       "quality_profile": "serial_one_active_query_tab_download_bound_cleanup",
       "references": [
+        "execution-surfaces.md",
+        "database-execution.md",
         "project-workflow.md"
       ],
       "outputs": [

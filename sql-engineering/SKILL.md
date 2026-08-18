@@ -58,10 +58,11 @@ The machine-readable registry is `references/capabilities.json`. The main routes
 - `REVIEW`: inspect SQL from product and code perspectives.
 - `ASSET_CATALOG` / `ASSET_ORGANIZATION`: build explicit read-only shared indexes.
 
-Browser execution is an optional `QUERY_EXECUTE` route: it consumes an exact receipt through the
-Chrome plugin and the user's own session, with no bundled endpoint or credential automation. The
-`COLLABORATION_SUBMIT` route only creates a local review plan. Local DB-API and command-line
-adapters remain supported when the user supplies a project-local, ignored connection profile.
+`QUERY_EXECUTE` selects one explicit execution surface after an exact receipt. Direct execution
+uses `sql_execute.py` with a project-local DB-API/CLI profile. Web execution first resolves an
+ignored `web_query_adapter_v1`, then uses the Chrome plugin and the user's own session. A missing
+adapter produces a manual handoff. Read `references/execution-surfaces.md` before executing or
+adapting a website. The `COLLABORATION_SUBMIT` route only creates a local review plan.
 
 ## Project layout
 

@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "web_query_adapter_v1",
+  "title": "Web Query Adapter v1",
+  "description": "A local, credential-free contract for running one receipted SQL file through a user-authenticated web query surface.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "adapter_id",
+    "display_name",
+    "allowed_hosts",
+    "entry",
+    "editor",
+    "submit",
+    "completion",
+    "result",
+    "policy",
+    "tab_policy"
+  ],
+  "properties": {
+    "schema_version": { "const": "web_query_adapter_v1" },
+    "adapter_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+    "display_name": { "type": "string", "minLength": 1 },
+    "allowed_hosts": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^[A-Za-z0-9.-]+$" }
+    },
+    "entry": {
+      "type": "object",
+      "required": ["root_url", "query_url"],
+      "properties": {
+        "root_url": { "type": "string", "format": "uri" },
+        "query_url": { "type": "string", "format": "uri" }
+      },
+      "additionalProperties": false
+    },
+    "editor": { "$ref": "#/$defs/locator" },
+    "submit": { "$ref": "#/$defs/locator" },
+    "completion": {
+      "type": "object",
+      "required": ["success", "failure", "timeout_seconds"],
+      "properties": {
+        "success": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/locator" }
+        },
+        "failure": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/locator" }
+        },
+        "timeout_seconds": { "type": "integer", "minimum": 1, "maximum": 3600 }
+      },
+      "additionalProperties": false
+    },
+    "result": {
+      "type": "object",
+      "required": ["inline_max_rows"],
+      "anyOf": [
+        { "required": ["inline_download"] },
+        { "required": ["large_result_link"] }
+      ],
+      "properties": {
+        "inline_max_rows": { "type": "integer", "minimum": 1 },
+        "row_count": { "$ref": "#/$defs/locator" },
+        "inline_download": { "$ref": "#/$defs/locator" },
+        "large_result_link": { "$ref": "#/$defs/locator" },
+        "export_button": { "$ref": "#/$defs/locator" },
+        "format_option": { "$ref": "#/$defs/locator" }
+      },
+      "additionalProperties": false
+    },
+    "policy": {
+      "type": "object",
+      "required": ["authentication", "read_only", "submit_once", "allow_http"],
+      "properties": {
+        "authentication": { "const": "user_session" },
+        "read_only": { "const": true },
+        "submit_once": { "const": true },
+        "allow_http": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "tab_policy": {
+      "type": "object",
+      "required": ["max_active_query_tabs", "close_after_download"],
+      "properties": {
+        "max_active_query_tabs": { "const": 1 },
+        "close_after_download": { "const": true }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "locator": {
+      "type": "object",
+      "required": ["strategy", "value"],
+      "properties": {
+        "strategy": { "enum": ["role", "label", "text", "css"] },
+        "value": { "type": "string", "minLength": 1 },
+        "exact": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

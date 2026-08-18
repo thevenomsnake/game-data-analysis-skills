@@ -34,12 +34,15 @@ title, or general model knowledge.
 - Keep every executable SQL version in the project workspace and never overwrite an earlier version.
 - Add one managed `@SQL_GENERATION` header; the public edition uses the local Git user or the
   `DA_SKILLS_USER` environment variable, falling back to `local-user`.
-- Execute only a single read-only statement through a configured DB-API or CLI adapter.
-- If no adapter or credential is available, return `manual_required` with the exact SQL path.
+- Execute only a single read-only statement through the explicitly selected direct DB-API/CLI
+  surface or the separately governed web adapter surface.
+- If no surface or credential is available, return `manual_required` with the exact SQL path.
 - Keep result files, visualizations, validation, and formal packages as separate objects linked by
   content hash and version.
 
 ## Public execution boundary
 
-The public package has no browser or organization-console adapter. A user may add a local adapter
-for their own environment, but it must be read-only and must not place secrets in tracked files.
+The public package includes a credential-free Deltaverse web-adapter example and the
+`web_query_adapter_v1` validator. A user may add or replace a local adapter for another environment,
+but it must be read-only, use the user's own Chrome session, and keep secrets out of tracked files.
+The web route never becomes a DB-API profile and `sql_execute.py` never drives a browser.
