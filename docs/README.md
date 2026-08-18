@@ -11,7 +11,7 @@ Start with:
 - [Public maintenance](PUBLIC_MAINTENANCE.md)
 - [Query execution surfaces and web adapters](../sql-engineering/references/execution-surfaces.md)
 - [Codex and external-agent integration interfaces](INTEGRATION_INTERFACES.md)
-- [Release notes v1.4.0](RELEASE_NOTES_v1.4.0.md)
+- [Release notes v0.1.0](RELEASE_NOTES_v0.1.0.md)
 - [README maintenance](README_MAINTENANCE.md)
 - [README maintenance log](README_MAINTENANCE_LOG.md)
 

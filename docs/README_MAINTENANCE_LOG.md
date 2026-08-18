@@ -4,13 +4,16 @@ Append one entry for every public README release. Preserve earlier rows as histo
 
 | Date | Version / commit | Scope | Verification |
 |---|---|---|---|
-| 2026-08-18 | `v1.4.4` / `4cbdcc0` | Split usage documentation into the Codex Skill interface and the external AI-agent/third-party command-and-file interface; added executable README maintenance validation. | README validator and tool tests passed; public boundary, capability registry, and six locale copy checks passed. |
-| 2026-08-18 | `v1.4.3` / `52080d2` | Exposed stable `English`, `简体中文`, `繁體中文`, `日本語`, `한국어`, and `Español` navigation in every README. | Six locale `humanization copy`; `Public validation` passed on `main` and tag. |
-| 2026-08-18 | `v1.4.1` / `379a16c` | Made the public README set product-neutral and described pluggable capability interfaces. | Six locale `humanization copy`; public boundary and source allowlist passed. |
-| 2026-08-18 | `v1.4.0` / `1921fc1` | Replaced four locale stubs with complete README content; documented execution surfaces, asset interfaces, CI, source sync, security, and third-party notices. | Setup `7/7`; SQL `106/106`; six locale checks; public boundary and source allowlist passed. |
+| 2026-08-18 | `v0.1.0` / release tag | First public README release: six locale entry points, pluggable capability interfaces, Codex and external-agent integration paths, direct/web/manual execution, and public asset contracts. | Six locale `humanization copy`; README validator; public boundary; capability registry; Setup `7/7`; SQL `106/106`; GitHub Actions. |
+
+## Pre-release Preparation
+
+The following commits prepared the first release before the first public tag: `5660f36`, `51f3b10`,
+`0a91394`, `9fda217`, `1921fc1`, `379a16c`, `bed5758`, `52080d2`, and `715dd0c`. They remain in
+Git history as implementation evidence, not as release tags.
 
 ## Next Entry Template
 
 ```text
-| YYYY-MM-DD | vX.Y.Z / <commit> | <facts, commands, interfaces, locales changed> | <checks and CI runs> |
+| YYYY-MM-DD | vX.Y.Z / release tag | facts, commands, interfaces, locales changed | checks and CI runs |
 ```
