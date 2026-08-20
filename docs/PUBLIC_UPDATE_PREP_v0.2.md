@@ -8,8 +8,13 @@ this document.
 ## Source Baseline
 
 - Maintained source tip reviewed: `af3186ec` (`SQL Engineering` `4.231.0`, spec `4.11`)
+- Maintained source working-tree delta reviewed on 2026-08-20: an uncommitted SQL-error recovery
+  contract adds terminal `sql_error`, local-repair routing, new fingerprint/page rules, and a
+  regression scenario. It is not yet a source commit and is not treated as a public release input.
 - Public baseline: `main` at `c79b707`, first public release `v0.1.0`
 - Source analysis and router smoke: `test_analysis_workflow` `11/11`; `test_workflow_router` `7/7`
+- Source working-tree smoke after the SQL-error delta: `test_analysis_workflow` `12/12` and
+  `test_workflow_router` `7/7`
 - Source-only changes reviewed: analysis discovery, query design, work items, execution attempts,
   analysis audit lineage, workflow routing, and related asset-provider projections
 - Current source-to-public audit intentionally blocks with these unreviewed source-only paths:
@@ -45,6 +50,7 @@ external AI agent that needs to continue an analysis without replaying an entire
 | Analysis discovery and Query Design state | Port the resumable state machine and digest rules; keep state under ignored `query_workspace`. |
 | Query Work Items and fresh-context handoff | Expose batch relations, blockers, checkpoints, inherited facts, and a bounded context JSON. |
 | Analysis schemas | Add versioned schemas for discovery, index, batch, work item, context, design brief, execution attempt, and audit link. |
+| SQL-error recovery | Port the provider-neutral terminal `sql_error` state, local-repair checkpoint, and new-fingerprint/new-attempt rule; keep site-specific page details behind the adapter. |
 | SQL Workspace integration | Carry an optional analysis contract into SQL metadata and receipts; preserve explicit legacy compatibility for pre-v0.2 SQL. |
 | Formal asset/provider integration | Add analysis audit members and relationships only when a formal package explicitly contains them. |
 | External Agent interface | Document read-only route selection and context handoff through JSON CLI; do not require Codex runtime. |
