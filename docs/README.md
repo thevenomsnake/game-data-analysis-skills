@@ -14,6 +14,7 @@ Start with:
 - [Release notes v0.1.0](RELEASE_NOTES_v0.1.0.md)
 - [README maintenance](README_MAINTENANCE.md)
 - [README maintenance log](README_MAINTENANCE_LOG.md)
+- [Public update preparation v0.2](PUBLIC_UPDATE_PREP_v0.2.md)
 
 The executable contract lives in `sql-engineering/SKILL.md` and its `references/` directory.
 JSON schemas, manifests, and sidecar metadata are machine authority; Markdown explains how to use
